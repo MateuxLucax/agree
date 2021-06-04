@@ -1,6 +1,6 @@
 package models.server.channel;
 
-// DELETE can WRITE, WRITE can READ, READ is sad
+// It's a hierarchy: DELETE can also WRITE, WRITE can also READ, READ is sad
 public enum Permissions {
     READ,
     WRITE,

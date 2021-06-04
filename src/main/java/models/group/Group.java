@@ -3,11 +3,108 @@ package models.group;
 import models.User;
 import models.message.Message;
 
-import java.util.List;
+import java.util.*;
+
+/* Messages are loaded/unloaded at the top or bottom for pagination.
+
+   To be ordered by date, they need to be "loaded below" if they were sent earlier than
+   the currently loaded messages, or "loaded above" if they were sent later than the currently
+   loaded messages.
+
+   The point of this is to not load all the messages of the group at once, which could
+   be a lot and cause some lag, only a portion of them.
+   So if the user scrolls up too much, some messages will be
+   unloaded below, and vice-versa. MAX_MESSAGES_LOADED_AT_ONCE is the exact
+   limit at which messages will start being unloaded as more are loaded.
+
+   Note that to "unload" is different from "delete":
+   the first means it means that the user isn't viewing the message anymore,
+   the latter means it's actually deleted from the database
+
+   (I really feel like this stuff about message loading/unloading should be in a separate MessagePage
+   class or something like that, and the Group class should actually store no information about messages.
+   But maybe it generates a MessagePage by a method or something, idk. )
+*/
 
 public class Group {
 
-    private List<User> users;
+    private static final int MAX_MESSAGES_LOADED_AT_ONCE = 5;  // 5 just for testing, 200? normally
 
-    private List<Message> messages;
+    private final List<User> users;
+
+    private final Deque<Message> messages;
+
+    public Group() {
+        this.users = new ArrayList<>();
+        this.messages = new LinkedList<>();
+    }
+
+    public void addUser(User user) { users.add(user); }
+    public void removeUser(User user) { users.remove(user); }
+
+    public void loadMessageAbove(Message msg) {
+        messages.addFirst(msg);
+        if (messages.size() > MAX_MESSAGES_LOADED_AT_ONCE)
+            unloadMessageBelow();
+    }
+
+    public void loadMessageBelow(Message msg) {
+        messages.addLast(msg);
+        if (messages.size() > MAX_MESSAGES_LOADED_AT_ONCE)
+            unloadMessageAbove();
+    }
+
+    public void unloadMessageAbove() { messages.removeFirst(); }
+    public void unloadMessageBelow() { messages.removeLast(); }
+
+    public void deleteMessage(Message msg) { messages.remove(msg); }
+    // Message is deleted from group -> it's also automatically deleted from the DB (Observer pattern?)
+
+    public String showGroup() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("Members:");
+        for (var user : users)
+            sb.append(' ').append(user.getNickname());
+        sb.append('\n');
+
+        for (var msg : messages)
+            sb.append(msg.toString()).append('\n');
+
+        return sb.toString();
+    }
+
+    public static void test() {
+        User u1 = new User("john123", new Date());
+        User u2 = new User("jane321", new Date());
+
+        Group g = new Group();
+        g.addUser(u1);
+        g.addUser(u2);
+
+        g.loadMessageBelow(new Message(u1, "hello", new Date()));
+        g.loadMessageBelow(new Message(u2, "hey", new Date()));
+        g.loadMessageBelow(new Message(u1, "how are you?", new Date()));
+
+        System.out.println(g.showGroup());
+
+        // Load enough messages to fill the page
+        g.loadMessageBelow(new Message(u2, "goodbye", new Date()));
+        g.loadMessageBelow(new Message(u2, "just kidding", new Date()));
+
+        System.out.println(g.showGroup());
+
+        // Loading more than 5 messages; with MAX_MESSAGES_LOADED_AT_ONCE = 5 messages above should be unloaded
+        g.loadMessageBelow(new Message(u1, "below1", new Date()));
+        g.loadMessageBelow(new Message(u1, "below2", new Date()));
+
+        System.out.println(g.showGroup());
+
+        // Now let's load above -- messages below should be unloaded
+        g.loadMessageAbove(new Message(u2, "above1", new Date()));
+        g.loadMessageAbove(new Message(u1, "above2", new Date()));
+        g.loadMessageAbove(new Message(u1, "above3", new Date()));
+
+        System.out.println(g.showGroup());
+    }
 }

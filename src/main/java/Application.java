@@ -1,3 +1,5 @@
+import models.group.Group;
+
 public class Application {
 
     // private LoggedUserInfo loggedUserInfo;
@@ -6,6 +8,6 @@ public class Application {
     //   List<Server> servers;
 
     public static void main(String[] args) {
-
+        Group.test();
     }
 }
