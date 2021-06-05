@@ -30,14 +30,20 @@ public class Group {
 
     private static final int MAX_MESSAGES_LOADED_AT_ONCE = 5;  // 5 just for testing, 200? normally
 
+    private final String name;
     private final List<User> users;
-
     private final Deque<Message> messages;
+    private       Date lastMessageDate;
 
-    public Group() {
+    public Group(String name) {
+        this.name = name;
         this.users = new ArrayList<>();
         this.messages = new LinkedList<>();
     }
+
+    // So we can order groups in the user interface to show the ones more active recently
+    public void setLastMessageDate(Date date) { this.lastMessageDate = date; }
+    public Date getLastMessageDate() { return this.lastMessageDate; }
 
     public void addUser(User user) { users.add(user); }
     public void removeUser(User user) { users.remove(user); }
@@ -60,8 +66,14 @@ public class Group {
     public void deleteMessage(Message msg) { messages.remove(msg); }
     // Message is deleted from group -> it's also automatically deleted from the DB (Observer pattern?)
 
+    public String toString() {
+        return "Group("+name+"){Last message at "+lastMessageDate+"}";
+    }
+
     public String showGroup() {
         StringBuilder sb = new StringBuilder();
+
+        sb.append("== ").append(name).append(" ==\n");
 
         sb.append("Members:");
         for (var user : users)
@@ -78,7 +90,7 @@ public class Group {
         User u1 = new User("john123", new Date());
         User u2 = new User("jane321", new Date());
 
-        Group g = new Group();
+        Group g = new Group("group :)");
         g.addUser(u1);
         g.addUser(u2);
 

@@ -17,6 +17,10 @@ public class User {
         this.createdAt = createdAt;
     }
 
+    public String toString() {
+        return "User("+nickname+")";
+    }
+
     public String getNickname() { return nickname; }
 
     public Date getCreationDate() { return createdAt; }
