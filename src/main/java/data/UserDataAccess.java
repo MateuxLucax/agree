@@ -51,9 +51,9 @@ public class UserDataAccess {
 
     public List<Group> retrieveGroups(User user) {
         List<Group> groups = new ArrayList<>();
-        groups.add(new Group("group 1"));
-        groups.add(new Group("group 2"));
-        groups.add(new Group("last group"));
+        groups.add(new Group("group 1", new Date()));
+        groups.add(new Group("group 2", new Date()));
+        groups.add(new Group("last group", new Date()));
         return groups;
     }
 

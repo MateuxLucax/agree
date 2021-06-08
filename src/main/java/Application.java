@@ -71,10 +71,9 @@ public class Application {
             Application app = Application.startSession();
             System.out.println("Welcome!");
 
-            // Comparator<Group> byLastMessageDate = Comparator.comparing(Group::getLastMessageDate);
 
             System.out.println("\nYour groups:");
-            // app.loggedUserGroups.sort(byLastMessageDate);  // NullPointerException here...
+            app.loggedUserGroups.sort(Comparator.comparing(Group::getLastMessageDate));
             System.out.println(app.loggedUserGroups);
 
             System.out.println("\nYour friends:");

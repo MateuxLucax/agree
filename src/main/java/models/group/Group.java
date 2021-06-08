@@ -35,11 +35,14 @@ public class Group {
     private final Deque<Message> messages;
     private       Date lastMessageDate;
 
-    public Group(String name) {
+    public Group(String name, Date lastMessageDate) {
         this.name = name;
+        this.lastMessageDate = lastMessageDate;
         this.users = new ArrayList<>();
         this.messages = new LinkedList<>();
     }
+
+    public String getName() { return this.name; }
 
     // So we can order groups in the user interface to show the ones more active recently
     public void setLastMessageDate(Date date) { this.lastMessageDate = date; }
@@ -90,7 +93,7 @@ public class Group {
         User u1 = new User("john123", new Date());
         User u2 = new User("jane321", new Date());
 
-        Group g = new Group("group :)");
+        Group g = new Group("group :)", new Date());
         g.addUser(u1);
         g.addUser(u2);
 
