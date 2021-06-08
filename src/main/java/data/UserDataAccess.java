@@ -35,11 +35,14 @@ public class UserDataAccess {
     throws NameAlreadyInUseException,
            UnsafePasswordException
     {
-        String thePassword = "123";
         if (name.equals("admin"))
             throw new NameAlreadyInUseException("admin");
-        if (password.equals(thePassword))
+        if (!this.isPasswordSafe(password))
             throw new UnsafePasswordException();
+    }
+
+    private boolean isPasswordSafe(String password) {
+        return password.matches("(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}");
     }
 
     public User retrieveUser(String name) {
