@@ -1,6 +1,7 @@
 import data.UserDataAccess;
-import exceptions.UnsafePasswordException;
 import gui.AuthPanel;
+import gui.GroupBar;
+import gui.UserBar;
 import models.User;
 import models.group.Group;
 
@@ -20,6 +21,7 @@ public class Application {
     private List<User> loggedUserFriends;
 
     private JFrame frame;
+    private JPanel homePanel;
 
     public Application() {
         this.loggedUserGroups = new ArrayList<>();
@@ -31,6 +33,9 @@ public class Application {
                 System.exit(0);
             }
         });
+
+        this.homePanel = new JPanel();
+
         startSession();
     }
 
@@ -42,6 +47,10 @@ public class Application {
             loggedUser = userDataAccess.retrieveUser(username);
             loggedUserFriends = userDataAccess.retrieveFriends(loggedUser);
             loggedUserGroups = userDataAccess.retrieveGroups(loggedUser);
+            initializeHomePanel();
+            frame.remove(authPanel.getPanel());
+            frame.add(homePanel);
+            frame.pack();
         });
 
         authPanel.setRegistrationListener((username, password) -> {
@@ -49,8 +58,29 @@ public class Application {
             loggedUser = userDataAccess.retrieveUser(username);
             loggedUserFriends = userDataAccess.retrieveFriends(loggedUser);
             loggedUserGroups = userDataAccess.retrieveGroups(loggedUser);
+            initializeHomePanel();
+            frame.remove(authPanel.getPanel());
+            frame.add(homePanel);
+            frame.pack();
         });
 
+        frame.pack();
+        frame.setVisible(true);
+    }
+
+    // Precondition: user is logged in,
+    // loggedUserGroups and loggedUserFriends are initialized
+    private void initializeHomePanel() {
+        var groupsPanel = new JPanel();
+        var friendsPanel = new JPanel();
+
+        for (var group : loggedUserGroups)
+            groupsPanel.add(new GroupBar(group).getPanel());
+        for (var friend : loggedUserFriends)
+            friendsPanel.add(new UserBar(friend).getPanel());
+
+        homePanel.add(groupsPanel);
+        homePanel.add(friendsPanel);
     }
 
 
