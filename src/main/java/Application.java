@@ -1,43 +1,60 @@
 import data.UserDataAccess;
-import exceptions.IncorrectPasswordException;
-import exceptions.NameAlreadyInUseException;
 import exceptions.UnsafePasswordException;
 import gui.AuthPanel;
 import models.User;
 import models.group.Group;
 
 import javax.swing.*;
-import java.util.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Application {
 
+    private static final UserDataAccess userDataAccess = UserDataAccess.getInstance();
+
     // Information about the user in session
-    private final User loggedUser;
-    private final List<Group> loggedUserGroups;
-    private final List<User> loggedUserFriends;
+    private User loggedUser;
+    private List<Group> loggedUserGroups;
+    private List<User> loggedUserFriends;
 
-    private final static UserDataAccess userDataAccess = UserDataAccess.getInstance();
+    private JFrame frame;
 
-    public Application(User user) {
-        this.loggedUser = user;
+    public Application() {
         this.loggedUserGroups = new ArrayList<>();
         this.loggedUserFriends = new ArrayList<>();
+
+        this.frame = new JFrame();
+        frame.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                System.exit(0);
+            }
+        });
+        startSession();
     }
 
-    // Why all the custom exceptions? Couldn't we just use Exception or RuntimeException?
-    // In this particular case, the client code (say, UI code) that calls startSession actually wants
-    // to know precisely what happened, so it can say to the user "hey, this name is already in use" or
-    // "that password is incorrect, try again".
-    // If we just throw a RuntimeException or have the methods returning bool that isn't possible
-    // (Well, sure, authenticateUser returning false surely means the password is incorrect,
-    // but createAccount returning false could mean either that the name is already in use
-    // or that the password is unsafe -- to short, no numbers, no uppercase letters etc.
-    // [although we might not actually care about this aspect of the software...],
-    // so we can't know specifically what happened)
+    private void startSession() {
+        var authPanel = new AuthPanel();
+        frame.add(authPanel.getPanel());
 
-    // Also, we probably need two different methods here, one for login and one for registration
+        authPanel.setLoginListener(username -> {
+            loggedUser = userDataAccess.retrieveUser(username);
+            loggedUserFriends = userDataAccess.retrieveFriends(loggedUser);
+            loggedUserGroups = userDataAccess.retrieveGroups(loggedUser);
+        });
 
-    public static Application startSession()
+        authPanel.setRegistrationListener((username, password) -> {
+            userDataAccess.createAccount(username, password);
+            loggedUser = userDataAccess.retrieveUser(username);
+            loggedUserFriends = userDataAccess.retrieveFriends(loggedUser);
+            loggedUserGroups = userDataAccess.retrieveGroups(loggedUser);
+        });
+
+    }
+
+
+    /*public static Application startSession()
     throws IncorrectPasswordException,
            NameAlreadyInUseException,
            UnsafePasswordException
@@ -66,14 +83,11 @@ public class Application {
         }
 
         return app;
-    }
+    }*/
 
     public static void main(String[] args) {
 
-        var authPanel = new AuthPanel();
-        var frame = new JFrame();
-        frame.add(authPanel.getPanel());
-        frame.setVisible(true);
+        var app = new Application();
 
         /* try {
             Application app = Application.startSession();
