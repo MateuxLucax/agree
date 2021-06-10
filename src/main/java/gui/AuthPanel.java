@@ -22,11 +22,6 @@ public class AuthPanel {
                 String name = tfName.getText();
                 String password = new String(passwordField.getPassword());
                 UserDataAccess.getInstance().authenticate(name, password);
-
-                // authentication succeded
-                // ...
-                lbWarning.setText("");
-
             } catch (IncorrectPasswordException e) {
                 lbWarning.setText("Incorrect password for " + e.getUsername());
             }
@@ -36,12 +31,7 @@ public class AuthPanel {
             try {
                 String name = tfName.getText();
                 String password = new String(passwordField.getPassword());
-                UserDataAccess.getInstance().createAccount(name, password);
-
-                // account creation succeded
-                // ...
-                lbWarning.setText("");
-
+                UserDataAccess.getInstance().validateNewAccount(name, password);
             } catch (UnsafePasswordException e) {
                 lbWarning.setText("Unsafe password");
             } catch (NameAlreadyInUseException e) {

@@ -31,7 +31,7 @@ public class UserDataAccess {
             throw new IncorrectPasswordException(name);
     }
 
-    public void createAccount(String name, String password)
+    public void validateNewAccount(String name, String password)
     throws NameAlreadyInUseException,
            UnsafePasswordException
     {
@@ -39,6 +39,10 @@ public class UserDataAccess {
             throw new NameAlreadyInUseException("admin");
         if (!this.isPasswordSafe(password))
             throw new UnsafePasswordException();
+    }
+
+    public void createAccount(String name, String password) {
+        // Access DB to create account...
     }
 
     private boolean isPasswordSafe(String password) {
