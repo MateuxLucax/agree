@@ -2,9 +2,11 @@ import data.UserDataAccess;
 import exceptions.IncorrectPasswordException;
 import exceptions.NameAlreadyInUseException;
 import exceptions.UnsafePasswordException;
+import gui.AuthPanel;
 import models.User;
 import models.group.Group;
 
+import javax.swing.*;
 import java.util.*;
 
 public class Application {
@@ -67,7 +69,13 @@ public class Application {
     }
 
     public static void main(String[] args) {
-        try {
+
+        var authPanel = new AuthPanel();
+        var frame = new JFrame();
+        frame.add(authPanel.getPanel());
+        frame.setVisible(true);
+
+        /* try {
             Application app = Application.startSession();
             System.out.println("Welcome!");
 
@@ -87,6 +95,6 @@ public class Application {
             System.out.println("The name " + e.getName() + " is already being used by someone else");
         } catch(Exception e) {
             e.printStackTrace();
-        }
+        } */
     }
 }
