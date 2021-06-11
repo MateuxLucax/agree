@@ -7,15 +7,15 @@ import javax.swing.*;
 // TODO add profile picture
 
 public class UserBar {
-    private JPanel main;
+    private JPanel mainPanel;
     private JLabel lbName;
 
     public UserBar(User user) {
         lbName.setText(user.getNickname());
     }
 
-    public JPanel getPanel() {
-        return main;
+    public JPanel getJPanel() {
+        return mainPanel;
     }
 
 }

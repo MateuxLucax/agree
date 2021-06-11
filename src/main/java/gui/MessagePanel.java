@@ -19,7 +19,7 @@ public class MessagePanel {
         lbText.setText(msg.getText());
     }
 
-    public JPanel getPanel() {
+    public JPanel getJPanel() {
         return mainPanel;
     }
     // TODO make all these EtcPanel classes extend JPanel so that this getPanel method is unnecessary

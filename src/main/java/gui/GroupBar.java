@@ -12,7 +12,7 @@ import java.awt.event.ActionListener;
 
 public class GroupBar {
 
-    private JPanel main;
+    private JPanel mainPanel;
     private JLabel lbName;
     private JLabel lbLastMessage;
     private JButton btOpen;
@@ -27,7 +27,7 @@ public class GroupBar {
         lbLastMessage.setText(group.getLastMessageDate().toString());
     }
 
-    public JPanel getPanel() {
-        return main;
+    public JPanel getJPanel() {
+        return mainPanel;
     }
 }

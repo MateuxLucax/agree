@@ -6,7 +6,6 @@ import data.GroupDataAccess;
 import models.group.Group;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
@@ -36,7 +35,7 @@ public class GroupPanel {
         var messagesPanel = new JPanel();
         messagesPanel.setLayout(new BoxLayout(messagesPanel, BoxLayout.PAGE_AXIS));
         for (var msg : group.getMessages())
-            messagesPanel.add(new MessagePanel(msg).getPanel());
+            messagesPanel.add(new MessagePanel(msg).getJPanel());
         var messagesScrollPane = new JScrollPane();
         messagesScrollPane.setViewportView(messagesPanel);
         messagesScrollPane.getVerticalScrollBar().setUnitIncrement(20);
@@ -52,7 +51,7 @@ public class GroupPanel {
         btGoBack.addActionListener(onGoBack);
     }
 
-    public JPanel getPanel() {
+    public JPanel getJPanel() {
         return mainPanel;
     }
 }

@@ -16,7 +16,7 @@ public class AuthPanel {
     private JButton btLogin;
     private JButton btCreateAccount;
     private JLabel lbWarning;
-    private JPanel panel;
+    private JPanel mainPanel;
 
     private Consumer<String> onLogin;
     private BiConsumer<String, String> onRegistration;
@@ -55,8 +55,8 @@ public class AuthPanel {
         });
     }
 
-    public JPanel getPanel() {
-        return panel;
+    public JPanel getJPanel() {
+        return mainPanel;
     }
 
 }

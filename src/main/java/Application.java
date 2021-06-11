@@ -42,14 +42,14 @@ public class Application {
 
     private void startSession() {
         var authPanel = new AuthPanel();
-        frame.add(authPanel.getPanel());
+        frame.add(authPanel.getJPanel());
 
         authPanel.setLoginListener(username -> {
             loggedUser = userDataAccess.retrieveUser(username);
             loggedUserFriends = userDataAccess.retrieveFriends(loggedUser);
             loggedUserGroups = userDataAccess.retrieveGroups(loggedUser);
             populateHomePanel();
-            frame.remove(authPanel.getPanel());
+            frame.remove(authPanel.getJPanel());
             frame.add(homePanel);
             frame.pack();
         });
@@ -60,7 +60,7 @@ public class Application {
             loggedUserFriends = userDataAccess.retrieveFriends(loggedUser);
             loggedUserGroups = userDataAccess.retrieveGroups(loggedUser);
             populateHomePanel();
-            frame.remove(authPanel.getPanel());
+            frame.remove(authPanel.getJPanel());
             frame.add(homePanel);
             frame.pack();
         });
@@ -78,7 +78,7 @@ public class Application {
         for (var group : loggedUserGroups) {
             var groupPanel = new GroupPanel(group);
             groupPanel.setGoBackListener(evt -> {
-                frame.remove(groupPanel.getPanel());
+                frame.remove(groupPanel.getJPanel());
                 frame.add(homePanel);
                 frame.pack();
                 frame.repaint();
@@ -86,14 +86,14 @@ public class Application {
             var groupBar = new GroupBar(group);
             groupBar.setOpenListener(evt -> {
                 frame.remove(homePanel);
-                frame.add(groupPanel.getPanel());
+                frame.add(groupPanel.getJPanel());
                 frame.pack();
                 frame.repaint();
             });
-            groupsPanel.add(groupBar.getPanel());
+            groupsPanel.add(groupBar.getJPanel());
         }
         for (var friend : loggedUserFriends)
-            friendsPanel.add(new UserBar(friend).getPanel());
+            friendsPanel.add(new UserBar(friend).getJPanel());
 
         homePanel.add(groupsPanel);
         homePanel.add(friendsPanel);
