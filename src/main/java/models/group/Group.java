@@ -28,11 +28,11 @@ import java.util.*;
 
 public class Group {
 
-    private static final int MAX_MESSAGES_LOADED_AT_ONCE = 5;  // 5 just for testing, 200? normally
+    private static final int MAX_MESSAGES_LOADED_AT_ONCE = 100;
 
     private final String name;
     private final List<User> users;
-    private final Deque<Message> messages;
+    private final LinkedList<Message> messages;
     private       Date lastMessageDate;
 
     public Group(String name, Date lastMessageDate) {
@@ -47,6 +47,14 @@ public class Group {
     // So we can order groups in the user interface to show the ones more active recently
     public void setLastMessageDate(Date date) { this.lastMessageDate = date; }
     public Date getLastMessageDate() { return this.lastMessageDate; }
+
+    public List<User> getUsers() {
+        return Collections.unmodifiableList(users);
+    }
+
+    public List<Message> getMessages() {
+        return Collections.unmodifiableList(messages);
+    }
 
     public void addUser(User user) { users.add(user); }
     public void removeUser(User user) { users.remove(user); }
@@ -65,9 +73,6 @@ public class Group {
 
     public void unloadMessageAbove() { messages.removeFirst(); }
     public void unloadMessageBelow() { messages.removeLast(); }
-
-    public void deleteMessage(Message msg) { messages.remove(msg); }
-    // Message is deleted from group -> it's also automatically deleted from the DB (Observer pattern?)
 
     public String toString() {
         return "Group("+name+"){Last message at "+lastMessageDate+"}";
