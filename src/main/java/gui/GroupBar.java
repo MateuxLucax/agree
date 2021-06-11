@@ -8,12 +8,18 @@ package gui;
 import models.group.Group;
 
 import javax.swing.*;
+import java.awt.event.ActionListener;
 
 public class GroupBar {
 
     private JPanel main;
     private JLabel lbName;
     private JLabel lbLastMessage;
+    private JButton btOpen;
+
+    public void setOpenListener(ActionListener onOpen) {
+        btOpen.addActionListener(onOpen);
+    }
 
     public GroupBar(Group group) {
         lbName.setText(group.getName());

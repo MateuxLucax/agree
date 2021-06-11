@@ -1,6 +1,7 @@
 import data.UserDataAccess;
 import gui.AuthPanel;
 import gui.GroupBar;
+import gui.GroupPanel;
 import gui.UserBar;
 import models.User;
 import models.group.Group;
@@ -47,7 +48,7 @@ public class Application {
             loggedUser = userDataAccess.retrieveUser(username);
             loggedUserFriends = userDataAccess.retrieveFriends(loggedUser);
             loggedUserGroups = userDataAccess.retrieveGroups(loggedUser);
-            initializeHomePanel();
+            populateHomePanel();
             frame.remove(authPanel.getPanel());
             frame.add(homePanel);
             frame.pack();
@@ -58,7 +59,7 @@ public class Application {
             loggedUser = userDataAccess.retrieveUser(username);
             loggedUserFriends = userDataAccess.retrieveFriends(loggedUser);
             loggedUserGroups = userDataAccess.retrieveGroups(loggedUser);
-            initializeHomePanel();
+            populateHomePanel();
             frame.remove(authPanel.getPanel());
             frame.add(homePanel);
             frame.pack();
@@ -70,12 +71,27 @@ public class Application {
 
     // Precondition: user is logged in,
     // loggedUserGroups and loggedUserFriends are initialized
-    private void initializeHomePanel() {
+    private void populateHomePanel() {
         var groupsPanel = new JPanel();
         var friendsPanel = new JPanel();
 
-        for (var group : loggedUserGroups)
-            groupsPanel.add(new GroupBar(group).getPanel());
+        for (var group : loggedUserGroups) {
+            var groupPanel = new GroupPanel(group);
+            groupPanel.setGoBackListener(evt -> {
+                frame.remove(groupPanel.getPanel());
+                frame.add(homePanel);
+                frame.pack();
+                frame.repaint();
+            });
+            var groupBar = new GroupBar(group);
+            groupBar.setOpenListener(evt -> {
+                frame.remove(homePanel);
+                frame.add(groupPanel.getPanel());
+                frame.pack();
+                frame.repaint();
+            });
+            groupsPanel.add(groupBar.getPanel());
+        }
         for (var friend : loggedUserFriends)
             friendsPanel.add(new UserBar(friend).getPanel());
 
