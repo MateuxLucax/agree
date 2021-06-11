@@ -14,9 +14,7 @@ public class Message implements Comparable<Message> {
      * This change might end up not being a problem at all. We'll see.
      */
     private User user;
-
     private String text;
-
     private Date sentAt;
 
     public Message(User user, String text, Date sentAt) {
@@ -24,6 +22,10 @@ public class Message implements Comparable<Message> {
         this.text = text;
         this.sentAt = sentAt;
     }
+
+    public User getUser() { return user; }
+    public Date getSentAt() { return sentAt; }
+    public String getText() { return text; }
 
     public int compareTo(Message other) {
         return sentAt.compareTo(other.sentAt);
