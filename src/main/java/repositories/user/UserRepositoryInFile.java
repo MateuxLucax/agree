@@ -34,7 +34,7 @@ public class UserRepositoryInFile implements IUserRepository {
     public User getUser(String username, String password) {
         try {
             User user = this.gson.fromJson(new JsonReader(new FileReader(this.directory + "/user.json")), User.class);
-            if (user.getNickname().equalsIgnoreCase(username) && user.getPassword().equalsIgnoreCase(password)) {
+            if (user.getNickname().equals(username) && user.getPassword().equals(password)) {
                 return user;
             }
         } catch (Exception e) {
