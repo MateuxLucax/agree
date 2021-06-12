@@ -1,3 +1,6 @@
+import com.github.weisj.darklaf.LafManager;
+import com.github.weisj.darklaf.theme.DarculaTheme;
+import com.github.weisj.darklaf.theme.laf.DarculaThemeDarklafLookAndFeel;
 import data.UserDataAccess;
 import gui.AuthPanel;
 import gui.GroupBar;
@@ -5,14 +8,11 @@ import gui.GroupPanel;
 import gui.UserBar;
 import models.User;
 import models.group.Group;
-import services.login.ILoginService;
-import services.login.LoginService;
 
 import javax.swing.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class Application {
@@ -30,6 +30,14 @@ public class Application {
     public Application() {
         loggedUserGroups = new ArrayList<>();
         loggedUserFriends = new ArrayList<>();
+        LafManager.install();
+        LafManager.setTheme(new DarculaTheme());
+        try {
+            UIManager.setLookAndFeel(new DarculaThemeDarklafLookAndFeel());
+        } catch (UnsupportedLookAndFeelException e) {
+            e.printStackTrace();
+        }
+
 
         frame = new JFrame();
         frame.addWindowListener(new WindowAdapter() {
