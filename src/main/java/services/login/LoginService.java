@@ -65,6 +65,6 @@ public class LoginService implements ILoginService {
     }
 
     public static boolean verifyUserPassword(String providedPassword, String securedPassword) {
-        return generateSecurePassword(providedPassword).equalsIgnoreCase(securedPassword);
+        return generateSecurePassword(providedPassword).equals(securedPassword);
     }
 }
