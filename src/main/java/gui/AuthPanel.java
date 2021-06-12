@@ -37,7 +37,7 @@ public class AuthPanel {
                 UserDataAccess.getInstance().authenticate(name, password);
                 onLogin.accept(name);
             } catch (UnauthorizedUserException e) {
-                lbWarning.setText("Incorrect password for " + e.getMessage());
+                lbWarning.setText("Username or password incorrect!");
             }
         });
 
