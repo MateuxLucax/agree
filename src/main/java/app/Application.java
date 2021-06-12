@@ -46,6 +46,8 @@ public class Application {
 
         var authPanel = new AuthPanel();
         frame.add(authPanel.getJPanel());
+        frame.pack();
+        frame.setVisible(true);
 
         authPanel.setSuccessListener(() -> {
             userSession = UserSession.getInstance();
@@ -54,9 +56,6 @@ public class Application {
             frame.add(homePanel);
             frame.pack();
         });
-
-        frame.pack();
-        frame.setVisible(true);
     }
 
     // Precondition: user is logged in,
