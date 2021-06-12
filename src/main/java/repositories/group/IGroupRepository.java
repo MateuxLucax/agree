@@ -9,11 +9,11 @@ public interface IGroupRepository {
 
     boolean createGroup(Group group);
 
-    boolean removeGroup(Group group);
+    boolean removeGroup(String id);
 
     boolean updateGroup(Group group);
 
     List<Group> getGroups(User user);
 
-    Group getGroup(int id);
+    Group getGroup(String id);
 }

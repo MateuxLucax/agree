@@ -7,17 +7,11 @@ import gui.AuthPanel;
 import gui.GroupBar;
 import gui.GroupPanel;
 import gui.UserBar;
-import models.User;
-import models.group.Group;
-import models.message.Message;
-import repositories.group.GroupInFileRepository;
-import repositories.group.IGroupRepository;
 import utils.AssetsUtil;
 
 import javax.swing.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.Date;
 
 public class Application {
 
@@ -50,15 +44,18 @@ public class Application {
 
     private void startSession() {
 
-        IGroupRepository groupRepository = new GroupInFileRepository();
-
-        User user1 = new User("cleber", new Date());
-        User user2 = new User("carlos", new Date());
-        Group group = new Group("teste");
-        group.addUser(user1);
-        group.addUser(user2);
-
-        groupRepository.createGroup(group);
+//        IGroupRepository groupRepository = new GroupInFileRepository();
+//
+//        User user1 = new User("cleber", new Date());
+//        User user2 = new User("carlos", new Date());
+//        Group group = new Group("teste");
+//        group.addUser(user1);
+//        group.addUser(user2);
+//
+//        groupRepository.createGroup(group);
+//
+//        System.out.println(groupRepository.getGroups(user1));
+//        System.out.println(groupRepository.getGroup("e0645554-aebb-424f-94fa-9855afeb7bf8"));
 
         var authPanel = new AuthPanel();
         frame.add(authPanel.getJPanel());
