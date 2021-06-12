@@ -30,16 +30,31 @@ public class Group {
 
     private static final int MAX_MESSAGES_LOADED_AT_ONCE = 100;
 
+    private       String id;
     private final String name;
     private final List<User> users;
     private final LinkedList<Message> messages;
     private       Date lastMessageDate;
+
+    public Group(String name) {
+        this.name = name;
+        this.users = new ArrayList<>();
+        this.messages = new LinkedList<>();
+    }
 
     public Group(String name, Date lastMessageDate) {
         this.name = name;
         this.lastMessageDate = lastMessageDate;
         this.users = new ArrayList<>();
         this.messages = new LinkedList<>();
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getName() { return this.name; }

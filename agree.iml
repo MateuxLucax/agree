@@ -23,5 +23,6 @@
     <orderEntry type="library" scope="RUNTIME" name="Maven: com.github.weisj:darklaf-macos:2.5.5" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.swinglabs:jxlayer:3.0.4" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: com.formdev:svgSalamander:1.1.2.3" level="project" />
+    <orderEntry type="library" name="Maven: org.jetbrains:annotations:21.0.1" level="project" />
   </component>
 </module>

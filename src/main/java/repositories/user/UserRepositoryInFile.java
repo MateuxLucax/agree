@@ -6,6 +6,7 @@ import models.User;
 
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.util.List;
 
 public class UserRepositoryInFile implements IUserRepository {
 
