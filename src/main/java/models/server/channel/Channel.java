@@ -16,4 +16,10 @@ public class Channel {
     // private Deque<Message> messages;
 
     private Map<Role, Permissions> permissions;
+    //            #main   #videos  #private
+    // Admin      DELETE  DELETE   DELETE
+    // Moderator  DELETE  DELETE   READ
+    // Guy        READ    READ     NONE
+    //
+
 }

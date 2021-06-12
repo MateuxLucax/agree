@@ -5,7 +5,6 @@ import models.group.Group;
 import models.message.Message;
 
 import java.util.Date;
-import java.util.List;
 
 public class GroupDataAccess {
 
