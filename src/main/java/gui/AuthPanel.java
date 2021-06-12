@@ -4,8 +4,13 @@ import data.UserDataAccess;
 import exceptions.NameAlreadyInUseException;
 import exceptions.UnauthorizedUserException;
 import exceptions.UnsafePasswordException;
+import utils.AssetsUtil;
 
 import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -17,6 +22,7 @@ public class AuthPanel {
     private JButton btCreateAccount;
     private JLabel lbWarning;
     private JPanel mainPanel;
+    private JLabel title;
 
     private Consumer<String> onLogin;
     private BiConsumer<String, String> onRegistration;
@@ -30,6 +36,11 @@ public class AuthPanel {
     }
 
     public AuthPanel() {
+        Border border = title.getBorder();
+        Border margin = new EmptyBorder(0,0,24,0);
+        title.setIcon(new ImageIcon(Objects.requireNonNull(AssetsUtil.getImage("/assets/logo.png"))));
+        title.setBorder(new CompoundBorder(border, margin));
+
         btLogin.addActionListener(evt -> {
             try {
                 String name = tfName.getText();

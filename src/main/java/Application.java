@@ -39,7 +39,7 @@ public class Application {
         }
 
 
-        frame = new JFrame();
+        frame = new JFrame("Agree");
         frame.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 System.exit(0);
