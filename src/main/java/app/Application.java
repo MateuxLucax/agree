@@ -1,36 +1,26 @@
+package app;
+
 import com.github.weisj.darklaf.LafManager;
 import com.github.weisj.darklaf.theme.DarculaTheme;
 import com.github.weisj.darklaf.theme.laf.DarculaThemeDarklafLookAndFeel;
-import data.UserDataAccess;
 import gui.AuthPanel;
 import gui.GroupBar;
 import gui.GroupPanel;
 import gui.UserBar;
-import models.User;
-import models.group.Group;
 import utils.AssetsUtil;
 
 import javax.swing.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Application {
 
-    private static final UserDataAccess userDataAccess = UserDataAccess.getInstance();
-
-    // Information about the user in session
-    private User loggedUser;
-    private List<Group> loggedUserGroups;
-    private List<User> loggedUserFriends;
+    private UserSession userSession;
 
     private final JFrame frame;
     private final JPanel homePanel;
 
     public Application() {
-        loggedUserGroups = new ArrayList<>();
-        loggedUserFriends = new ArrayList<>();
         LafManager.install();
         LafManager.setTheme(new DarculaTheme());
         try {
@@ -38,7 +28,6 @@ public class Application {
         } catch (UnsupportedLookAndFeelException e) {
             e.printStackTrace();
         }
-
 
         frame = new JFrame("Agree");
         frame.setIconImage(AssetsUtil.getImage(AssetsUtil.ICON));
@@ -58,21 +47,8 @@ public class Application {
         var authPanel = new AuthPanel();
         frame.add(authPanel.getJPanel());
 
-        authPanel.setLoginListener(username -> {
-            loggedUser = userDataAccess.retrieveUser();
-            loggedUserFriends = userDataAccess.retrieveFriends(loggedUser);
-            loggedUserGroups = userDataAccess.retrieveGroups(loggedUser);
-            populateHomePanel();
-            frame.remove(authPanel.getJPanel());
-            frame.add(homePanel);
-            frame.pack();
-        });
-
-        authPanel.setRegistrationListener((username, password) -> {
-            userDataAccess.createAccount(username, password);
-            loggedUser = userDataAccess.retrieveUser();
-            loggedUserFriends = userDataAccess.retrieveFriends(loggedUser);
-            loggedUserGroups = userDataAccess.retrieveGroups(loggedUser);
+        authPanel.setSuccessListener(() -> {
+            userSession = UserSession.getInstance();
             populateHomePanel();
             frame.remove(authPanel.getJPanel());
             frame.add(homePanel);
@@ -89,7 +65,7 @@ public class Application {
         var groupsPanel = new JPanel();
         var friendsPanel = new JPanel();
 
-        for (var group : loggedUserGroups) {
+        for (var group : userSession.getGroups()) {
             var groupPanel = new GroupPanel(group);
             groupPanel.setGoBackListener(evt -> {
                 frame.remove(groupPanel.getJPanel());
@@ -106,7 +82,7 @@ public class Application {
             });
             groupsPanel.add(groupBar.getJPanel());
         }
-        for (var friend : loggedUserFriends)
+        for (var friend : userSession.getFriends())
             friendsPanel.add(new UserBar(friend).getJPanel());
 
         homePanel.add(groupsPanel);

@@ -1,6 +1,6 @@
 package gui;
 
-import data.UserDataAccess;
+import app.UserSession;
 import exceptions.NameAlreadyInUseException;
 import exceptions.UnauthorizedUserException;
 import exceptions.UnsafePasswordException;
@@ -24,15 +24,10 @@ public class AuthPanel {
     private JPanel mainPanel;
     private JLabel title;
 
-    private Consumer<String> onLogin;
-    private BiConsumer<String, String> onRegistration;
+    private Runnable onSuccess;
 
-    public void setLoginListener(Consumer<String> onLogin) {
-        this.onLogin = onLogin;
-    }
-
-    public void setRegistrationListener(BiConsumer<String, String> onRegistration) {
-        this.onRegistration = onRegistration;
+    public void setSuccessListener(Runnable onSuccess) {
+        this.onSuccess = onSuccess;
     }
 
     public AuthPanel() {
@@ -42,27 +37,30 @@ public class AuthPanel {
         title.setBorder(new CompoundBorder(border, margin));
 
         btLogin.addActionListener(evt -> {
+            String name = tfName.getText();
+            String password = new String(passwordField.getPassword());
+            passwordField.setText("");
+
             try {
-                String name = tfName.getText();
-                String password = new String(passwordField.getPassword());
-                passwordField.setText("");
-                UserDataAccess.getInstance().authenticate(name, password);
-                onLogin.accept(name);
+                UserSession.authenticate(name, password);
+                onSuccess.run();
             } catch (UnauthorizedUserException e) {
                 lbWarning.setText("Username or password incorrect!");
             }
         });
 
         btCreateAccount.addActionListener(evt -> {
+            String name = tfName.getText();
+            String password = new String(passwordField.getPassword());
+            passwordField.setText("");
+
             try {
-                String name = tfName.getText();
-                String password = new String(passwordField.getPassword());
-                UserDataAccess.getInstance().validateNewAccount(name, password);
-                onRegistration.accept(name, password);
+                UserSession.createAccount(name, password);
+                onSuccess.run();
             } catch (UnsafePasswordException e) {
                 lbWarning.setText("Unsafe password");
             } catch (NameAlreadyInUseException e) {
-                lbWarning.setText("Name " + e.getName() + " already in use");
+                lbWarning.setText("Name " + name + " already in use");
             }
         });
     }
