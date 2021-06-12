@@ -81,3 +81,7 @@ fabric.properties
 
 # *.iml
 # modules.xml
+
+agree.iml
+
+user.json

@@ -1,8 +1,8 @@
 package gui;
 
 import data.UserDataAccess;
-import exceptions.IncorrectPasswordException;
 import exceptions.NameAlreadyInUseException;
+import exceptions.UnauthorizedUserException;
 import exceptions.UnsafePasswordException;
 
 import javax.swing.*;
@@ -36,8 +36,8 @@ public class AuthPanel {
                 String password = new String(passwordField.getPassword());
                 UserDataAccess.getInstance().authenticate(name, password);
                 onLogin.accept(name);
-            } catch (IncorrectPasswordException e) {
-                lbWarning.setText("Incorrect password for " + e.getUsername());
+            } catch (UnauthorizedUserException e) {
+                lbWarning.setText("Incorrect password for " + e.getMessage());
             }
         });
 

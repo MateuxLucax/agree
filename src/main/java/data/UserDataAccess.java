@@ -1,10 +1,12 @@
 package data;
 
-import exceptions.IncorrectPasswordException;
 import exceptions.NameAlreadyInUseException;
+import exceptions.UnauthorizedUserException;
 import exceptions.UnsafePasswordException;
 import models.User;
 import models.group.Group;
+import services.login.ILoginService;
+import services.login.LoginService;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -15,20 +17,20 @@ public class UserDataAccess {
     // For now just some dummy implementations until we have an actual database
 
     private static UserDataAccess instance;
+    private final ILoginService loginService;
+    private User user;
 
-    public UserDataAccess() { }
+    public UserDataAccess() {
+        this.loginService = new LoginService();
+    }
 
     public static UserDataAccess getInstance() {
         if (instance == null) instance = new UserDataAccess();
         return instance;
     }
 
-    public void authenticate(String name, String password)
-    throws IncorrectPasswordException
-    {
-        String thePassword = "123";
-        if (!password.equals(thePassword))
-            throw new IncorrectPasswordException(name);
+    public void authenticate(String name, String password) throws UnauthorizedUserException {
+        this.user = loginService.authenticate(name, password);
     }
 
     public void validateNewAccount(String name, String password)
@@ -42,15 +44,17 @@ public class UserDataAccess {
     }
 
     public void createAccount(String name, String password) {
-        // Access DB to create account...
+        User user = new User(name, new Date());
+        user.setPassword(password);
+        this.loginService.createUser(user);
     }
 
     private boolean isPasswordSafe(String password) {
         return password.matches("(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}");
     }
 
-    public User retrieveUser(String name) {
-        return new User(name, new Date());
+    public User retrieveUser() {
+        return this.user;
     }
 
     public List<Group> retrieveGroups(User user) {

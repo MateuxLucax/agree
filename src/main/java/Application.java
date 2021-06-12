@@ -5,11 +5,14 @@ import gui.GroupPanel;
 import gui.UserBar;
 import models.User;
 import models.group.Group;
+import services.login.ILoginService;
+import services.login.LoginService;
 
 import javax.swing.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class Application {
@@ -41,11 +44,12 @@ public class Application {
     }
 
     private void startSession() {
+
         var authPanel = new AuthPanel();
         frame.add(authPanel.getJPanel());
 
         authPanel.setLoginListener(username -> {
-            loggedUser = userDataAccess.retrieveUser(username);
+            loggedUser = userDataAccess.retrieveUser();
             loggedUserFriends = userDataAccess.retrieveFriends(loggedUser);
             loggedUserGroups = userDataAccess.retrieveGroups(loggedUser);
             populateHomePanel();
@@ -56,7 +60,7 @@ public class Application {
 
         authPanel.setRegistrationListener((username, password) -> {
             userDataAccess.createAccount(username, password);
-            loggedUser = userDataAccess.retrieveUser(username);
+            loggedUser = userDataAccess.retrieveUser();
             loggedUserFriends = userDataAccess.retrieveFriends(loggedUser);
             loggedUserGroups = userDataAccess.retrieveGroups(loggedUser);
             populateHomePanel();

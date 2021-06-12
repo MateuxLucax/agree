@@ -10,6 +10,8 @@ public class User {
 
     private String email;
 
+    private String password;
+
     // private String picture;
 
     public User(String nickname, Date createdAt) {
@@ -24,4 +26,12 @@ public class User {
     public String getNickname() { return nickname; }
 
     public Date getCreationDate() { return createdAt; }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }
