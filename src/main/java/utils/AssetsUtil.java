@@ -6,6 +6,9 @@ import java.io.File;
 
 public class AssetsUtil {
 
+    public static final String LOGO = "/assets/logo.png";
+    public static final String ICON = "/assets/icon.png";
+
     public static BufferedImage getImage(String path) {
         try {
             String filePath = System.getProperty("user.dir") + path;

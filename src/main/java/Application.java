@@ -8,6 +8,7 @@ import gui.GroupPanel;
 import gui.UserBar;
 import models.User;
 import models.group.Group;
+import utils.AssetsUtil;
 
 import javax.swing.*;
 import java.awt.event.WindowAdapter;
@@ -24,8 +25,8 @@ public class Application {
     private List<Group> loggedUserGroups;
     private List<User> loggedUserFriends;
 
-    private JFrame frame;
-    private JPanel homePanel;
+    private final JFrame frame;
+    private final JPanel homePanel;
 
     public Application() {
         loggedUserGroups = new ArrayList<>();
@@ -40,6 +41,7 @@ public class Application {
 
 
         frame = new JFrame("Agree");
+        frame.setIconImage(AssetsUtil.getImage(AssetsUtil.ICON));
         frame.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 System.exit(0);

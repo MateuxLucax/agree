@@ -38,13 +38,14 @@ public class AuthPanel {
     public AuthPanel() {
         Border border = title.getBorder();
         Border margin = new EmptyBorder(0,0,24,0);
-        title.setIcon(new ImageIcon(Objects.requireNonNull(AssetsUtil.getImage("/assets/logo.png"))));
+        title.setIcon(new ImageIcon(Objects.requireNonNull(AssetsUtil.getImage(AssetsUtil.LOGO))));
         title.setBorder(new CompoundBorder(border, margin));
 
         btLogin.addActionListener(evt -> {
             try {
                 String name = tfName.getText();
                 String password = new String(passwordField.getPassword());
+                passwordField.setText("");
                 UserDataAccess.getInstance().authenticate(name, password);
                 onLogin.accept(name);
             } catch (UnauthorizedUserException e) {
