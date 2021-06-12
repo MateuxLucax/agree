@@ -18,8 +18,7 @@ public class UserRepositoryInFile implements IUserRepository {
 
     @Override
     public boolean storeUser(User user) {
-        try {
-            FileWriter fileWriter = new FileWriter(this.directory + "/user.json");
+        try (var fileWriter = new FileWriter(this.directory + "/user.json")) {
             fileWriter.write(this.gson.toJson(user));
             fileWriter.close();
             return true;
@@ -32,8 +31,10 @@ public class UserRepositoryInFile implements IUserRepository {
 
     @Override
     public User getUser(String username, String password) {
-        try {
-            User user = this.gson.fromJson(new JsonReader(new FileReader(this.directory + "/user.json")), User.class);
+        try (var fileReader = new FileReader(this.directory + "/user.json");
+             var jsonReader = new JsonReader(fileReader))
+        {
+            User user = this.gson.fromJson(jsonReader, User.class);
             if (user.getNickname().equals(username) && user.getPassword().equals(password)) {
                 return user;
             }
