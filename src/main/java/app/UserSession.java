@@ -79,9 +79,9 @@ public class UserSession {
     public void loadGroups() {
         // Would get user's groups from a DB / repository
         // Now let's just load some placeholder data
-        groups.add(new Group("group 1", new Date()));
-        groups.add(new Group("group 2", new Date()));
-        groups.add(new Group("last group", new Date()));
+        groups.add(new Group("group 1"));
+        groups.add(new Group("group 2"));
+        groups.add(new Group("last group"));
     }
 
     public void loadFriends() {

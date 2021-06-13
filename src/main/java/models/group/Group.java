@@ -34,17 +34,9 @@ public class Group {
     private final String name;
     private final List<User> users;
     private final LinkedList<Message> messages;
-    private       Date lastMessageDate;
 
     public Group(String name) {
         this.name = name;
-        this.users = new ArrayList<>();
-        this.messages = new LinkedList<>();
-    }
-
-    public Group(String name, Date lastMessageDate) {
-        this.name = name;
-        this.lastMessageDate = lastMessageDate;
         this.users = new ArrayList<>();
         this.messages = new LinkedList<>();
     }
@@ -58,10 +50,6 @@ public class Group {
     }
 
     public String getName() { return this.name; }
-
-    // So we can order groups in the user interface to show the ones more active recently
-    public void setLastMessageDate(Date date) { this.lastMessageDate = date; }
-    public Date getLastMessageDate() { return this.lastMessageDate; }
 
     public List<User> getUsers() {
         return Collections.unmodifiableList(users);
