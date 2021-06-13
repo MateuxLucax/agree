@@ -24,7 +24,7 @@ public class Message implements Comparable<Message> {
     }
 
     public User getUser() { return user; }
-    public Date getSentAt() { return sentAt; }
+    public Date sentAt() { return sentAt; }
     public String getText() { return text; }
 
     public int compareTo(Message other) {

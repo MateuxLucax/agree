@@ -15,7 +15,7 @@ public class MessagePanel {
 
     public MessagePanel(Message msg) {
         lbAuthor.setText(msg.getUser().getNickname());
-        lbSentAt.setText(msg.getSentAt().toString());
+        lbSentAt.setText(msg.sentAt().toString());
         lbText.setText(msg.getText());
     }
 

@@ -59,7 +59,8 @@ public class Application {
 
         var authPanel = new AuthPanel();
         frame.add(authPanel.getJPanel());
-        frame.pack();
+        frame.pack();  // TODO change all the pack() calls to setSize, or maybe set to fullscreen
+                       // or actually learn about Dimension, preferredSize and all that jazz
         frame.setVisible(true);
 
         authPanel.setSuccessListener(() -> {
@@ -67,7 +68,7 @@ public class Application {
             populateHomePanel();
             frame.remove(authPanel.getJPanel());
             frame.add(homePanel);
-            frame.pack();
+            frame.revalidate();
         });
     }
 
@@ -82,15 +83,14 @@ public class Application {
             groupPanel.setGoBackListener(evt -> {
                 frame.remove(groupPanel.getJPanel());
                 frame.add(homePanel);
-                frame.pack();
-                frame.repaint();
+                frame.revalidate();
             });
             var groupBar = new GroupBar(group);
             groupBar.setOpenListener(evt -> {
                 frame.remove(homePanel);
                 frame.add(groupPanel.getJPanel());
+                frame.revalidate();
                 frame.pack();
-                frame.repaint();
             });
             groupsPanel.add(groupBar.getJPanel());
         }

@@ -24,7 +24,7 @@ public class GroupBar {
     public GroupBar(Group group) {
         lbName.setText(group.getName());
         // TODO relative time: "last message 2 minutes ago"
-        lbLastMessage.setText(group.getLastMessageDate().toString());
+        lbLastMessage.setText(group.getMessages().getFirst().sentAt().toString());
     }
 
     public JPanel getJPanel() {

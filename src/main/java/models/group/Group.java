@@ -55,9 +55,7 @@ public class Group {
         return Collections.unmodifiableList(users);
     }
 
-    public List<Message> getMessages() {
-        return Collections.unmodifiableList(messages);
-    }
+    public LinkedList<Message> getMessages() { return messages; }
 
     public void addUser(User user) { users.add(user); }
     public void removeUser(User user) { users.remove(user); }
