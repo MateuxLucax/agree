@@ -2,6 +2,7 @@ package gui;
 
 // Where the user actually reads and writes messages
 
+import app.UserSession;
 import models.User;
 import models.group.Group;
 import models.message.Message;
@@ -16,20 +17,16 @@ import java.util.LinkedList;
 
 public class GroupPanel {
 
+    private Group group;
     private JPanel mainPanel;
     private JButton btGoBack;
 
-    private IMessageRepository msgRepo = new MessageRepositoryTest();
-
     public GroupPanel(Group group) {
-        // TODO groupRepo.getUsers(Group group);
-        group.addUser(new User("foo", new Date()));
-        group.addUser(new User("bar", new Date()));
-        group.addUser(new User("aeiou", new Date()));
+        this.group = group;
+
+        IMessageRepository msgRepo = UserSession.getInstance().getMessageRepository();
 
         LinkedList<Message> messages = group.getMessages();
-
-        msgRepo.getMostRecentMessages(group);
 
         /* mainPanel
          * \--- headerPanel (name, lastMessageDate, goBack)
