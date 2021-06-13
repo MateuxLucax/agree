@@ -37,30 +37,41 @@ public class AuthPanel {
         title.setBorder(new CompoundBorder(border, margin));
 
         btLogin.addActionListener(evt -> {
+            lbWarning.setText("");
             String name = tfName.getText();
             String password = new String(passwordField.getPassword());
             passwordField.setText("");
 
-            try {
-                UserSession.authenticate(name, password);
-                onSuccess.run();
-            } catch (UnauthorizedUserException e) {
-                lbWarning.setText("Username or password incorrect!");
+            if (name.isEmpty() || password.isEmpty()) {
+                lbWarning.setText("Username and Password are required!");
+            } else {
+                try {
+                    UserSession.authenticate(name, password);
+                    onSuccess.run();
+                } catch (UnauthorizedUserException e) {
+                    lbWarning.setText("Username or password incorrect!");
+                }
             }
         });
 
         btCreateAccount.addActionListener(evt -> {
+            lbWarning.setText("");
             String name = tfName.getText();
             String password = new String(passwordField.getPassword());
             passwordField.setText("");
 
-            try {
-                UserSession.createAccount(name, password);
-                onSuccess.run();
-            } catch (UnsafePasswordException e) {
-                lbWarning.setText("Unsafe password");
-            } catch (NameAlreadyInUseException e) {
-                lbWarning.setText("Name " + name + " already in use");
+
+            if (name.isEmpty() || password.isEmpty()) {
+                lbWarning.setText("Username and Password are required!");
+            } else {
+                try {
+                    UserSession.createAccount(name, password);
+                    onSuccess.run();
+                } catch (UnsafePasswordException e) {
+                    lbWarning.setText("Unsafe password");
+                } catch (NameAlreadyInUseException e) {
+                    lbWarning.setText("Name " + name + " already in use");
+                }
             }
         });
     }

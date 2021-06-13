@@ -10,6 +10,7 @@ import gui.UserBar;
 import utils.AssetsUtil;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -59,6 +60,8 @@ public class Application {
 
         var authPanel = new AuthPanel();
         frame.add(authPanel.getJPanel());
+        frame.setExtendedState(frame.getExtendedState() | JFrame.MAXIMIZED_BOTH);
+//        frame.getContentPane().setPreferredSize(Toolkit.getDefaultToolkit().getScreenSize());
         frame.pack();  // TODO change all the pack() calls to setSize, or maybe set to fullscreen
                        // or actually learn about Dimension, preferredSize and all that jazz
         frame.setVisible(true);
