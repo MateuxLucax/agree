@@ -37,43 +37,47 @@ public class AuthPanel {
         title.setBorder(new CompoundBorder(border, margin));
 
         btLogin.addActionListener(evt -> {
-            lbWarning.setText("");
+            warn("");
             String name = tfName.getText();
             String password = new String(passwordField.getPassword());
             passwordField.setText("");
 
             if (name.isEmpty() || password.isEmpty()) {
-                lbWarning.setText("Username and Password are required!");
+                warn("Username and Password are required!");
             } else {
                 try {
                     UserSession.authenticate(name, password);
                     onSuccess.run();
                 } catch (UnauthorizedUserException e) {
-                    lbWarning.setText("Username or password incorrect!");
+                    warn("Username or password incorrect!");
                 }
             }
         });
 
         btCreateAccount.addActionListener(evt -> {
-            lbWarning.setText("");
+            warn("");
             String name = tfName.getText();
             String password = new String(passwordField.getPassword());
             passwordField.setText("");
 
 
             if (name.isEmpty() || password.isEmpty()) {
-                lbWarning.setText("Username and Password are required!");
+                warn("Username and Password are required!");
             } else {
                 try {
                     UserSession.createAccount(name, password);
                     onSuccess.run();
                 } catch (UnsafePasswordException e) {
-                    lbWarning.setText("Unsafe password");
+                    warn("Unsafe password");
                 } catch (NameAlreadyInUseException e) {
-                    lbWarning.setText("Name " + name + " already in use");
+                    warn("Name " + name + " already in use");
                 }
             }
         });
+    }
+
+    private void warn(String text) {
+        lbWarning.setText(text);
     }
 
     public JPanel getJPanel() {

@@ -19,6 +19,7 @@ public class GroupPanel {
 
     private Group group;
     private JPanel mainPanel;
+    private JPanel messageListPanel;
     private JButton btGoBack;
 
     public GroupPanel(Group group) {
@@ -46,27 +47,20 @@ public class GroupPanel {
         headerPanel.add(lbLastMessageDate);
         headerPanel.add(btGoBack);
 
-        var messageListPanel = new JPanel();
+        messageListPanel = new JPanel();
         messageListPanel.setLayout(new BoxLayout(messageListPanel, BoxLayout.PAGE_AXIS));
-        for (var msg : messages)
-            messageListPanel.add(new MessagePanel(msg).getJPanel());
+        reloadMessageList();
 
         var btLoadPrevious = new JButton("Load previous messages");
         btLoadPrevious.addActionListener(evt -> {
             msgRepo.getMessagesBefore(group, messages.getFirst().sentAt());
-            messageListPanel.removeAll();
-            for (var msg : messages)
-                messageListPanel.add(new MessagePanel(msg).getJPanel());
-            messageListPanel.revalidate();
+            reloadMessageList();
         });
 
         var btLoadNewer = new JButton("Load newer messages");
         btLoadNewer.addActionListener(evt -> {
             msgRepo.getMessagesAfter(group, messages.getLast().sentAt());
-            messageListPanel.removeAll();
-            for (var msg : messages)
-                messageListPanel.add(new MessagePanel(msg).getJPanel());
-            messageListPanel.revalidate();
+            reloadMessageList();
         });
 
         var messagePanel = new JPanel();
@@ -83,6 +77,13 @@ public class GroupPanel {
         mainPanel.setLayout(new BorderLayout());
         mainPanel.add(headerPanel, BorderLayout.PAGE_START);
         mainPanel.add(messageScrollPane, BorderLayout.CENTER);
+    }
+
+    public void reloadMessageList() {
+        messageListPanel.removeAll();
+        for (var msg : group.getMessages())
+            messageListPanel.add(new MessagePanel(msg).getJPanel());
+        messageListPanel.revalidate();
     }
 
     public void setGoBackListener(ActionListener onGoBack) {
