@@ -3,10 +3,7 @@ package app;
 import com.github.weisj.darklaf.LafManager;
 import com.github.weisj.darklaf.theme.DarculaTheme;
 import com.github.weisj.darklaf.theme.laf.DarculaThemeDarklafLookAndFeel;
-import gui.AuthPanel;
-import gui.GroupBar;
-import gui.GroupPanel;
-import gui.UserBar;
+import gui.*;
 import utils.AssetsUtil;
 
 import javax.swing.*;
@@ -18,8 +15,7 @@ public class Application {
 
     private UserSession userSession;
 
-    private final JFrame frame;
-    private final JPanel homePanel;
+    private final AppFrame frame;
 
     public Application() {
         LafManager.install();
@@ -30,7 +26,7 @@ public class Application {
             e.printStackTrace();
         }
 
-        frame = new JFrame("Agree");
+        frame = new AppFrame("Agree");
         frame.setIconImage(AssetsUtil.getImage(AssetsUtil.ICON));
         frame.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
@@ -38,56 +34,92 @@ public class Application {
             }
         });
 
-        homePanel = new JPanel();
-
         startSession();
     }
 
     private void startSession() {
         var authPanel = new AuthPanel();
-        frame.add(authPanel.getJPanel());
+        frame.setMainPanel(authPanel.getJPanel());
+
         frame.setExtendedState(frame.getExtendedState() | JFrame.MAXIMIZED_BOTH);
-//        frame.getContentPane().setPreferredSize(Toolkit.getDefaultToolkit().getScreenSize());
+        //frame.getContentPane().setPreferredSize(Toolkit.getDefaultToolkit().getScreenSize());
         frame.pack();  // TODO change all the pack() calls to setSize, or maybe set to fullscreen
                        // or actually learn about Dimension, preferredSize and all that jazz
+
         frame.setVisible(true);
 
         authPanel.setSuccessListener(() -> {
+            frame.setMainPanel(new JPanel());  // empty panel just to replace the authPanel
             userSession = UserSession.getInstance();
-            populateHomePanel();
-            frame.remove(authPanel.getJPanel());
-            frame.add(homePanel);
+            initializeFrame();
             frame.revalidate();
         });
     }
 
-    // Precondition: user is logged in,
-    // loggedUserGroups and loggedUserFriends are initialized
-    private void populateHomePanel() {
-        var groupsPanel = new JPanel();
-        var friendsPanel = new JPanel();
+    private void initializeFrame() {
+        /*
+                                         mainPanel
+                   sideBar               VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
+                   VVVVVVVVVVVVVVVVVVVVVV
+                   +---------------------------------------------------------------------+
+                   | > groups | friends | group 2 -- last message 10 min ago             |
+                   +----------+---------+                                                |
+        sidePanel {| group 1            | ...                                            |
+                  {| > group 2          | dude_n (15 min ago): asdfasdf                  |
+                  {| group 3            | dude_2 (14 min ago): goodbye                   |
+                  {| ...                | dude_1 (10 min ago): hello world               |
+                   +--------------------+                                                |
+                   | create group       | Write message: _______________________________ |
+                   +--------------------+------------------------------------------------+
+        User clicks on "groups" or "friends" -> Contents of the sidePanel changes
+        User clicks on a group, on a friend, or on "create group" -> Contents of the mainPanel change
+        */
+
+        var groupListPanel = new JPanel();
+        groupListPanel.setLayout(new BoxLayout(groupListPanel, BoxLayout.PAGE_AXIS));
 
         for (var group : userSession.getGroups()) {
             var groupPanel = new GroupPanel(group);
-            groupPanel.setGoBackListener(evt -> {
-                frame.remove(groupPanel.getJPanel());
-                frame.add(homePanel);
-                frame.revalidate();
-            });
             var groupBar = new GroupBar(group);
             groupBar.setOpenListener(evt -> {
-                frame.remove(homePanel);
-                frame.add(groupPanel.getJPanel());
+                frame.setMainPanel(groupPanel.getJPanel());
                 frame.revalidate();
                 frame.pack();
             });
-            groupsPanel.add(groupBar.getJPanel());
+            groupListPanel.add(groupBar.getJPanel());
         }
-        for (var friend : userSession.getFriends())
-            friendsPanel.add(new UserBar(friend).getJPanel());
+        // FIXME when clicking on "open" in a GroupBar the group doesn't always immediatly open on the mainPanel, it's weird
+        // More specifically, it opens immediatly the first time you click it,
+        // but on further clicks you need to resize the window for it to happen
 
-        homePanel.add(groupsPanel);
-        homePanel.add(friendsPanel);
+        var friendListPanel = new JPanel();
+        friendListPanel.setLayout(new BoxLayout(friendListPanel, BoxLayout.PAGE_AXIS));
+
+        for (var friend : userSession.getFriends()) {
+            var friendBar = new UserBar(friend);
+            friendListPanel.add(friendBar.getJPanel());
+        }
+
+        var btGroups = new JButton("Groups");
+        var btFriends = new JButton("Friends");
+        btGroups.addActionListener(evt -> {
+            frame.setSidePanel(groupListPanel);
+            frame.revalidate();
+        });
+        btFriends.addActionListener(evt -> {
+            frame.setSidePanel(friendListPanel);
+            frame.revalidate();
+        });
+
+        var buttons = new JPanel(new FlowLayout());
+        buttons.add(btGroups);
+        buttons.add(btFriends);
+
+        var btCreateGroup = new JButton("Create group");
+
+        frame.addAboveSidePanel(buttons);
+        frame.setSidePanel(groupListPanel);
+        frame.addBelowSidePanel(btCreateGroup);
     }
 
     public static void main(String[] args) {

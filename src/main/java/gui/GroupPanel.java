@@ -20,7 +20,6 @@ public class GroupPanel {
     private Group group;
     private JPanel mainPanel;
     private JPanel messageListPanel;
-    private JButton btGoBack;
 
     public GroupPanel(Group group) {
         this.group = group;
@@ -30,7 +29,7 @@ public class GroupPanel {
         LinkedList<Message> messages = group.getMessages();
 
         /* mainPanel
-         * \--- headerPanel (name, lastMessageDate, goBack)
+         * \--- headerPanel (name, lastMessageDate)
          * \--- messageScrollPane
          *      \--- messagePanel
          *           \--- btLoadPrevious
@@ -40,12 +39,10 @@ public class GroupPanel {
 
         var lbName = new JLabel(group.getName());
         var lbLastMessageDate = new JLabel(messages.getLast().sentAt().toString());
-        btGoBack = new JButton("Go back");
 
         var headerPanel = new JPanel();
         headerPanel.add(lbName);
         headerPanel.add(lbLastMessageDate);
-        headerPanel.add(btGoBack);
 
         messageListPanel = new JPanel();
         messageListPanel.setLayout(new BoxLayout(messageListPanel, BoxLayout.PAGE_AXIS));
@@ -84,10 +81,6 @@ public class GroupPanel {
         for (var msg : group.getMessages())
             messageListPanel.add(new MessagePanel(msg).getJPanel());
         messageListPanel.revalidate();
-    }
-
-    public void setGoBackListener(ActionListener onGoBack) {
-        btGoBack.addActionListener(onGoBack);
     }
 
     public JPanel getJPanel() {
