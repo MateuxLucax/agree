@@ -3,6 +3,9 @@ package app;
 import com.github.weisj.darklaf.LafManager;
 import com.github.weisj.darklaf.theme.DarculaTheme;
 import com.github.weisj.darklaf.theme.laf.DarculaThemeDarklafLookAndFeel;
+import exceptions.NameAlreadyInUseException;
+import exceptions.UnauthorizedUserException;
+import exceptions.UnsafePasswordException;
 import gui.AuthPanel;
 import gui.GroupPanel;
 import utils.AssetsUtil;
@@ -37,18 +40,40 @@ public class Application {
         frame.add(authPanel.getJPanel());
 
         frame.setExtendedState(frame.getExtendedState() | JFrame.MAXIMIZED_BOTH);
-        //frame.getContentPane().setPreferredSize(Toolkit.getDefaultToolkit().getScreenSize());
-        frame.pack();  // TODO change all the pack() calls to setSize, or maybe set to fullscreen
-                       // or actually learn about Dimension, preferredSize and all that jazz
-
+        frame.pack();
         frame.setVisible(true);
 
-        authPanel.setSuccessListener(() -> {
-            frame.remove(authPanel.getJPanel());
-            userSession = UserSession.getInstance();
-            initializeFrame();
-            frame.pack();
-            frame.revalidate();
+        // This stuff is what later will be in the controller for the AuthPanel, right?
+        authPanel.setLoginListener((name, password) -> {
+            if (name.isEmpty() || password.isEmpty()) {
+                authPanel.warn("Username and password are required!");
+                return;
+            }
+            try {
+                userSession = UserSession.authenticate(name, password);
+                frame.remove(authPanel.getJPanel());
+                initializeFrame();
+                frame.revalidate();
+            } catch (UnauthorizedUserException e) {
+                authPanel.warn("Incorrect username or password!");
+            }
+        });
+
+        authPanel.setRegistrationListener((name, password) -> {
+            if (name.isEmpty() || password.isEmpty()) {
+                authPanel.warn("Username and password are required!");
+                return;
+            }
+            try {
+                userSession = UserSession.createAccount(name, password);
+                frame.remove(authPanel.getJPanel());
+                initializeFrame();
+                frame.revalidate();
+            } catch (NameAlreadyInUseException e) {
+                authPanel.warn("Someone already uses the name " + name);
+            } catch (UnsafePasswordException e) {
+                authPanel.warn("Unsafe password!");
+            }
         });
     }
 

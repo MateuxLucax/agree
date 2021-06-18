@@ -1,9 +1,5 @@
 package gui;
 
-import app.UserSession;
-import exceptions.NameAlreadyInUseException;
-import exceptions.UnauthorizedUserException;
-import exceptions.UnsafePasswordException;
 import utils.AssetsUtil;
 
 import javax.swing.*;
@@ -12,7 +8,6 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import java.util.Objects;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 public class AuthPanel {
 
@@ -24,10 +19,15 @@ public class AuthPanel {
     private JPanel mainPanel;
     private JLabel title;
 
-    private Runnable onSuccess;
+    private BiConsumer<String, String> onLoginAttempt;
+    private BiConsumer<String, String> onRegistrationAttempt;
 
-    public void setSuccessListener(Runnable onSuccess) {
-        this.onSuccess = onSuccess;
+    public void setLoginListener(BiConsumer<String, String> onLoginAttempt) {
+        this.onLoginAttempt = onLoginAttempt;
+    }
+
+    public void setRegistrationListener(BiConsumer<String, String> onRegistrationAttempt) {
+        this.onRegistrationAttempt = onRegistrationAttempt;
     }
 
     public AuthPanel() {
@@ -37,46 +37,21 @@ public class AuthPanel {
         title.setBorder(new CompoundBorder(border, margin));
 
         btLogin.addActionListener(evt -> {
-            warn("");
             String name = tfName.getText();
             String password = new String(passwordField.getPassword());
             passwordField.setText("");
-
-            if (name.isEmpty() || password.isEmpty()) {
-                warn("Username and Password are required!");
-            } else {
-                try {
-                    UserSession.authenticate(name, password);
-                    onSuccess.run();
-                } catch (UnauthorizedUserException e) {
-                    warn("Username or password incorrect!");
-                }
-            }
+            onLoginAttempt.accept(name, password);
         });
 
         btCreateAccount.addActionListener(evt -> {
-            warn("");
             String name = tfName.getText();
             String password = new String(passwordField.getPassword());
             passwordField.setText("");
-
-
-            if (name.isEmpty() || password.isEmpty()) {
-                warn("Username and Password are required!");
-            } else {
-                try {
-                    UserSession.createAccount(name, password);
-                    onSuccess.run();
-                } catch (UnsafePasswordException e) {
-                    warn("Unsafe password");
-                } catch (NameAlreadyInUseException e) {
-                    warn("Name " + name + " already in use");
-                }
-            }
+            onRegistrationAttempt.accept(name, password);
         });
     }
 
-    private void warn(String text) {
+    public void warn(String text) {
         lbWarning.setText(text);
     }
 

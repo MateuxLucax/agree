@@ -25,8 +25,6 @@ public class UserSession {
     private final IGroupRepository groupRepo;
     private final IMessageRepository msgRepo;
 
-    private static UserSession instance;
-
     private UserSession() {
         groups = new ArrayList<>();
         friends = new ArrayList<>();
@@ -36,43 +34,34 @@ public class UserSession {
         msgRepo = new MessageRepositoryTest();
     }
 
-    public static UserSession getInstance() {
-        if (instance == null)
-            throw new NullPointerException("User session not started yet! Call UserSession.createAccount() or authenticate() first.");
-        return instance;
-    }
-
-    public static void createAccount(String name, String password)
+    public static UserSession createAccount(String name, String password)
     throws UnsafePasswordException,
            NameAlreadyInUseException
     {
-        if (instance != null) return;
-
+        if (name.equals("admin")) {
+            throw new NameAlreadyInUseException();
+        }
         // boolean passwordIsSafe = password.matches("(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\\\S+$).{8,}");
         boolean passwordIsSafe = password.length() > 8;
-        if (!passwordIsSafe)
+        if (!passwordIsSafe) {
             throw new UnsafePasswordException();
-        if (name.equals("admin"))
-            throw new NameAlreadyInUseException();
+        }
 
         var session = new UserSession();
         session.user = new User(name, new Date());
         session.user.setPassword(password);
         session.loginService.createUser(session.user);
-
         session.initialize();
-        instance = session;
+        return session;
     }
 
-    public static void authenticate(String name, String password)
+    public static UserSession authenticate(String name, String password)
     throws UnauthorizedUserException
     {
-        if (instance != null) return;
         var session = new UserSession();
         session.user = session.loginService.authenticate(name, password);
-
         session.initialize();
-        instance = session;
+        return session;
     }
 
     private void initialize() {
