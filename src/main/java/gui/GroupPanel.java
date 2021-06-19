@@ -32,11 +32,14 @@ public class GroupPanel {
          */
 
         var lbName = new JLabel(group.getName());
-        var lbLastMessageDate = new JLabel(messages.getLast().sentAt().toString());
 
         var headerPanel = new JPanel();
         headerPanel.add(lbName);
-        headerPanel.add(lbLastMessageDate);
+
+        if (!messages.isEmpty()) {
+            var lbLastMessageDate = new JLabel(messages.getLast().sentAt().toString());
+            headerPanel.add(lbLastMessageDate);
+        }
 
         messageListPanel = new JPanel();
         messageListPanel.setLayout(new BoxLayout(messageListPanel, BoxLayout.PAGE_AXIS));
@@ -44,14 +47,18 @@ public class GroupPanel {
 
         var btLoadPrevious = new JButton("Load previous messages");
         btLoadPrevious.addActionListener(evt -> {
-            msgRepo.getMessagesBefore(group, messages.getFirst().sentAt());
-            reloadMessageList(group);
+            if (!messages.isEmpty()) {
+                msgRepo.getMessagesBefore(group, messages.getFirst().sentAt());
+                reloadMessageList(group);
+            }
         });
 
         var btLoadNewer = new JButton("Load newer messages");
         btLoadNewer.addActionListener(evt -> {
-            msgRepo.getMessagesAfter(group, messages.getLast().sentAt());
-            reloadMessageList(group);
+            if (!messages.isEmpty()) {
+                msgRepo.getMessagesAfter(group, messages.getLast().sentAt());
+                reloadMessageList(group);
+            }
         });
 
         var messagePanel = new JPanel();
