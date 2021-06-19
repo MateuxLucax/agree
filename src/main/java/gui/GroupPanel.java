@@ -9,6 +9,7 @@ import repositories.message.MessageRepositoryTest;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Date;
 import java.util.LinkedList;
 
 public class GroupPanel {
@@ -47,18 +48,16 @@ public class GroupPanel {
 
         var btLoadPrevious = new JButton("Load previous messages");
         btLoadPrevious.addActionListener(evt -> {
-            if (!messages.isEmpty()) {
-                msgRepo.getMessagesBefore(group, messages.getFirst().sentAt());
-                reloadMessageList(group);
-            }
+            Date date = messages.isEmpty() ? new Date() : messages.getFirst().sentAt();
+            msgRepo.getMessagesBefore(group, date);
+            reloadMessageList(group);
         });
 
         var btLoadNewer = new JButton("Load newer messages");
         btLoadNewer.addActionListener(evt -> {
-            if (!messages.isEmpty()) {
-                msgRepo.getMessagesAfter(group, messages.getLast().sentAt());
-                reloadMessageList(group);
-            }
+            Date date = messages.isEmpty() ? new Date() : messages.getLast().sentAt();
+            msgRepo.getMessagesAfter(group, date);
+            reloadMessageList(group);
         });
 
         var messagePanel = new JPanel();
