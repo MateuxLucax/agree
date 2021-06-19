@@ -42,7 +42,7 @@ public class Group {
 
     public Group(String name, User owner) {
         this.name = name;
-        this.owner = owner;
+        setOwner(owner);
         this.users = new ArrayList<>();
         this.messages = new LinkedList<>();
     }
@@ -59,7 +59,11 @@ public class Group {
 
     public User getOwner() { return owner; }
 
-    public void setOwner(User newOwner) { owner = newOwner; }
+    public void setOwner(User newOwner) {
+        if (newOwner == null)
+            throw new NullPointerException("Groups need an owner");
+        owner = newOwner;
+    }
 
     public List<User> getUsers() {
         return Collections.unmodifiableList(users);
