@@ -19,12 +19,12 @@ public class GroupPanel {
 
     IMessageRepository msgRepo;
 
-    public GroupPanel(Group group) {
+    public GroupPanel(Group group, boolean showToOwner) {
         msgRepo = new MessageRepositoryTest();
         LinkedList<Message> messages = group.getMessages();
 
         /* mainPanel
-         * \--- headerPanel (name, lastMessageDate)
+         * \--- headerPanel (name, lastMessageDate[, manageGroup if owner])
          * \--- messageScrollPane
          *      \--- messagePanel
          *           \--- btLoadPrevious
@@ -40,6 +40,12 @@ public class GroupPanel {
         if (!messages.isEmpty()) {
             var lbLastMessageDate = new JLabel(messages.getLast().sentAt().toString());
             headerPanel.add(lbLastMessageDate);
+        }
+
+        if (showToOwner) {
+            JButton btManage = new JButton("Manage");
+            headerPanel.add(btManage);
+            // TODO actual group management panel (delete group, renaming group, removing users etc.)
         }
 
         messageListPanel = new JPanel();
@@ -71,10 +77,23 @@ public class GroupPanel {
         messageScrollPane.setViewportView(messagePanel);
         messageScrollPane.getVerticalScrollBar().setUnitIncrement(20);
 
+        var messageTextArea = new JTextArea();
+        var btSendMessage = new JButton("Send");
+        btSendMessage.addActionListener(evt -> {
+            System.out.println("Sending \""+messageTextArea.getText()+"\"");
+
+            // TODO GroupPanel takes a onMessageSent closure that'll actually create the message on the database and whatever else needs to be done
+            // onMessageSent.accept(messageTextArea.getText());
+            // and if we're gonna do that, we should also consider whether the "load newer messages" and "load previous messages"
+            // should take a closure instead of explicitely using the msgRepo
+        });
+        var writeMessagePanel = new JPanel();
+
         mainPanel = new JPanel();
         mainPanel.setLayout(new BorderLayout());
         mainPanel.add(headerPanel, BorderLayout.PAGE_START);
         mainPanel.add(messageScrollPane, BorderLayout.CENTER);
+        mainPanel.add(writeMessagePanel, BorderLayout.PAGE_END);
     }
 
     public void reloadMessageList(Group group) {

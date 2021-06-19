@@ -85,7 +85,8 @@ public class Application {
         // https://stackoverflow.com/q/17648780
         var groupListPanel = new JTabbedPane(JTabbedPane.LEFT);
         for (var group : userSession.getGroups()) {
-            groupListPanel.addTab(group.getName(), new GroupPanel(group).getJPanel());
+            boolean isOwner = userSession.getUser().equals(group.getOwner());
+            groupListPanel.addTab(group.getName(), new GroupPanel(group, isOwner).getJPanel());
         }
 
         var createGroupPanel = new CreateGroupPanel();
@@ -100,7 +101,7 @@ public class Application {
             groupListPanel.insertTab(
                     group.getName(),
                     null,
-                    new GroupPanel(group).getJPanel(),
+                    new GroupPanel(group, true).getJPanel(),
                     null,
                     groupListPanel.getTabCount()-1
             );
