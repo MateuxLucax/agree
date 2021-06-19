@@ -32,7 +32,7 @@ public class Group {
 
     private       String id;
     private final String name;
-    private final User   creator;
+    private       User   owner;
     private final List<User> users;
     private final LinkedList<Message> messages;
 
@@ -40,9 +40,9 @@ public class Group {
     // which is taken in the constructor.
     // should this creator be duplicated: in the attribute and also in the users list?
 
-    public Group(String name, User creator) {
+    public Group(String name, User owner) {
         this.name = name;
-        this.creator = creator;
+        this.owner = owner;
         this.users = new ArrayList<>();
         this.messages = new LinkedList<>();
     }
@@ -57,7 +57,9 @@ public class Group {
 
     public String getName() { return this.name; }
 
-    public User getCreator() { return creator; }
+    public User getOwner() { return owner; }
+
+    public void setOwner(User newOwner) { owner = newOwner; }
 
     public List<User> getUsers() {
         return Collections.unmodifiableList(users);
@@ -68,7 +70,7 @@ public class Group {
     public void addUser(User user) { users.add(user); }
 
     public void removeUser(User user) {
-        if (!user.equals(creator))
+        if (!user.equals(owner))
             users.remove(user);
     }
 
