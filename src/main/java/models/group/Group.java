@@ -63,15 +63,12 @@ public class Group {
     public void loadMessageAbove(Message msg) {
         messages.addFirst(msg);
         if (messages.size() > MAX_MESSAGES_LOADED_AT_ONCE)
-            unloadMessageBelow();
+            messages.removeLast();
     }
 
     public void loadMessageBelow(Message msg) {
         messages.addLast(msg);
         if (messages.size() > MAX_MESSAGES_LOADED_AT_ONCE)
-            unloadMessageAbove();
+            messages.removeFirst();
     }
-
-    public void unloadMessageAbove() { messages.removeFirst(); }
-    public void unloadMessageBelow() { messages.removeLast(); }
 }
