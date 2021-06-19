@@ -91,7 +91,7 @@ public class Application {
         var createGroupPanel = new CreateGroupPanel();
         groupListPanel.addTab("+ New group", createGroupPanel.getJPanel());
         createGroupPanel.setCreationListener(groupName -> {
-            var group = new Group(groupName);
+            var group = new Group(groupName, userSession.getUser());
             group.addUser(userSession.getUser());
 
             userSession.getGroupRepository().createGroup(group);

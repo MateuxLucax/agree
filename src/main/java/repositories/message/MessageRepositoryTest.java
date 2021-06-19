@@ -17,21 +17,21 @@ public class MessageRepositoryTest implements IMessageRepository
     }
 
     public boolean getMessagesBefore(Group group, Date date) {
-        User someUser = group.getUsers().get(0);
+        User someUser = group.getCreator();
         for (int i = 0; i < LOADED_MESSAGES; i++)
             group.loadMessageAbove(new Message(someUser, "above ["+i+"] :^)", new Date()));
         return true;
     }
 
     public boolean getMessagesAfter(Group group, Date date) {
-        User someUser = group.getUsers().get(0);
+        User someUser = group.getCreator();
         for (int i = 0; i < LOADED_MESSAGES; i++)
             group.loadMessageBelow(new Message(someUser, "below ["+i+"] :^)", new Date()));
         return true;
     }
 
     public boolean getMostRecentMessages(Group group) {
-        User someUser = group.getUsers().get(0);
+        User someUser = group.getCreator();
         for (int i = 0; i < LOADED_MESSAGES; i++)
             group.loadMessageBelow(new Message(someUser, "hello :^)", new Date()));
         return true;

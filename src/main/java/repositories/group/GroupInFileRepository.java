@@ -74,7 +74,9 @@ public class GroupInFileRepository implements IGroupRepository {
     public List<Group> getGroups(User user) {
         try (var jsonReader = new JsonReader(new FileReader(this.directory + GROUP_FILE))) {
             List<Group> groups = this.gson.fromJson(jsonReader, this.groupsListType);
-            return groups.stream().filter(group -> group.getUsers().contains(user)).collect(Collectors.toList());
+            return groups.stream()
+                    .filter(group -> group.getCreator().equals(user) || group.getUsers().contains(user))
+                    .collect(Collectors.toList());
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -85,7 +87,9 @@ public class GroupInFileRepository implements IGroupRepository {
     public Group getGroup(String id) {
         try (var jsonReader = new JsonReader(new FileReader(this.directory + GROUP_FILE))) {
             List<Group> groups = this.gson.fromJson(jsonReader, this.groupsListType);
-            return groups.stream().filter(group -> group.getId().equals(id)).collect(Collectors.toList()).get(0);
+            return groups.stream()
+                    .filter(group -> group.getId().equals(id))
+                    .collect(Collectors.toList()).get(0);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }

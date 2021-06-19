@@ -41,11 +41,11 @@ public class User {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return nickname.equals(user.nickname) && Objects.equals(email, user.email);
+        return nickname.equals(user.nickname);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(nickname, email);
+        return Objects.hash(nickname);
     }
 }
