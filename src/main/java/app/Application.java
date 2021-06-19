@@ -94,6 +94,8 @@ public class Application {
             var group = new Group(groupName);
             group.addUser(userSession.getUser());
 
+            userSession.getGroupRepository().createGroup(group);
+
             // insert the new tab before the "+ New group" one, so it's always last
             groupListPanel.insertTab(
                     group.getName(),

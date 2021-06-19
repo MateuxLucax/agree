@@ -58,6 +58,7 @@ public class GroupPanel {
             Date date = messages.isEmpty() ? new Date() : messages.getLast().sentAt();
             msgRepo.getMessagesAfter(group, date);
             reloadMessageList(group);
+            // TODO update "lbLastMessageDate" here
         });
 
         var messagePanel = new JPanel();

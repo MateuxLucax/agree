@@ -65,19 +65,11 @@ public class UserSession {
     }
 
     private void initialize() {
-        // Ideally:
+        groups.addAll(groupRepo.getGroups(user));
 
-        // groups.addAll(groupRepo.getGroups(user));
-        // groups.forEach(groupRepo::getUsers);
-        // groups.forEach(msgRepo::getMostRecentMessages);
-        // friends.addAll(friendshipRepo.getFriends(user));
-
-        // For now:
-
-        groups.add(new Group("group 1"));
-        groups.add(new Group("group 2"));
-        groups.add(new Group("last group"));
-
+        // TODO
+        //    groups.forEach(groupRepo::getUsers)
+        // or groups.forEach(userRepo::getUsers) ?
         for (var group : groups) {
             group.addUser(new User("foo", new Date()));
             group.addUser(new User("bar", new Date()));
@@ -85,6 +77,8 @@ public class UserSession {
         }
         groups.forEach(msgRepo::getMostRecentMessages);
 
+        // TODO
+        //     friends.addAll(friendshipRepo.getFriends(user));
         friends.add(new User("john123", new Date()));
         friends.add(new User("asdf", new Date()));
         friends.add(new User("aeiou69", new Date()));

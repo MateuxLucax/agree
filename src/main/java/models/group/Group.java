@@ -35,6 +35,10 @@ public class Group {
     private final List<User> users;
     private final LinkedList<Message> messages;
 
+    // TODO special attribute for the group creator,
+    // which is taken in the constructor.
+    // should this creator be duplicated: in the attribute and also in the users list?
+
     public Group(String name) {
         this.name = name;
         this.users = new ArrayList<>();
