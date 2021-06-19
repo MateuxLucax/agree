@@ -7,7 +7,9 @@ import exceptions.NameAlreadyInUseException;
 import exceptions.UnauthorizedUserException;
 import exceptions.UnsafePasswordException;
 import gui.AuthPanel;
+import gui.CreateGroupPanel;
 import gui.GroupPanel;
+import models.group.Group;
 import utils.AssetsUtil;
 
 import javax.swing.*;
@@ -85,6 +87,22 @@ public class Application {
         for (var group : userSession.getGroups()) {
             groupListPanel.addTab(group.getName(), new GroupPanel(group).getJPanel());
         }
+
+        var createGroupPanel = new CreateGroupPanel();
+        groupListPanel.addTab("+ New group", createGroupPanel.getJPanel());
+        createGroupPanel.setCreationListener(groupName -> {
+            var group = new Group(groupName);
+            group.addUser(userSession.getUser());
+
+            // insert the new tab before the "+ New group" one, so it's always last
+            groupListPanel.insertTab(
+                    group.getName(),
+                    null,
+                    new GroupPanel(group).getJPanel(),
+                    null,
+                    groupListPanel.getTabCount()-1
+            );
+        });
 
         var friendListPanel = new JTabbedPane(JTabbedPane.LEFT);
         for (var friend : userSession.getFriends()) {
