@@ -25,15 +25,14 @@ public class GroupPanel {
 
         /* mainPanel
          * \--- headerPanel (name, lastMessageDate[, manageGroup if owner])
-         * \--- messageScrollPane
-         *      \--- messagePanel
+         * \--- messagesScrollPane
+         *      \--- messagesPanel
          *           \--- btLoadPrevious
          *           \--- messageListPanel
          *           \--- btLoadNewer
          */
 
         var lbName = new JLabel(group.getName());
-
         var headerPanel = new JPanel();
         headerPanel.add(lbName);
 
@@ -67,33 +66,38 @@ public class GroupPanel {
             // TODO update "lbLastMessageDate" here
         });
 
-        var messagePanel = new JPanel();
-        messagePanel.setLayout(new BorderLayout());
-        messagePanel.add(btLoadPrevious, BorderLayout.PAGE_START);
-        messagePanel.add(messageListPanel, BorderLayout.CENTER);
-        messagePanel.add(btLoadNewer, BorderLayout.PAGE_END);
+        var messagesPanel = new JPanel();
+        messagesPanel.setLayout(new BorderLayout());
+        messagesPanel.add(btLoadPrevious, BorderLayout.PAGE_START);
+        messagesPanel.add(messageListPanel, BorderLayout.CENTER);
+        messagesPanel.add(btLoadNewer, BorderLayout.PAGE_END);
 
-        var messageScrollPane = new JScrollPane();
-        messageScrollPane.setViewportView(messagePanel);
-        messageScrollPane.getVerticalScrollBar().setUnitIncrement(20);
+        var messagesScrollPane = new JScrollPane();
+        messagesScrollPane.setViewportView(messagesPanel);
+        messagesScrollPane.getVerticalScrollBar().setUnitIncrement(20);
 
         var messageTextArea = new JTextArea();
         var btSendMessage = new JButton("Send");
         btSendMessage.addActionListener(evt -> {
             System.out.println("Sending \""+messageTextArea.getText()+"\"");
-
             // TODO GroupPanel takes a onMessageSent closure that'll actually create the message on the database and whatever else needs to be done
             // onMessageSent.accept(messageTextArea.getText());
             // and if we're gonna do that, we should also consider whether the "load newer messages" and "load previous messages"
             // should take a closure instead of explicitely using the msgRepo
+
+            messageTextArea.setText("");
         });
-        var writeMessagePanel = new JPanel();
+
+        var newMessagePanel = new JPanel();
+        newMessagePanel.setLayout(new BorderLayout());
+        newMessagePanel.add(messageTextArea, BorderLayout.CENTER);
+        newMessagePanel.add(btSendMessage, BorderLayout.LINE_END);
 
         mainPanel = new JPanel();
         mainPanel.setLayout(new BorderLayout());
         mainPanel.add(headerPanel, BorderLayout.PAGE_START);
-        mainPanel.add(messageScrollPane, BorderLayout.CENTER);
-        mainPanel.add(writeMessagePanel, BorderLayout.PAGE_END);
+        mainPanel.add(messagesScrollPane, BorderLayout.CENTER);
+        mainPanel.add(newMessagePanel, BorderLayout.PAGE_END);
     }
 
     public void reloadMessageList(Group group) {
