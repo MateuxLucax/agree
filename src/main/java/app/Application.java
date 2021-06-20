@@ -10,9 +10,12 @@ import gui.AuthPanel;
 import gui.CreateGroupPanel;
 import gui.GroupPanel;
 import models.group.Group;
+import models.message.Message;
 import utils.AssetsUtil;
 
 import javax.swing.*;
+import java.util.Date;
+import java.util.LinkedList;
 
 public class Application {
 
@@ -86,7 +89,30 @@ public class Application {
         var groupListPanel = new JTabbedPane(JTabbedPane.LEFT);
         for (var group : userSession.getGroups()) {
             boolean isOwner = userSession.getUser().equals(group.getOwner());
-            groupListPanel.addTab(group.getName(), new GroupPanel(group, isOwner).getJPanel());
+            var groupPanel = new GroupPanel(group, isOwner);
+
+            groupPanel.setLoadOlderButtonListener(evt -> {
+                LinkedList<Message> messages = group.getMessages();
+                Date date = messages.isEmpty() ? new Date() : messages.getFirst().sentAt();
+                userSession.getMessageRepository().getMessagesBefore(group, date);
+                groupPanel.refreshMessageListPanel();
+            });
+
+            groupPanel.setLoadNewerButtonListener(evt -> {
+                LinkedList<Message> messages = group.getMessages();
+                Date date = messages.isEmpty() ? new Date() : messages.getLast().sentAt();
+                userSession.getMessageRepository().getMessagesAfter(group, date);
+                groupPanel.refreshMessageListPanel();
+            });
+
+            groupPanel.setSendButtonListener(text -> {
+                var msg = new Message(userSession.getUser(), text, new Date());
+                userSession.getMessageRepository().addMessage(group, msg);
+                group.loadMessageBelow(msg);
+                groupPanel.refreshMessageListPanel();
+            });
+
+            groupListPanel.addTab(group.getName(), groupPanel.getJPanel());
         }
 
         var createGroupPanel = new CreateGroupPanel();
