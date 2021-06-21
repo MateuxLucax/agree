@@ -37,15 +37,15 @@ public class Application {
         frame.setIconImage(AssetsUtil.getImage(AssetsUtil.ICON));
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-        startSession();
+        startUserSession();
     }
 
-    private void startSession() {
+    private void startUserSession() {
         var authPanel = new AuthPanel();
         frame.add(authPanel.getJPanel());
 
-        frame.setExtendedState(frame.getExtendedState() | JFrame.MAXIMIZED_BOTH);
         frame.pack();
+        frame.setExtendedState(frame.getExtendedState() | JFrame.MAXIMIZED_BOTH);
         frame.setVisible(true);
 
         // This stuff is what later will be in the controller for the AuthPanel, right?
@@ -57,7 +57,7 @@ public class Application {
             try {
                 userSession = UserSession.authenticate(name, password);
                 frame.remove(authPanel.getJPanel());
-                initializeFrame();
+                initializeMainPanel();
                 frame.revalidate();
             } catch (UnauthorizedUserException e) {
                 authPanel.warn("Incorrect username or password!");
@@ -72,7 +72,7 @@ public class Application {
             try {
                 userSession = UserSession.createAccount(name, password);
                 frame.remove(authPanel.getJPanel());
-                initializeFrame();
+                initializeMainPanel();
                 frame.revalidate();
             } catch (NameAlreadyInUseException e) {
                 authPanel.warn("Someone already uses the name " + name);
@@ -82,7 +82,10 @@ public class Application {
         });
     }
 
-    private void initializeFrame() {
+    // TODO move the main panel into a gui.MainPanel class
+    //     but then where do the set...Listener calls go?
+    //     probably better to wait and do it when we're supposed to use MVC
+    private void initializeMainPanel() {
         // For now the tabs only have text, but we can add icons to them
         // when we implement groups and users having their profile pictures:
         // https://stackoverflow.com/q/17648780
@@ -115,14 +118,12 @@ public class Application {
             groupListPanel.addTab(group.getName(), groupPanel.getJPanel());
         }
 
-        var createGroupPanel = new CreateGroupPanel();
-        groupListPanel.addTab("+ New group", createGroupPanel.getJPanel());
-        createGroupPanel.setCreationListener(groupName -> {
+        var groupCreationPanel = new CreateGroupPanel();
+        groupListPanel.addTab("+ New group", groupCreationPanel.getJPanel());
+
+        groupCreationPanel.setCreationListener(groupName -> {
             var group = new Group(groupName, userSession.getUser());
-            group.addUser(userSession.getUser());
-
             userSession.getGroupRepository().createGroup(group);
-
             // insert the new tab before the "+ New group" one, so it's always last
             groupListPanel.insertTab(
                     group.getName(),
@@ -143,13 +144,12 @@ public class Application {
             friendListPanel.addTab(friend.getNickname(), new JPanel());  // no UserPanel yet...
         }
 
-        var sidePanel = new JTabbedPane(JTabbedPane.TOP);
-        sidePanel.addTab("Groups", groupListPanel);
-        sidePanel.addTab("Friends", friendListPanel);
+        var mainPanel = new JTabbedPane(JTabbedPane.TOP);
+        mainPanel.addTab("Groups", groupListPanel);
+        mainPanel.addTab("Friends", friendListPanel);
+        // TODO "settings" tab
 
-        // var btCreateGroup = new JButton("Create group");
-
-        frame.add(sidePanel);
+        frame.add(mainPanel);
     }
 
     public static void main(String[] args) {

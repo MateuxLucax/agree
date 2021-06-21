@@ -36,10 +36,6 @@ public class Group {
     private final List<User> users;
     private final LinkedList<Message> messages;
 
-    // TODO special attribute for the group creator,
-    // which is taken in the constructor.
-    // should this creator be duplicated: in the attribute and also in the users list?
-
     public Group(String name, User owner) {
         this.name = name;
         setOwner(owner);
@@ -79,14 +75,14 @@ public class Group {
     }
 
     public void loadMessageAbove(Message msg) {
-        messages.addFirst(msg);
-        if (messages.size() > MAX_MESSAGES_LOADED_AT_ONCE)
+        if (messages.size() + 1 > MAX_MESSAGES_LOADED_AT_ONCE)
             messages.removeLast();
+        messages.addFirst(msg);
     }
 
     public void loadMessageBelow(Message msg) {
-        messages.addLast(msg);
-        if (messages.size() > MAX_MESSAGES_LOADED_AT_ONCE)
+        if (messages.size() + 1> MAX_MESSAGES_LOADED_AT_ONCE)
             messages.removeFirst();
+        messages.addLast(msg);
     }
 }

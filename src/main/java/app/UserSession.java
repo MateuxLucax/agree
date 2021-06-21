@@ -38,6 +38,7 @@ public class UserSession {
     throws UnsafePasswordException,
            NameAlreadyInUseException
     {
+        // TODO actually implement this (in the user repository)
         if (name.equals("admin")) {
             throw new NameAlreadyInUseException();
         }
@@ -68,8 +69,8 @@ public class UserSession {
         groups.addAll(groupRepo.getGroups(user));
 
         // TODO
-        //    groups.forEach(groupRepo::getUsers)
-        // or groups.forEach(userRepo::getUsers) ?
+        //       groups.forEach(groupRepo::getUsers)
+        //    or groups.forEach(userRepo::getUsers) ?
         for (var group : groups) {
             group.addUser(new User("foo", new Date()));
             group.addUser(new User("bar", new Date()));

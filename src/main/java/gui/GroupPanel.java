@@ -39,7 +39,7 @@ public class GroupPanel {
         });
     }
 
-    public GroupPanel(Group group, boolean showToOwner) {
+    public GroupPanel(Group group, boolean showingToOwner) {
         this.group = group;
 
         /* mainPanel
@@ -55,7 +55,7 @@ public class GroupPanel {
         var headerPanel = new JPanel();
         headerPanel.add(lbName);
 
-        if (showToOwner) {
+        if (showingToOwner) {
             JButton btManage = new JButton("Manage");
             headerPanel.add(btManage);
             // TODO actual group management panel (delete group, renaming group, removing users etc.)
