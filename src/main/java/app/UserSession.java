@@ -5,6 +5,7 @@ import models.group.Group;
 import repositories.group.GroupInFileRepository;
 import repositories.group.IGroupRepository;
 import repositories.message.IMessageRepository;
+import repositories.message.MessageInFileRepository;
 import repositories.message.MessageRepositoryTest;
 
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ public class UserSession {
         friends = new ArrayList<>();
 
         groupRepo = new GroupInFileRepository();
-        msgRepo = new MessageRepositoryTest();
+        msgRepo = new MessageInFileRepository();
     }
 
     public static synchronized UserSession getInstance() {

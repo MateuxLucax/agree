@@ -85,3 +85,4 @@ fabric.properties
 agree.iml
 
 database
+*.json

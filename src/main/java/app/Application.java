@@ -12,6 +12,7 @@ import gui.GroupPanel;
 import models.User;
 import models.group.Group;
 import models.message.Message;
+import repositories.message.IMessageRepository;
 import services.login.ILoginService;
 import services.login.LoginService;
 import utils.AssetsUtil;
@@ -23,6 +24,8 @@ import java.util.LinkedList;
 public class Application {
 
     private final JFrame frame;
+    private UserSession session;
+    private IMessageRepository msgRepo;
 
     public Application() {
         // Initialize theme
@@ -50,15 +53,17 @@ public class Application {
         frame.setExtendedState(frame.getExtendedState() | JFrame.MAXIMIZED_BOTH);
         frame.setVisible(true);
 
-        // This stuff is what later will be in the controller for the AuthPanel, right?
+        session = UserSession.getInstance();
+        msgRepo = session.getMessageRepository();
+
         authPanel.setLoginListener((name, password) -> {
             if (name.isEmpty() || password.isEmpty()) {
                 authPanel.warn("Username and password are required!");
                 return;
             }
             try {
-                UserSession.getInstance().setUser(loginService.authenticate(name, password));
-                UserSession.getInstance().initialize();
+                session.setUser(loginService.authenticate(name, password));
+                session.initialize();
                 frame.remove(authPanel.getJPanel());
                 initializeMainPanel();
                 frame.revalidate();
@@ -75,8 +80,8 @@ public class Application {
             try {
                 var user = new User(name, password);
                 if (loginService.createUser(user)) {
-                    UserSession.getInstance().setUser(user);
-                    UserSession.getInstance().initialize();
+                    session.setUser(user);
+                    session.initialize();
                 }
                 frame.remove(authPanel.getJPanel());
                 initializeMainPanel();
@@ -97,29 +102,32 @@ public class Application {
         // when we implement groups and users having their profile pictures:
         // https://stackoverflow.com/q/17648780
         var groupListPanel = new JTabbedPane(JTabbedPane.LEFT);
-        for (var group : UserSession.getInstance().getGroups()) {
-            boolean isOwner = UserSession.getInstance().getUser().equals(group.getOwner());
+        for (var group : session.getGroups()) {
+            boolean isOwner = session.getUser().equals(group.getOwner());
             var groupPanel = new GroupPanel(group, isOwner);
 
             groupPanel.setLoadOlderButtonListener(evt -> {
                 LinkedList<Message> messages = group.getMessages();
                 Date date = messages.isEmpty() ? new Date() : messages.getFirst().sentAt();
-                UserSession.getInstance().getMessageRepository().getMessagesBefore(group, date);
+                msgRepo.getMessagesBefore(group, date);
                 groupPanel.refreshMessageListPanel();
             });
 
             groupPanel.setLoadNewerButtonListener(evt -> {
                 LinkedList<Message> messages = group.getMessages();
                 Date date = messages.isEmpty() ? new Date() : messages.getLast().sentAt();
-                UserSession.getInstance().getMessageRepository().getMessagesAfter(group, date);
+                msgRepo.getMessagesAfter(group, date);
                 groupPanel.refreshMessageListPanel();
             });
 
             groupPanel.setSendButtonListener(text -> {
-                var msg = new Message(UserSession.getInstance().getUser(), text, new Date());
-                UserSession.getInstance().getMessageRepository().addMessage(group, msg);
-                group.loadMessageBelow(msg);
-                groupPanel.refreshMessageListPanel();
+                var msg = new Message(session.getUser(), text, new Date());
+                boolean sentSuccessfully = msgRepo.addMessage(group, msg);
+                if (sentSuccessfully) {
+                    group.loadMessageBelow(msg);
+                    groupPanel.refreshMessageListPanel();
+                }
+                return sentSuccessfully;
             });
 
             groupListPanel.addTab(group.getName(), groupPanel.getJPanel());
@@ -129,8 +137,8 @@ public class Application {
         groupListPanel.addTab("+ New group", groupCreationPanel.getJPanel());
 
         groupCreationPanel.setCreationListener(groupName -> {
-            var group = new Group(groupName, UserSession.getInstance().getUser());
-            UserSession.getInstance().getGroupRepository().createGroup(group);
+            var group = new Group(groupName, session.getUser());
+            session.getGroupRepository().createGroup(group);
             // insert the new tab before the "+ New group" one, so it's always last
             groupListPanel.insertTab(
                     group.getName(),
@@ -142,7 +150,7 @@ public class Application {
         });
 
         var friendListPanel = new JTabbedPane(JTabbedPane.LEFT);
-        for (var friend : UserSession.getInstance().getFriends()) {
+        for (var friend : session.getFriends()) {
             var friendPanel = new JPanel();
             // not sure what to put here yet
             // if having someone as a friend automatically creates a group with just you and the friend only

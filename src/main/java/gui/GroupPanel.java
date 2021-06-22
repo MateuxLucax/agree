@@ -15,11 +15,13 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.Date;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class GroupPanel {
 
-    private final User user = UserSession.getInstance().getUser();
-    private final IMessageRepository messageRepository = new MessageInFileRepository();
+    // private final User user = UserSession.getInstance().getUser();
+    // private final IMessageRepository messageRepository = new MessageInFileRepository();
+    // unused?
 
     private final JPanel mainPanel;
 
@@ -40,10 +42,10 @@ public class GroupPanel {
         btLoadNewer.addActionListener(listener);
     }
 
-    public void setSendButtonListener(Consumer<String> onNewMessage) {
+    public void setSendButtonListener(Function<String, Boolean> onNewMessage) {
         btSendMessage.addActionListener(evt -> {
-            onNewMessage.accept(taMessageText.getText());
-            taMessageText.setText("");
+            if (onNewMessage.apply(taMessageText.getText()))
+                taMessageText.setText("");
         });
     }
 
@@ -89,12 +91,6 @@ public class GroupPanel {
         taMessageText = new JTextArea();
         taMessageText.setBorder(new EmptyBorder(0, 0, 0, 16));
         btSendMessage = new JButton("Send");
-
-        btSendMessage.addActionListener(e -> {
-             if (messageRepository.addMessage(group, new Message(user, taMessageText.getText(), new Date()))) {
-                 taMessageText.setText("");
-             }
-        });
 
         var newMessagePanel = new JPanel();
         newMessagePanel.setLayout(new BorderLayout());

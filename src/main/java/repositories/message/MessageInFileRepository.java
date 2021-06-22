@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class MessageInFileRepository implements IMessageRepository {
 
@@ -54,7 +55,12 @@ public class MessageInFileRepository implements IMessageRepository {
 
     @Override
     public boolean getMostRecentMessages(Group group) {
-        return false;
+        // For now not really the "most recent", just all of them (for testing)
+        for (var gm : groupMessages) {
+            if (gm.getGroup().equals(group))
+                group.loadMessageBelow(gm.getMessage());
+        }
+        return true;
     }
 
     @Override
