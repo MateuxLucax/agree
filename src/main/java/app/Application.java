@@ -121,6 +121,8 @@ public class Application {
             });
 
             groupPanel.setSendButtonListener(text -> {
+                // FIXME cannot send a message just after creating the group,
+                //    have to restart the application for it to happen
                 var msg = new Message(session.getUser(), text, new Date());
                 boolean sentSuccessfully = msgRepo.addMessage(group, msg);
                 if (sentSuccessfully) {
@@ -138,15 +140,16 @@ public class Application {
 
         groupCreationPanel.setCreationListener(groupName -> {
             var group = new Group(groupName, session.getUser());
-            session.getGroupRepository().createGroup(group);
-            // insert the new tab before the "+ New group" one, so it's always last
-            groupListPanel.insertTab(
-                    group.getName(),
-                    null,
-                    new GroupPanel(group, true).getJPanel(),
-                    null,
-                    groupListPanel.getTabCount()-1
-            );
+            if (session.getGroupRepository().createGroup(group)) {
+                // insert the new tab before the "+ New group" one, so it's always last
+                groupListPanel.insertTab(
+                        group.getName(),
+                        null,
+                        new GroupPanel(group, true).getJPanel(),
+                        null,
+                        groupListPanel.getTabCount() - 1
+                );
+            }
         });
 
         var friendListPanel = new JTabbedPane(JTabbedPane.LEFT);
