@@ -2,27 +2,35 @@ package gui;
 
 // Where the user actually reads and writes messages
 
+import app.UserSession;
+import models.User;
 import models.group.Group;
 import models.message.Message;
+import repositories.message.IMessageRepository;
+import repositories.message.MessageInFileRepository;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.util.LinkedList;
+import java.util.Date;
 import java.util.function.Consumer;
 
 public class GroupPanel {
 
-    private JPanel mainPanel;
+    private final User user = UserSession.getInstance().getUser();
+    private final IMessageRepository messageRepository = new MessageInFileRepository();
 
-    private Group group;
+    private final JPanel mainPanel;
 
-    private JPanel messageListPanel;
-    private JButton btLoadOlder;
-    private JButton btLoadNewer;
+    private final Group group;
 
-    private JTextArea taMessageText;
-    private JButton btSendMessage;
+    private final JPanel messageListPanel;
+    private final JButton btLoadOlder;
+    private final JButton btLoadNewer;
+
+    private final JTextArea taMessageText;
+    private final JButton btSendMessage;
 
     public void setLoadOlderButtonListener(ActionListener listener) {
         btLoadOlder.addActionListener(listener);
@@ -79,10 +87,18 @@ public class GroupPanel {
         messagesScrollPane.getVerticalScrollBar().setUnitIncrement(20);
 
         taMessageText = new JTextArea();
+        taMessageText.setBorder(new EmptyBorder(0, 0, 0, 16));
         btSendMessage = new JButton("Send");
+
+        btSendMessage.addActionListener(e -> {
+             if (messageRepository.addMessage(group, new Message(user, taMessageText.getText(), new Date()))) {
+                 taMessageText.setText("");
+             }
+        });
 
         var newMessagePanel = new JPanel();
         newMessagePanel.setLayout(new BorderLayout());
+        newMessagePanel.setBorder(new EmptyBorder(16, 16, 16, 16));
         newMessagePanel.add(taMessageText, BorderLayout.CENTER);
         newMessagePanel.add(btSendMessage, BorderLayout.LINE_END);
 

@@ -1,8 +1,8 @@
 package repositories.message;
 
 import models.User;
-import models.message.Message;
 import models.group.Group;
+import models.message.Message;
 
 import java.util.Date;
 

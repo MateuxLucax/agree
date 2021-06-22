@@ -3,7 +3,6 @@ package repositories.message;
 import models.group.Group;
 import models.message.Message;
 
-import java.util.List;
 import java.util.Date;
 
 public interface IMessageRepository {

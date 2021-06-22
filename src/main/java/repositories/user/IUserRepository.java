@@ -7,4 +7,6 @@ public interface IUserRepository {
     boolean storeUser(User user);
 
     User getUser(String username, String password);
+
+    boolean userExists(String username);
 }

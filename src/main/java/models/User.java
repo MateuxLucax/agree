@@ -20,6 +20,12 @@ public class User {
         this.createdAt = createdAt;
     }
 
+    public User(String nickname, String password) {
+        this.nickname = nickname;
+        this.password = password;
+        this.createdAt = new Date();
+    }
+
     public String toString() {
         return "User("+nickname+")";
     }

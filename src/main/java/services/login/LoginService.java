@@ -1,6 +1,8 @@
 package services.login;
 
+import exceptions.NameAlreadyInUseException;
 import exceptions.UnauthorizedUserException;
+import exceptions.UnsafePasswordException;
 import models.User;
 import repositories.user.IUserRepository;
 import repositories.user.UserRepositoryInFile;
@@ -35,7 +37,17 @@ public class LoginService implements ILoginService {
     }
 
     @Override
-    public boolean createUser(User user) {
+    public boolean createUser(User user) throws NameAlreadyInUseException, UnsafePasswordException {
+        if (repository.userExists(user.getNickname())) {
+            throw new NameAlreadyInUseException();
+        }
+
+        // boolean passwordIsSafe = password.matches("(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\\\S+$).{8,}");
+        boolean passwordIsSafe = user.getPassword().length() > 2;
+        if (!passwordIsSafe) {
+            throw new UnsafePasswordException();
+        }
+
         user.setPassword(generateSecurePassword(user.getPassword()));
         return this.repository.storeUser(user);
     }

@@ -9,8 +9,11 @@ import exceptions.UnsafePasswordException;
 import gui.AuthPanel;
 import gui.CreateGroupPanel;
 import gui.GroupPanel;
+import models.User;
 import models.group.Group;
 import models.message.Message;
+import services.login.ILoginService;
+import services.login.LoginService;
 import utils.AssetsUtil;
 
 import javax.swing.*;
@@ -18,8 +21,6 @@ import java.util.Date;
 import java.util.LinkedList;
 
 public class Application {
-
-    private UserSession userSession;
 
     private final JFrame frame;
 
@@ -41,6 +42,7 @@ public class Application {
     }
 
     private void startUserSession() {
+        ILoginService loginService = new LoginService();
         var authPanel = new AuthPanel();
         frame.add(authPanel.getJPanel());
 
@@ -55,7 +57,8 @@ public class Application {
                 return;
             }
             try {
-                userSession = UserSession.authenticate(name, password);
+                UserSession.getInstance().setUser(loginService.authenticate(name, password));
+                UserSession.getInstance().initialize();
                 frame.remove(authPanel.getJPanel());
                 initializeMainPanel();
                 frame.revalidate();
@@ -70,7 +73,11 @@ public class Application {
                 return;
             }
             try {
-                userSession = UserSession.createAccount(name, password);
+                var user = new User(name, password);
+                if (loginService.createUser(user)) {
+                    UserSession.getInstance().setUser(user);
+                    UserSession.getInstance().initialize();
+                }
                 frame.remove(authPanel.getJPanel());
                 initializeMainPanel();
                 frame.revalidate();
@@ -90,27 +97,27 @@ public class Application {
         // when we implement groups and users having their profile pictures:
         // https://stackoverflow.com/q/17648780
         var groupListPanel = new JTabbedPane(JTabbedPane.LEFT);
-        for (var group : userSession.getGroups()) {
-            boolean isOwner = userSession.getUser().equals(group.getOwner());
+        for (var group : UserSession.getInstance().getGroups()) {
+            boolean isOwner = UserSession.getInstance().getUser().equals(group.getOwner());
             var groupPanel = new GroupPanel(group, isOwner);
 
             groupPanel.setLoadOlderButtonListener(evt -> {
                 LinkedList<Message> messages = group.getMessages();
                 Date date = messages.isEmpty() ? new Date() : messages.getFirst().sentAt();
-                userSession.getMessageRepository().getMessagesBefore(group, date);
+                UserSession.getInstance().getMessageRepository().getMessagesBefore(group, date);
                 groupPanel.refreshMessageListPanel();
             });
 
             groupPanel.setLoadNewerButtonListener(evt -> {
                 LinkedList<Message> messages = group.getMessages();
                 Date date = messages.isEmpty() ? new Date() : messages.getLast().sentAt();
-                userSession.getMessageRepository().getMessagesAfter(group, date);
+                UserSession.getInstance().getMessageRepository().getMessagesAfter(group, date);
                 groupPanel.refreshMessageListPanel();
             });
 
             groupPanel.setSendButtonListener(text -> {
-                var msg = new Message(userSession.getUser(), text, new Date());
-                userSession.getMessageRepository().addMessage(group, msg);
+                var msg = new Message(UserSession.getInstance().getUser(), text, new Date());
+                UserSession.getInstance().getMessageRepository().addMessage(group, msg);
                 group.loadMessageBelow(msg);
                 groupPanel.refreshMessageListPanel();
             });
@@ -122,8 +129,8 @@ public class Application {
         groupListPanel.addTab("+ New group", groupCreationPanel.getJPanel());
 
         groupCreationPanel.setCreationListener(groupName -> {
-            var group = new Group(groupName, userSession.getUser());
-            userSession.getGroupRepository().createGroup(group);
+            var group = new Group(groupName, UserSession.getInstance().getUser());
+            UserSession.getInstance().getGroupRepository().createGroup(group);
             // insert the new tab before the "+ New group" one, so it's always last
             groupListPanel.insertTab(
                     group.getName(),
@@ -135,7 +142,7 @@ public class Application {
         });
 
         var friendListPanel = new JTabbedPane(JTabbedPane.LEFT);
-        for (var friend : userSession.getFriends()) {
+        for (var friend : UserSession.getInstance().getFriends()) {
             var friendPanel = new JPanel();
             // not sure what to put here yet
             // if having someone as a friend automatically creates a group with just you and the friend only
