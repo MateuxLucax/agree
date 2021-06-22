@@ -10,27 +10,23 @@ import utils.JsonDatabaseUtil;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.lang.reflect.Type;
 import java.util.*;
 
 public class MessageInFileRepository implements IMessageRepository {
 
     private final Gson gson = new Gson();
-    private final Type groupMessagesType = new TypeToken<List<Map<Group, Message>>>() {}.getType();
     private final File groupMessageFile;
-    private final List<Map<Group, Message>> groupMessages = new ArrayList<>();
+    private final List<GroupMessage> groupMessages = new ArrayList<>();
 
     public MessageInFileRepository() {
-        groupMessageFile = JsonDatabaseUtil.getFile("groupMessage.json");
+        groupMessageFile = JsonDatabaseUtil.getFile("groupMessages.json");
         getGroupMessages();
     }
 
     @Override
     public boolean addMessage(Group group, Message message) {
         try (var fileWriter = new FileWriter(groupMessageFile)) {
-            Map<Group, Message> messageMap = new HashMap<>();
-            messageMap.put(group, message);
-            groupMessages.add(messageMap);
+            groupMessages.add(new GroupMessage(group, message));
             fileWriter.write(this.gson.toJson(groupMessages));
             this.getGroupMessages();
             return true;
@@ -68,12 +64,51 @@ public class MessageInFileRepository implements IMessageRepository {
 
     private void getGroupMessages() {
         try (var jsonReader = new JsonReader(new FileReader(groupMessageFile))) {
-            List<Map<Group, Message>> groupMessagesInFile = this.gson.fromJson(jsonReader, this.groupMessagesType);
+            List<GroupMessage> groupMessagesInFile = this.gson.fromJson(jsonReader, new TypeToken<List<GroupMessage>>() {}.getType());
             if (groupMessagesInFile != null) {
                 groupMessages.addAll(groupMessagesInFile);
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
+        }
+    }
+
+    public static class GroupMessage {
+        private Group group;
+        private Message message;
+
+        public GroupMessage(Group group, Message message) {
+            this.group = group;
+            this.message = message;
+        }
+
+        public Group getGroup() {
+            return group;
+        }
+
+        public void setGroup(Group group) {
+            this.group = group;
+        }
+
+        public Message getMessage() {
+            return message;
+        }
+
+        public void setMessage(Message message) {
+            this.message = message;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            GroupMessage that = (GroupMessage) o;
+            return Objects.equals(group, that.group) && Objects.equals(message, that.message);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(group, message);
         }
     }
 }

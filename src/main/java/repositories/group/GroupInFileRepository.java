@@ -10,7 +10,6 @@ import utils.JsonDatabaseUtil;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -19,12 +18,11 @@ import java.util.stream.Collectors;
 public class GroupInFileRepository implements IGroupRepository {
 
     private final Gson gson = new Gson();
-    private final Type groupsListType = new TypeToken<List<Group>>() {}.getType();
     private final File groupFile;
     private final List<Group> groups = new ArrayList<>();
 
     public GroupInFileRepository() {
-        groupFile = JsonDatabaseUtil.getFile("groupMessage.json");
+        groupFile = JsonDatabaseUtil.getFile("groups.json");
         getGroups();
     }
 
@@ -64,13 +62,13 @@ public class GroupInFileRepository implements IGroupRepository {
     public Group getGroup(String id) {
         return groups.stream()
                 .filter(group -> group.getId().equals(id))
-                .findFirst()
-                .get();
+                .collect(Collectors.toList())
+                .get(0);
     }
 
     private void getGroups() {
         try (var jsonReader = new JsonReader(new FileReader(groupFile))) {
-            List<Group> groupsInFile = this.gson.fromJson(jsonReader, this.groupsListType);
+            List<Group> groupsInFile = this.gson.fromJson(jsonReader, new TypeToken<List<Group>>() {}.getType());
             if (groupsInFile != null) {
                 groups.addAll(groupsInFile);
             }

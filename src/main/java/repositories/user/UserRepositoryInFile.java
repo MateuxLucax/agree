@@ -9,14 +9,13 @@ import utils.JsonDatabaseUtil;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class UserRepositoryInFile implements IUserRepository {
 
     private final Gson gson = new Gson();
-    private final Type userListType = new TypeToken<List<User>>() {}.getType();
     private final File userFile;
     private final List<User> users = new ArrayList<>();
 
@@ -41,7 +40,10 @@ public class UserRepositoryInFile implements IUserRepository {
 
     @Override
     public User getUser(String username, String password) {
-        return users.stream().filter(user -> user.getNickname().equals(username) && user.getPassword().equals(password)).findFirst().orElse(null);
+        return users.stream()
+                .filter(user -> user.getNickname().equals(username) && user.getPassword().equals(password))
+                .collect(Collectors.toList())
+                .get(0);
     }
 
     @Override
@@ -51,7 +53,7 @@ public class UserRepositoryInFile implements IUserRepository {
 
     private void getUsersFromJson() {
         try (var jsonReader = new JsonReader(new FileReader(userFile))) {
-            List<User> usersInFile = this.gson.fromJson(jsonReader, this.userListType);
+            List<User> usersInFile = this.gson.fromJson(jsonReader, new TypeToken<List<User>>() {}.getType());
             if (usersInFile != null) {
                 users.addAll(usersInFile);
             }
