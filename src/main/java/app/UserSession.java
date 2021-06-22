@@ -25,18 +25,17 @@ public class UserSession {
     private UserSession() {
         groups = new ArrayList<>();
         friends = new ArrayList<>();
-
         groupRepo = new GroupInFileRepository();
         msgRepo = new MessageInFileRepository();
     }
 
     public static synchronized UserSession getInstance() {
         if (instance == null) instance = new UserSession();
-
         return instance;
     }
 
-    public void initialize() {
+    public void initialize(User user) {
+        this.user = user;
         groups.addAll(groupRepo.getGroups(user));
 
         // TODO
@@ -59,10 +58,7 @@ public class UserSession {
     public User getUser() { return user; }
     public List<Group> getGroups() { return groups; }
     public List<User> getFriends() { return friends; }
+
     public IMessageRepository getMessageRepository() { return msgRepo; }
     public IGroupRepository getGroupRepository() { return groupRepo; }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
 }

@@ -62,8 +62,7 @@ public class Application {
                 return;
             }
             try {
-                session.setUser(loginService.authenticate(name, password));
-                session.initialize();
+                session.initialize(loginService.authenticate(name, password));
                 frame.remove(authPanel.getJPanel());
                 initializeMainPanel();
                 frame.revalidate();
@@ -80,8 +79,7 @@ public class Application {
             try {
                 var user = new User(name, password);
                 if (loginService.createUser(user)) {
-                    session.setUser(user);
-                    session.initialize();
+                    session.initialize(user);
                 }
                 frame.remove(authPanel.getJPanel());
                 initializeMainPanel();
