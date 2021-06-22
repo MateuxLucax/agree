@@ -11,6 +11,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class UserRepositoryInFile implements IUserRepository {
@@ -42,8 +43,9 @@ public class UserRepositoryInFile implements IUserRepository {
     public User getUser(String username, String password) {
         return users.stream()
                 .filter(user -> user.getNickname().equals(username) && user.getPassword().equals(password))
-                .collect(Collectors.toList())
-                .get(0);
+                .findFirst()  // returns an Optional<User>
+                .orElse(null);
+        // It's weird to return null here since the whole purpose of the Optional is to avoid null values
     }
 
     @Override
