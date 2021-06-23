@@ -6,7 +6,6 @@ import repositories.group.GroupInFileRepository;
 import repositories.group.IGroupRepository;
 import repositories.message.IMessageRepository;
 import repositories.message.MessageInFileRepository;
-import repositories.message.MessageRepositoryTest;
 
 import java.util.ArrayList;
 import java.util.Date;

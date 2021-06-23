@@ -2,19 +2,12 @@ package gui;
 
 // Where the user actually reads and writes messages
 
-import app.UserSession;
-import models.User;
 import models.group.Group;
-import models.message.Message;
-import repositories.message.IMessageRepository;
-import repositories.message.MessageInFileRepository;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.util.Date;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class GroupPanel {

@@ -10,8 +10,10 @@ import utils.JsonDatabaseUtil;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 
 public class MessageInFileRepository implements IMessageRepository {
 
@@ -29,7 +31,6 @@ public class MessageInFileRepository implements IMessageRepository {
         try (var fileWriter = new FileWriter(groupMessageFile)) {
             groupMessages.add(new GroupMessage(group, message));
             fileWriter.write(this.gson.toJson(groupMessages));
-            this.getGroupMessages();
             return true;
         } catch (Exception e) {
             System.out.println(e.getMessage());

@@ -62,8 +62,8 @@ public class GroupInFileRepository implements IGroupRepository {
     public Group getGroup(String id) {
         return groups.stream()
                 .filter(group -> group.getId().equals(id))
-                .collect(Collectors.toList())
-                .get(0);
+                .findAny()
+                .orElse(null);
     }
 
     private void getGroups() {

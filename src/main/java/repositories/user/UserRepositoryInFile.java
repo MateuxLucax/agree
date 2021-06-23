@@ -30,7 +30,6 @@ public class UserRepositoryInFile implements IUserRepository {
         try (var fileWriter = new FileWriter(userFile)) {
             users.add(user);
             fileWriter.write(this.gson.toJson(users));
-            getUsersFromJson();
             return true;
         } catch (Exception e) {
             System.out.println(e.getMessage());
