@@ -31,7 +31,7 @@ public class Group {
     private static final int MAX_MESSAGES_LOADED_AT_ONCE = 100;
 
     private       String id;
-    private final String name;
+    private       String name;
     private       User   owner;
     private final List<User> users;
     private final LinkedList<Message> messages;
@@ -51,7 +51,13 @@ public class Group {
         this.id = id;
     }
 
-    public String getName() { return this.name; }
+    public String getName() {
+        return this.name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public User getOwner() { return owner; }
 

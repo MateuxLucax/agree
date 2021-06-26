@@ -10,13 +10,11 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.function.Function;
 
-public class GroupPanel {
+public class GroupPanel extends JTabbedPane {
 
     // private final User user = UserSession.getInstance().getUser();
     // private final IMessageRepository messageRepository = new MessageInFileRepository();
     // unused?
-
-    private final JPanel mainPanel;
 
     private final Group group;
 
@@ -26,6 +24,8 @@ public class GroupPanel {
 
     private final JTextArea taMessageText;
     private final JButton btSendMessage;
+
+    private final GroupManagementPanel managPanel;
 
     public void setLoadOlderButtonListener(ActionListener listener) {
         btLoadOlder.addActionListener(listener);
@@ -42,27 +42,15 @@ public class GroupPanel {
         });
     }
 
+    // We make the management panel itself available like this
+    // so the Application can configure it -- set what happens
+    // when the owner presses the "delete" button and so on
+    public GroupManagementPanel getManagementPanel() {
+        return managPanel;
+    }
+
     public GroupPanel(Group group, boolean showingToOwner) {
         this.group = group;
-
-        /* mainPanel
-         * \--- headerPanel (name[, manageGroup if owner])
-         * \--- messagesScrollPane
-         *      \--- messagesPanel
-         *           \--- btLoadOlder
-         *           \--- messageListPanel
-         *           \--- btLoadNewer
-         */
-
-        var lbName = new JLabel(group.getName());
-        var headerPanel = new JPanel();
-        headerPanel.add(lbName);
-
-        if (showingToOwner) {
-            JButton btManage = new JButton("Manage");
-            headerPanel.add(btManage);
-            // TODO actual group management panel (delete group, renaming group, removing users etc.)
-        }
 
         messageListPanel = new JPanel();
         messageListPanel.setLayout(new BoxLayout(messageListPanel, BoxLayout.PAGE_AXIS));
@@ -91,11 +79,23 @@ public class GroupPanel {
         newMessagePanel.add(taMessageText, BorderLayout.CENTER);
         newMessagePanel.add(btSendMessage, BorderLayout.LINE_END);
 
-        mainPanel = new JPanel();
-        mainPanel.setLayout(new BorderLayout());
-        mainPanel.add(headerPanel, BorderLayout.PAGE_START);
-        mainPanel.add(messagesScrollPane, BorderLayout.CENTER);
-        mainPanel.add(newMessagePanel, BorderLayout.PAGE_END);
+        var messagesTab = new JPanel(new BorderLayout());
+        messagesTab.add(messagesScrollPane, BorderLayout.CENTER);
+        messagesTab.add(newMessagePanel, BorderLayout.PAGE_END);
+
+        addTab("Messages", messagesTab);
+
+        // TODO tab to list the group's members
+        // which also takes a 'showingToOwner' option,
+        // where if it's true it'll show a 'remove' button next to each user
+        // so the owner can remove them
+
+        if (showingToOwner) {
+            managPanel = new GroupManagementPanel(group.getName());
+            addTab("Manage", managPanel.getJPanel());
+        } else {
+            managPanel = null;
+        }
     }
 
     public void refreshMessageListPanel() {
@@ -103,9 +103,5 @@ public class GroupPanel {
         for (var msg : group.getMessages())
             messageListPanel.add(new MessagePanel(msg).getJPanel());
         messageListPanel.revalidate();
-    }
-
-    public JPanel getJPanel() {
-        return mainPanel;
     }
 }

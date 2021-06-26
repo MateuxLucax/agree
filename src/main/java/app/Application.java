@@ -8,10 +8,12 @@ import exceptions.UnauthorizedUserException;
 import exceptions.UnsafePasswordException;
 import gui.AuthPanel;
 import gui.CreateGroupPanel;
+import gui.GroupManagementPanel;
 import gui.GroupPanel;
 import models.User;
 import models.group.Group;
 import models.message.Message;
+import repositories.group.IGroupRepository;
 import repositories.message.IMessageRepository;
 import services.login.ILoginService;
 import services.login.LoginService;
@@ -26,6 +28,7 @@ public class Application {
     private final JFrame frame;
     private UserSession session;
     private IMessageRepository msgRepo;
+    private IGroupRepository groupRepo;
 
     public Application() {
         // Initialize theme
@@ -54,7 +57,8 @@ public class Application {
         frame.setVisible(true);
 
         session = UserSession.getInstance();
-        msgRepo = session.getMessageRepository();
+        msgRepo   = session.getMessageRepository();
+        groupRepo = session.getGroupRepository();
 
         authPanel.setLoginListener((name, password) -> {
             if (name.isEmpty() || password.isEmpty()) {
@@ -130,7 +134,25 @@ public class Application {
                 return sentSuccessfully;
             });
 
-            groupListPanel.addTab(group.getName(), groupPanel.getJPanel());
+            groupListPanel.addTab(group.getName(), groupPanel);
+
+            if (isOwner) {
+                GroupManagementPanel managPanel = groupPanel.getManagementPanel();
+                managPanel.setRenameButtonListener(newName -> {
+                    group.setName(newName);
+                    groupRepo.updateGroup(group);  // TODO consider just a .updateName method?
+                    // I'd like to change just the title of the tab
+                    // AFAIK this is the only way to do it -- replacing the whole tab
+                    int index = groupListPanel.getSelectedIndex();
+                    groupListPanel.removeTabAt(index);
+                    groupListPanel.insertTab(group.getName(), null, groupPanel, null, index);
+                });
+                managPanel.setDeleteButtonListener(() -> {
+                    groupListPanel.removeTabAt(groupListPanel.getSelectedIndex());
+                    groupRepo.removeGroup(group.getId());
+                });
+            }
+
         }
 
         var groupCreationPanel = new CreateGroupPanel();
@@ -138,12 +160,12 @@ public class Application {
 
         groupCreationPanel.setCreationListener(groupName -> {
             var group = new Group(groupName, session.getUser());
-            if (session.getGroupRepository().createGroup(group)) {
+            if (groupRepo.createGroup(group)) {
                 // insert the new tab before the "+ New group" one, so it's always last
                 groupListPanel.insertTab(
                         group.getName(),
                         null,
-                        new GroupPanel(group, true).getJPanel(),
+                        new GroupPanel(group, true),
                         null,
                         groupListPanel.getTabCount() - 1
                 );
