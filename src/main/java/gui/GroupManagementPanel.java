@@ -18,7 +18,6 @@ public class GroupManagementPanel {
             // TODO deal with empty names
             String text = tfNewName.getText();
             onRename.accept(text);
-            tfNewName.setText(text);
         });
     }
 
