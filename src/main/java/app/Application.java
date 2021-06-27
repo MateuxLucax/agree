@@ -6,10 +6,10 @@ import com.github.weisj.darklaf.theme.laf.DarculaThemeDarklafLookAndFeel;
 import exceptions.NameAlreadyInUseException;
 import exceptions.UnauthorizedUserException;
 import exceptions.UnsafePasswordException;
-import gui.AuthPanel;
-import gui.CreateGroupPanel;
-import gui.GroupManagementPanel;
-import gui.GroupPanel;
+import gui.*;
+import gui.group.GroupManagementPanel;
+import gui.group.GroupPanel;
+import gui.group.MessagingPanel;
 import models.User;
 import models.group.Group;
 import models.message.Message;
@@ -56,7 +56,7 @@ public class Application {
         frame.setExtendedState(frame.getExtendedState() | JFrame.MAXIMIZED_BOTH);
         frame.setVisible(true);
 
-        session = UserSession.getInstance();
+        session   = UserSession.getInstance();
         msgRepo   = session.getMessageRepository();
         groupRepo = session.getGroupRepository();
 
@@ -103,71 +103,26 @@ public class Application {
         // For now the tabs only have text, but we can add icons to them
         // when we implement groups and users having their profile pictures:
         // https://stackoverflow.com/q/17648780
-        var groupListPanel = new JTabbedPane(JTabbedPane.LEFT);
+        var groupTabs = new JTabbedPane(JTabbedPane.LEFT);
+
         for (var group : session.getGroups()) {
-            boolean isOwner = session.getUser().equals(group.getOwner());
-            var groupPanel = new GroupPanel(group, isOwner);
-
-            groupPanel.setLoadOlderButtonListener(evt -> {
-                LinkedList<Message> messages = group.getMessages();
-                Date date = messages.isEmpty() ? new Date() : messages.getFirst().sentAt();
-                msgRepo.getMessagesBefore(group, date);
-                groupPanel.refreshMessageListPanel();
-            });
-
-            groupPanel.setLoadNewerButtonListener(evt -> {
-                LinkedList<Message> messages = group.getMessages();
-                Date date = messages.isEmpty() ? new Date() : messages.getLast().sentAt();
-                msgRepo.getMessagesAfter(group, date);
-                groupPanel.refreshMessageListPanel();
-            });
-
-            groupPanel.setSendButtonListener(text -> {
-                // FIXME cannot send a message just after creating the group,
-                //    have to restart the application for it to happen
-                var msg = new Message(session.getUser(), text, new Date());
-                boolean sentSuccessfully = msgRepo.addMessage(group, msg);
-                if (sentSuccessfully) {
-                    group.loadMessageBelow(msg);
-                    groupPanel.refreshMessageListPanel();
-                }
-                return sentSuccessfully;
-            });
-
-            groupListPanel.addTab(group.getName(), groupPanel);
-
-            if (isOwner) {
-                GroupManagementPanel managPanel = groupPanel.getManagementPanel();
-                managPanel.setRenameButtonListener(newName -> {
-                    group.setName(newName);
-                    groupRepo.updateGroup(group);  // TODO consider just a .updateName method?
-                    // I'd like to change just the title of the tab
-                    // AFAIK this is the only way to do it -- replacing the whole tab
-                    int index = groupListPanel.getSelectedIndex();
-                    groupListPanel.removeTabAt(index);
-                    groupListPanel.insertTab(group.getName(), null, groupPanel, null, index);
-                });
-                managPanel.setDeleteButtonListener(() -> {
-                    groupListPanel.removeTabAt(groupListPanel.getSelectedIndex());
-                    groupRepo.removeGroup(group.getId());
-                });
-            }
-
+            GroupPanel groupPanel = createGroupPanel(group, groupTabs);
+            groupTabs.addTab(group.getName(), groupPanel);
         }
 
         var groupCreationPanel = new CreateGroupPanel();
-        groupListPanel.addTab("+ New group", groupCreationPanel.getJPanel());
+        groupTabs.addTab("+ New group", groupCreationPanel.getJPanel());
 
         groupCreationPanel.setCreationListener(groupName -> {
             var group = new Group(groupName, session.getUser());
             if (groupRepo.createGroup(group)) {
                 // insert the new tab before the "+ New group" one, so it's always last
-                groupListPanel.insertTab(
+                groupTabs.insertTab(
                         group.getName(),
                         null,
-                        new GroupPanel(group, true),
+                        createGroupPanel(group, groupTabs),
                         null,
-                        groupListPanel.getTabCount() - 1
+                        groupTabs.getTabCount() - 1
                 );
             }
         });
@@ -183,14 +138,73 @@ public class Application {
         }
 
         var mainPanel = new JTabbedPane(JTabbedPane.TOP);
-        mainPanel.addTab("Groups", groupListPanel);
+        mainPanel.addTab("Groups", groupTabs);
         mainPanel.addTab("Friends", friendListPanel);
         // TODO "settings" tab
 
         frame.add(mainPanel);
     }
 
+    // The role of these 'create' methods is to configure the behaviour
+    // using the set...listener or setOn... methods provided by the panels
+
+    public GroupPanel createGroupPanel(Group group, JTabbedPane groupTabs) {
+        var groupPanel = new GroupPanel();
+        MessagingPanel msgPanel = createMessagingPanel(group);
+        groupPanel.setMessagingTab(msgPanel);
+        if (group.getOwner().equals(session.getUser())) {
+            GroupManagementPanel managPanel = createGroupManagementPanel(group, groupPanel, groupTabs);
+            groupPanel.setManagementTab(managPanel);
+        }
+        return groupPanel;
+    }
+
+    public MessagingPanel createMessagingPanel(Group group) {
+        var msgPanel = new MessagingPanel();
+        msgPanel.loadMessages(group.getMessages());
+        msgPanel.setOnLoadOlder(() -> {
+            LinkedList<Message> messages = group.getMessages();
+            Date date = messages.isEmpty() ? new Date() : messages.getFirst().sentAt();
+            msgRepo.getMessagesBefore(group, date);
+            msgPanel.loadMessages(messages);
+        });
+        msgPanel.setOnLoadNewer(() -> {
+            LinkedList<Message> messages = group.getMessages();
+            Date date = messages.isEmpty() ? new Date() : messages.getLast().sentAt();
+            msgRepo.getMessagesAfter(group, date);
+            msgPanel.loadMessages(messages);
+        });
+        msgPanel.setOnSend(text -> {
+            var msg = new Message(session.getUser(), text, new Date());
+            boolean ok = msgRepo.addMessage(group, msg);
+            if (ok) {
+                group.loadMessageBelow(msg);
+                msgPanel.loadMessages(group.getMessages());
+            }
+            return ok;
+        });
+        return msgPanel;
+    }
+
+    public GroupManagementPanel createGroupManagementPanel(Group group, GroupPanel groupPanel, JTabbedPane groupTabs) {
+        var managPanel = new GroupManagementPanel(group.getName());
+        managPanel.setRenameButtonListener(newName -> {
+            group.setName(newName);
+            groupRepo.updateGroup(group);  // TODO consider just a .updateName method?
+            // I'd like to change just the title of the tab
+            // AFAIK this is the only way to do it -- replacing the whole tab
+            int index = groupTabs.getSelectedIndex();
+            groupTabs.removeTabAt(index);
+            groupTabs.insertTab(group.getName(), null, groupPanel, null, index);
+        });
+        managPanel.setDeleteButtonListener(() -> {
+            groupTabs.removeTabAt(groupTabs.getSelectedIndex());
+            groupRepo.removeGroup(group.getId());
+        });
+        return managPanel;
+    }
+
     public static void main(String[] args) {
-        var app = new Application();
+        new Application();
     }
 }

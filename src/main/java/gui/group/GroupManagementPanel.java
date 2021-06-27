@@ -1,4 +1,4 @@
-package gui;
+package gui.group;
 
 import javax.swing.*;
 import java.util.function.Consumer;
@@ -9,8 +9,8 @@ public class GroupManagementPanel {
     private JTextField tfNewName;
     private JButton btRename;
 
-    public GroupManagementPanel(String initialName) {
-        tfNewName.setText(initialName);
+    public GroupManagementPanel(String groupName) {
+        tfNewName.setText(groupName);
     }
 
     public void setRenameButtonListener(Consumer<String> onRename) {
