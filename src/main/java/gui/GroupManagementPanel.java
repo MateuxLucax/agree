@@ -1,4 +1,4 @@
-package gui.group;
+package gui;
 
 import javax.swing.*;
 import java.util.function.Consumer;

@@ -35,16 +35,7 @@ public class UserSession {
 
     public void initialize(User user) {
         this.user = user;
-        groups.addAll(groupRepo.getGroups(user));
-
-        // TODO
-        //       groups.forEach(groupRepo::getUsers)
-        //    or groups.forEach(userRepo::getUsers) ?
-        for (var group : groups) {
-            group.addUser(new User("foo", new Date()));
-            group.addUser(new User("bar", new Date()));
-            group.addUser(new User("aeiou", new Date()));
-        }
+        groups.addAll(groupRepo.getGroups(user));  // Already retrieves the users
         groups.forEach(msgRepo::getMostRecentMessages);
 
         // TODO

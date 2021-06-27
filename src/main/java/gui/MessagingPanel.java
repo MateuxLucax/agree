@@ -1,4 +1,4 @@
-package gui.group;
+package gui;
 
 import gui.MessagePanel;
 import models.message.Message;

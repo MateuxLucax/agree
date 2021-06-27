@@ -7,9 +7,9 @@ import exceptions.NameAlreadyInUseException;
 import exceptions.UnauthorizedUserException;
 import exceptions.UnsafePasswordException;
 import gui.*;
-import gui.group.GroupManagementPanel;
-import gui.group.GroupPanel;
-import gui.group.MessagingPanel;
+import gui.GroupManagementPanel;
+import gui.GroupPanel;
+import gui.MessagingPanel;
 import models.User;
 import models.group.Group;
 import models.message.Message;
@@ -150,12 +150,18 @@ public class Application {
 
     public GroupPanel createGroupPanel(Group group, JTabbedPane groupTabs) {
         var groupPanel = new GroupPanel();
+
         MessagingPanel msgPanel = createMessagingPanel(group);
         groupPanel.setMessagingTab(msgPanel);
+
+        UserListPanel membersPanel = createMembersPanel(group);
+        groupPanel.setMembersTab(membersPanel);
+
         if (group.getOwner().equals(session.getUser())) {
             GroupManagementPanel managPanel = createGroupManagementPanel(group, groupPanel, groupTabs);
             groupPanel.setManagementTab(managPanel);
         }
+
         return groupPanel;
     }
 
@@ -202,6 +208,26 @@ public class Application {
             groupRepo.removeGroup(group.getId());
         });
         return managPanel;
+    }
+
+    public UserListPanel createMembersPanel(Group group) {
+        var membersPanel = new UserListPanel();
+        for (var user : group.getUsers()) {
+            var bar = new UserBar(user);
+            if (session.getUser().equals(group.getOwner())) {
+                JButton btRemove = new JButton("Remove");
+                btRemove.addActionListener(evt -> {
+                    group.removeUser(user);
+                    // TODO actually remove user from group in the database
+                    membersPanel.removeUserBar(bar);
+                });
+                bar.addButton(btRemove);
+                // TODO btSetOwner (remember to perform the appropriate side effects --
+                //  the old owner cannot see the group as an owner anymore)
+            }
+            membersPanel.addUserBar(bar);
+        }
+        return membersPanel;
     }
 
     public static void main(String[] args) {
