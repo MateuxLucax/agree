@@ -154,7 +154,7 @@ public class Application {
         MessagingPanel msgPanel = createMessagingPanel(group);
         groupPanel.setMessagingTab(msgPanel);
 
-        UserListPanel membersPanel = createMembersPanel(group);
+        UserListPanel membersPanel = createMembersPanel(group, groupTabs);
         groupPanel.setMembersTab(membersPanel);
 
         if (group.getOwner().equals(session.getUser())) {
@@ -210,20 +210,32 @@ public class Application {
         return managPanel;
     }
 
-    public UserListPanel createMembersPanel(Group group) {
+    public UserListPanel createMembersPanel(Group group, JTabbedPane groupTabs) {
         var membersPanel = new UserListPanel();
         for (var user : group.getUsers()) {
             var bar = new UserBar(user);
             if (session.getUser().equals(group.getOwner())) {
                 JButton btRemove = new JButton("Remove");
+                bar.addButton(btRemove);
                 btRemove.addActionListener(evt -> {
                     group.removeUser(user);
                     // TODO actually remove user from group in the database
                     membersPanel.removeUserBar(bar);
                 });
-                bar.addButton(btRemove);
-                // TODO btSetOwner (remember to perform the appropriate side effects --
-                //  the old owner cannot see the group as an owner anymore)
+
+                JButton btSetOwner = new JButton("Set owner");
+                bar.addButton(btSetOwner);
+                btSetOwner.addActionListener(evt -> {
+                    group.setOwner(user);
+                    // TODO actually update owner in the database
+
+                    // Recreate the GroupPanel, now with the other user as owner
+                    GroupPanel groupPanel = createGroupPanel(group, groupTabs);
+                    // Replace the tab
+                    int index = groupTabs.getSelectedIndex();
+                    groupTabs.removeTabAt(index);
+                    groupTabs.insertTab(group.getName(), null, groupPanel, null, index);
+                });
             }
             membersPanel.addUserBar(bar);
         }
