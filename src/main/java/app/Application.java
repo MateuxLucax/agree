@@ -60,7 +60,7 @@ public class Application {
         msgRepo   = session.getMessageRepository();
         groupRepo = session.getGroupRepository();
 
-        authPanel.setLoginListener((name, password) -> {
+        authPanel.onLogin((name, password) -> {
             if (name.isEmpty() || password.isEmpty()) {
                 authPanel.warn("Username and password are required!");
                 return;
@@ -75,7 +75,7 @@ public class Application {
             }
         });
 
-        authPanel.setRegistrationListener((name, password) -> {
+        authPanel.onRegistration((name, password) -> {
             if (name.isEmpty() || password.isEmpty()) {
                 authPanel.warn("Username and password are required!");
                 return;
@@ -113,7 +113,7 @@ public class Application {
         var groupCreationPanel = new CreateGroupPanel();
         groupTabs.addTab("+ New group", groupCreationPanel.getJPanel());
 
-        groupCreationPanel.setCreationListener(groupName -> {
+        groupCreationPanel.onCreation(groupName -> {
             var group = new Group(groupName, session.getUser());
             if (groupRepo.createGroup(group)) {
                 // insert the new tab before the "+ New group" one, so it's always last
@@ -168,19 +168,19 @@ public class Application {
     public MessagingPanel createMessagingPanel(Group group) {
         var msgPanel = new MessagingPanel();
         msgPanel.loadMessages(group.getMessages());
-        msgPanel.setOnLoadOlder(() -> {
+        msgPanel.onLoadOlder(() -> {
             LinkedList<Message> messages = group.getMessages();
             Date date = messages.isEmpty() ? new Date() : messages.getFirst().sentAt();
             msgRepo.getMessagesBefore(group, date);
             msgPanel.loadMessages(messages);
         });
-        msgPanel.setOnLoadNewer(() -> {
+        msgPanel.onLoadNewer(() -> {
             LinkedList<Message> messages = group.getMessages();
             Date date = messages.isEmpty() ? new Date() : messages.getLast().sentAt();
             msgRepo.getMessagesAfter(group, date);
             msgPanel.loadMessages(messages);
         });
-        msgPanel.setOnSend(text -> {
+        msgPanel.onSendMessage(text -> {
             var msg = new Message(session.getUser(), text, new Date());
             boolean ok = msgRepo.addMessage(group, msg);
             if (ok) {
@@ -194,7 +194,7 @@ public class Application {
 
     public GroupManagementPanel createGroupManagementPanel(Group group, GroupPanel groupPanel, JTabbedPane groupTabs) {
         var managPanel = new GroupManagementPanel(group.getName());
-        managPanel.setRenameButtonListener(newName -> {
+        managPanel.onRename(newName -> {
             group.setName(newName);
             groupRepo.updateGroup(group);  // TODO consider just a .updateName method?
             // I'd like to change just the title of the tab
@@ -203,7 +203,7 @@ public class Application {
             groupTabs.removeTabAt(index);
             groupTabs.insertTab(group.getName(), null, groupPanel, null, index);
         });
-        managPanel.setDeleteButtonListener(() -> {
+        managPanel.onDelete(() -> {
             groupTabs.removeTabAt(groupTabs.getSelectedIndex());
             groupRepo.removeGroup(group.getId());
         });

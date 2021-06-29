@@ -22,11 +22,11 @@ public class AuthPanel {
     private BiConsumer<String, String> onLoginAttempt;
     private BiConsumer<String, String> onRegistrationAttempt;
 
-    public void setLoginListener(BiConsumer<String, String> onLoginAttempt) {
+    public void onLogin(BiConsumer<String, String> onLoginAttempt) {
         this.onLoginAttempt = onLoginAttempt;
     }
 
-    public void setRegistrationListener(BiConsumer<String, String> onRegistrationAttempt) {
+    public void onRegistration(BiConsumer<String, String> onRegistrationAttempt) {
         this.onRegistrationAttempt = onRegistrationAttempt;
     }
 

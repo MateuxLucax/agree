@@ -54,15 +54,15 @@ public class MessagingPanel extends JPanel {
         msgListPanel.revalidate();
     }
 
-    public void setOnLoadOlder(Runnable onLoadOlder) {
+    public void onLoadOlder(Runnable onLoadOlder) {
         btLoadOlder.addActionListener(evt -> onLoadOlder.run());
     }
 
-    public void setOnLoadNewer(Runnable onLoadNewer) {
+    public void onLoadNewer(Runnable onLoadNewer) {
         btLoadNewer.addActionListener(evt -> onLoadNewer.run());
     }
 
-    public void setOnSend(Function<String, Boolean> onSend) {
+    public void onSendMessage(Function<String, Boolean> onSend) {
         btSend.addActionListener(evt -> {
             if (onSend.apply(taNewMsg.getText()))
                 taNewMsg.setText("");

@@ -8,7 +8,7 @@ public class CreateGroupPanel {
     private JTextField tfGroupName;
     private JButton btCreate;
 
-    public void setCreationListener(Consumer<String> onCreation) {
+    public void onCreation(Consumer<String> onCreation) {
         btCreate.addActionListener(evt -> {
             String groupName = tfGroupName.getText();
             onCreation.accept(groupName);
