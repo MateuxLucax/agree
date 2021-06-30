@@ -6,7 +6,7 @@ public class FriendshipRequest extends Request {
     }
 
     public String getText() {
-        return String.format("%s wants to be friends with you, %s",
+        return String.format("%s wants to be friends with %s",
             from.getNickname(), to.getNickname());
     }
 
