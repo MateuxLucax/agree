@@ -6,6 +6,8 @@ import repositories.group.GroupInFileRepository;
 import repositories.group.IGroupRepository;
 import repositories.message.IMessageRepository;
 import repositories.message.MessageInFileRepository;
+import repositories.user.IUserRepository;
+import repositories.user.UserRepositoryInFile;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,12 +22,14 @@ public class UserSession {
     private final List<User> friends;
     private final IGroupRepository groupRepo;
     private final IMessageRepository msgRepo;
+    private final IUserRepository userRepo;
 
     private UserSession() {
         groups = new ArrayList<>();
         friends = new ArrayList<>();
         groupRepo = new GroupInFileRepository();
         msgRepo = new MessageInFileRepository();
+        userRepo = new UserRepositoryInFile();
     }
 
     public static synchronized UserSession getInstance() {
@@ -51,4 +55,5 @@ public class UserSession {
 
     public IMessageRepository getMessageRepository() { return msgRepo; }
     public IGroupRepository getGroupRepository() { return groupRepo; }
+    public IUserRepository getUserRepository() { return userRepo; }
 }

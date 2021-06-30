@@ -7,6 +7,7 @@ import utils.JsonDatabaseUtil;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class UserRepositoryInFile implements IUserRepository {
 
@@ -32,6 +33,13 @@ public class UserRepositoryInFile implements IUserRepository {
             if(user.getNickname().equals(username) && user.getPassword().equals(password)) return user;
 
         return null;
+    }
+
+    @Override
+    public List<User> searchUser(String search) {
+        return users.stream()
+                .filter(u -> u.getNickname().contains(search))
+                .collect(Collectors.toList());
     }
 
     @Override
