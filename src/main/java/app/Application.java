@@ -152,6 +152,7 @@ public class Application {
         var groupPanel = new GroupPanel();
 
         MessagingPanel msgPanel = createMessagingPanel(group);
+        MessagingPanel msgPanel = createGroupMessagingPanel(group);
         groupPanel.setMessagingTab(msgPanel);
 
         UserListPanel membersPanel = createMembersPanel(group, groupTabs);
@@ -166,6 +167,7 @@ public class Application {
     }
 
     public MessagingPanel createMessagingPanel(Group group) {
+    public MessagingPanel createGroupMessagingPanel(Group group) {
         var msgPanel = new MessagingPanel();
         msgPanel.loadMessages(group.getMessages());
         msgPanel.onLoadOlder(() -> {
