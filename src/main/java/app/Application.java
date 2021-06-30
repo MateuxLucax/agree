@@ -10,18 +10,21 @@ import gui.*;
 import gui.GroupManagementPanel;
 import gui.GroupPanel;
 import gui.MessagingPanel;
+import models.FriendshipRequest;
+import models.Request;
+import models.RequestState;
 import models.User;
 import models.group.Group;
 import models.message.Message;
 import repositories.group.IGroupRepository;
 import repositories.message.IMessageRepository;
+import repositories.user.IUserRepository;
 import services.login.ILoginService;
 import services.login.LoginService;
 import utils.AssetsUtil;
 
 import javax.swing.*;
-import java.util.Date;
-import java.util.LinkedList;
+import java.util.*;
 
 public class Application {
 
@@ -29,6 +32,7 @@ public class Application {
     private UserSession session;
     private IMessageRepository msgRepo;
     private IGroupRepository groupRepo;
+    private IUserRepository userRepo;
 
     public Application() {
         // Initialize theme
@@ -59,6 +63,7 @@ public class Application {
         session   = UserSession.getInstance();
         msgRepo   = session.getMessageRepository();
         groupRepo = session.getGroupRepository();
+        userRepo  = session.getUserRepository();
 
         authPanel.onLogin((name, password) -> {
             if (name.isEmpty() || password.isEmpty()) {
@@ -92,6 +97,8 @@ public class Application {
                 authPanel.warn("Someone already uses the name " + name);
             } catch (UnsafePasswordException e) {
                 authPanel.warn("Unsafe password!");
+                // TODO tell what the password requirements are
+                //     also, do it when the user moves the focus away from the password text field
             }
         });
     }
@@ -104,6 +111,9 @@ public class Application {
         // when we implement groups and users having their profile pictures:
         // https://stackoverflow.com/q/17648780
         var groupTabs = new JTabbedPane(JTabbedPane.LEFT);
+
+        // TODO order the groups with a Comparator that compares by last message date,
+        //     thus showing first the groups with most recent activity
 
         for (var group : session.getGroups()) {
             GroupPanel groupPanel = createGroupPanel(group, groupTabs);
@@ -133,13 +143,70 @@ public class Application {
             // not sure what to put here yet
             // if having someone as a friend automatically creates a group with just you and the friend only
             // then here we'll show a GroupPanel with said group
+            // TODO button to remove friend
             friendPanel.add(new JLabel(friend.getNickname()));
-            friendListPanel.addTab(friend.getNickname(), new JPanel());  // no UserPanel yet...
+            friendListPanel.addTab(friend.getNickname(), friendPanel);  // no UserPanel yet...
         }
+
+        var userSearchPanel = new UserSearchPanel();
+        userSearchPanel.onSearch(searchString -> {
+            List<User>    users = userRepo.searchUser(searchString);
+            List<UserBar> bars  = new ArrayList<>(users.size());
+            for (var user : users) {
+                var bar = new UserBar(user);
+
+                // If the user isn't in our friend list,
+                // we either have or haven't sent a friend request to him.
+                // If we have, we'll show the "request sent" button, greyed-out.
+                // If we haven't, we'll show the "ask to be friends" button,
+                // which when pressed sends the request to the user and
+                // also gets updated to the "request sent" button.
+                if (!session.getUser().equals(user) && !session.getFriends().contains(user)) {
+                    var btSent = new JButton("Request sent");
+                    btSent.setEnabled(false);
+
+                    /* NOTE: For when we have a database,
+                       maybe the search should do a SELECT query returning something like
+                       | nickname | isFriend | alreadySentFriendRequest |
+                       which would be more efficient(?)
+                       Basically, some extra information along with the list of users who match the search,
+                       so we don't need to do all this computation to check if it's a friend and if we have sent a request
+                     */
+
+                    boolean alreadySentRequest = false;
+                    List<Request> reqs = session.getRequests();
+                    for (int i = 0; !alreadySentRequest && i < reqs.size(); i++) {
+                        if (reqs.get(i).to().equals(user))
+                            alreadySentRequest = true;
+                    }
+                    if (alreadySentRequest) {
+                        bar.addButton(btSent);
+                    } else {
+                        var btAsk = new JButton("Ask to be friends");
+                        bar.addButton(btAsk);
+                        btAsk.addActionListener(evt -> {
+                            var request = new FriendshipRequest(session.getUser(), user, RequestState.PENDING);
+                            session.getRequests().add(request);
+                            // TODO actually add the request to the db / requestRepository?
+                            // TODO update the panel which will present the requests to/from the user to show this new one
+                            // Replace the "ask" button with the "request sent" button (TODO only do this if the request really succeded)
+                            bar.removeButton(btAsk);
+                            bar.repaint();
+                            bar.addButton(btSent);
+                        });
+
+                    }
+
+                }
+                bars.add(bar);
+            }
+            userSearchPanel.loadResults(bars);
+        });
 
         var mainPanel = new JTabbedPane(JTabbedPane.TOP);
         mainPanel.addTab("Groups", groupTabs);
         mainPanel.addTab("Friends", friendListPanel);
+        mainPanel.addTab("Search", userSearchPanel);
         // TODO "settings" tab
 
         frame.add(mainPanel);
@@ -151,7 +218,6 @@ public class Application {
     public GroupPanel createGroupPanel(Group group, JTabbedPane groupTabs) {
         var groupPanel = new GroupPanel();
 
-        MessagingPanel msgPanel = createMessagingPanel(group);
         MessagingPanel msgPanel = createGroupMessagingPanel(group);
         groupPanel.setMessagingTab(msgPanel);
 
@@ -166,7 +232,6 @@ public class Application {
         return groupPanel;
     }
 
-    public MessagingPanel createMessagingPanel(Group group) {
     public MessagingPanel createGroupMessagingPanel(Group group) {
         var msgPanel = new MessagingPanel();
         msgPanel.loadMessages(group.getMessages());

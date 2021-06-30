@@ -27,6 +27,10 @@ public abstract class Request {
         this.state = state;
     }
 
+    public String toString() {
+        return String.format("%s request from %s to %s", state, from, to);
+    }
+
     public abstract String getText();
 
     public abstract String getIcon();
