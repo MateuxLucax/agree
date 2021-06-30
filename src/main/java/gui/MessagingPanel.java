@@ -52,6 +52,7 @@ public class MessagingPanel extends JPanel {
         for (var msg : messages)
             msgListPanel.add(new MessagePanel(msg).getJPanel());
         msgListPanel.revalidate();
+        msgListPanel.repaint();
     }
 
     public void onLoadOlder(Runnable onLoadOlder) {

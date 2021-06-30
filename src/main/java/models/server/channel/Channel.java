@@ -15,11 +15,13 @@ public class Channel {
     private List<Message> messages;
     // private Deque<Message> messages;
 
-    private Map<Role, Permissions> permissions;
-    //            #main   #videos  #private
-    // Admin      DELETE  DELETE   DELETE
-    // Moderator  DELETE  DELETE   READ
-    // Guy        READ    READ     NONE
-    //
+    private Map<Role, Permission> permissions;
+    //            #main   #videos  #announcements  #private
+    // Admin      DELETE  DELETE   DELETE          DELETE
+    // Moderator  DELETE  DELETE   WRITE           READ
+    // Guy        WRITE   WRITE    READ            NONE
+
+    // so, inside the Channel main,
+    // Map permissions = { (admin, DELETE), (moderator, DELETE), (guy, WRITE) }
 
 }
