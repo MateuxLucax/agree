@@ -149,6 +149,7 @@ public class Application {
         }
 
         var userSearchPanel = new UserSearchPanel();
+        // TODO consider if maybe this whole lambda should be a class of its own or something, given its size
         userSearchPanel.onSearch(searchString -> {
             List<User>    users = userRepo.searchUser(searchString);
             List<UserBar> bars  = new ArrayList<>(users.size());
@@ -200,7 +201,7 @@ public class Application {
                 }
                 bars.add(bar);
             }
-            userSearchPanel.loadResults(bars);
+            return bars;
         });
 
         var mainPanel = new JTabbedPane(JTabbedPane.TOP);

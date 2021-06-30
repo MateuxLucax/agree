@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.BorderLayout;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class UserSearchPanel extends JPanel {
     private JButton    btSearch;
@@ -31,9 +32,9 @@ public class UserSearchPanel extends JPanel {
         add(resultsPanel, BorderLayout.CENTER);
     }
 
-    public void onSearch(Consumer<String> callback) {
+    public void onSearch(Function<String, List<UserBar>> searchFn) {
         btSearch.addActionListener(evt -> {
-            callback.accept(tfSearch.getText());
+            loadResults(searchFn.apply(tfSearch.getText()));
             tfSearch.setText("");
         });
     }
