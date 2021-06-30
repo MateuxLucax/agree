@@ -1,6 +1,5 @@
 package gui;
 
-import gui.MessagePanel;
 import models.message.Message;
 
 import javax.swing.*;

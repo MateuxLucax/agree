@@ -3,6 +3,7 @@ package app;
 import models.Request;
 import models.User;
 import models.group.Group;
+import models.group.GroupsSortByRecentMessages;
 import repositories.group.GroupInFileRepository;
 import repositories.group.IGroupRepository;
 import repositories.message.IMessageRepository;
@@ -55,7 +56,10 @@ public class UserSession {
     }
 
     public User getUser() { return user; }
-    public List<Group> getGroups() { return groups; }
+    public List<Group> getGroups() {
+        groups.sort(new GroupsSortByRecentMessages());
+        return groups;
+    }
     public List<User> getFriends() { return friends; }
     public List<Request> getRequests() { return requests; }
 
