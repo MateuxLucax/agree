@@ -1,0 +1,17 @@
+package models;
+
+public class FriendshipRequest extends Request {
+    public FriendshipRequest(User from, User to, RequestState state) {
+        super(from, to, state);
+    }
+
+    public String getText() {
+        return String.format("%s wants to be friends with you, %s",
+            from.getNickname(), to.getNickname());
+    }
+
+    public String getIcon() {
+        // TODO
+        return "<from.picture()>";
+    }
+}
