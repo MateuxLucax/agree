@@ -1,5 +1,6 @@
 package app;
 
+import models.Request;
 import models.User;
 import models.group.Group;
 import repositories.group.GroupInFileRepository;
@@ -20,6 +21,8 @@ public class UserSession {
     private       User user;
     private final List<Group> groups;
     private final List<User> friends;
+    private final List<Request> requests;
+
     private final IGroupRepository groupRepo;
     private final IMessageRepository msgRepo;
     private final IUserRepository userRepo;
@@ -27,6 +30,8 @@ public class UserSession {
     private UserSession() {
         groups = new ArrayList<>();
         friends = new ArrayList<>();
+        requests = new ArrayList<>();
+
         groupRepo = new GroupInFileRepository();
         msgRepo = new MessageInFileRepository();
         userRepo = new UserRepositoryInFile();
@@ -52,6 +57,7 @@ public class UserSession {
     public User getUser() { return user; }
     public List<Group> getGroups() { return groups; }
     public List<User> getFriends() { return friends; }
+    public List<Request> getRequests() { return requests; }
 
     public IMessageRepository getMessageRepository() { return msgRepo; }
     public IGroupRepository getGroupRepository() { return groupRepo; }
