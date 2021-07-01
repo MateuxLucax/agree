@@ -10,9 +10,6 @@ import gui.*;
 import gui.GroupManagementPanel;
 import gui.GroupPanel;
 import gui.MessagingPanel;
-import models.FriendshipRequest;
-import models.Request;
-import models.RequestState;
 import models.request.FriendshipRequest;
 import models.request.Request;
 import models.request.RequestState;
@@ -207,10 +204,27 @@ public class Application {
             return bars;
         });
 
+        var requestListPanel = new RequestListPanel();
+        for (var req : session.getRequests()) {
+            var reqBar = new RequestBar(req, session.getUser());
+            requestListPanel.addRequest(reqBar);
+            if (req.getState() == RequestState.PENDING && req.to().equals(session.getUser())) {
+                reqBar.onAccept(() -> {
+                    req.setState(RequestState.ACCEPTED);
+                    // TODO actually update request in the database
+                });
+                reqBar.onDecline(() -> {
+                    req.setState(RequestState.DECLINED);
+                    // TODO actually update request in the database
+                });
+            }
+        }
+
         var mainPanel = new JTabbedPane(JTabbedPane.TOP);
         mainPanel.addTab("Groups", groupTabs);
         mainPanel.addTab("Friends", friendListPanel);
         mainPanel.addTab("Search", userSearchPanel);
+        mainPanel.addTab("Requests", requestListPanel);
         // TODO "settings" tab
 
         frame.add(mainPanel);

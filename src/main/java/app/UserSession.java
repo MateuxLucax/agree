@@ -1,9 +1,12 @@
 package app;
 
-import models.Request;
+import models.request.FriendshipRequest;
+import models.request.GroupInvite;
+import models.request.Request;
 import models.User;
 import models.group.Group;
 import models.group.GroupsSortByRecentMessages;
+import models.request.RequestState;
 import repositories.group.GroupInFileRepository;
 import repositories.group.IGroupRepository;
 import repositories.message.IMessageRepository;
@@ -48,11 +51,24 @@ public class UserSession {
         groups.addAll(groupRepo.getGroups(user));  // Already retrieves the users
         groups.forEach(msgRepo::getMostRecentMessages);
 
-        // TODO
-        //     friends.addAll(friendshipRepo.getFriends(user));
-        friends.add(new User("john123", new Date()));
-        friends.add(new User("asdf", new Date()));
-        friends.add(new User("aeiou69", new Date()));
+        // TODO friends.addAll(friendshipRepo.getFriends(user));
+        // For now some dummy data to test
+        User us1 = new User("john123", new Date());
+        User us2 = new User("asdf", new Date());
+        User us3 = new User("aeiou69", new Date());
+        friends.add(us1);
+        friends.add(us2);
+        friends.add(us3);
+
+        // TODO requests.addAll(requestRepo.getRequests(user));
+        // For now some dummy data to test
+        requests.add(new FriendshipRequest(user, us1, RequestState.PENDING));
+        requests.add(new FriendshipRequest(us2, user, RequestState.PENDING));
+        requests.add(new FriendshipRequest(us3, user, RequestState.ACCEPTED));
+        if (!groups.isEmpty()) {
+            requests.add(new GroupInvite(user, us1, RequestState.DECLINED, groups.get(0)));
+            requests.add(new GroupInvite(us3, user, RequestState.ACCEPTED, groups.get(0)));
+        }
     }
 
     public User getUser() { return user; }
