@@ -1,5 +1,6 @@
-package models;
+package models.request;
 
+import models.User;
 import models.group.Group;
 
 public class GroupInvite extends Request {
@@ -11,8 +12,7 @@ public class GroupInvite extends Request {
     }
 
     public String getText() {
-        return String.format("%s invites %s to join %s",
-            from.getNickname(), to.getNickname(), group.getName());
+        return String.format("%s invites %s to join %s", from.getNickname(), to.getNickname(), group.getName());
     }
 
     public String getIcon() {

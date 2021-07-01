@@ -1,4 +1,4 @@
-package models;
+package models.request;
 
 public enum RequestState {
     PENDING,

@@ -1,4 +1,6 @@
-package models;
+package models.request;
+
+import models.User;
 
 public class FriendshipRequest extends Request {
     public FriendshipRequest(User from, User to, RequestState state) {

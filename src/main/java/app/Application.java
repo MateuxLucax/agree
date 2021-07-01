@@ -13,6 +13,9 @@ import gui.MessagingPanel;
 import models.FriendshipRequest;
 import models.Request;
 import models.RequestState;
+import models.request.FriendshipRequest;
+import models.request.Request;
+import models.request.RequestState;
 import models.User;
 import models.group.Group;
 import models.message.Message;
@@ -215,6 +218,8 @@ public class Application {
 
     // The role of these 'create' methods is to configure the behaviour
     // using the set...listener or setOn... methods provided by the panels
+    // We had to extract createGroupPanel to a method because it needed to be done twice in the code:
+    // when we load the user's groups, and when the user creates another group
 
     public GroupPanel createGroupPanel(Group group, JTabbedPane groupTabs) {
         var groupPanel = new GroupPanel();
