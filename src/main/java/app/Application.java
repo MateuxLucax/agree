@@ -148,6 +148,22 @@ public class Application {
             friendListPanel.addTab(friend.getNickname(), friendPanel);  // no UserPanel yet...
         }
 
+        var requestListPanel = new RequestListPanel();
+        for (var req : session.getRequests()) {
+            var reqBar = new RequestBar(req, session.getUser());
+            requestListPanel.addRequest(reqBar);
+            if (req.getState() == RequestState.PENDING && req.to().equals(session.getUser())) {
+                reqBar.onAccept(() -> {
+                    req.setState(RequestState.ACCEPTED);
+                    // TODO actually update request in the database
+                });
+                reqBar.onDecline(() -> {
+                    req.setState(RequestState.DECLINED);
+                    // TODO actually update request in the database
+                });
+            }
+        }
+
         var userSearchPanel = new UserSearchPanel();
         // TODO consider if maybe this whole lambda should be a class of its own or something, given its size
         userSearchPanel.onSearch(searchString -> {
@@ -188,9 +204,8 @@ public class Application {
                         btAsk.addActionListener(evt -> {
                             var request = new FriendshipRequest(session.getUser(), user, RequestState.PENDING);
                             session.getRequests().add(request);
-                            // TODO actually add the request to the db / requestRepository?
-                            // TODO update the panel which will present the requests to/from the user to show this new one
-                            // Replace the "ask" button with the "request sent" button (TODO only do this if the request really succeded)
+                            // TODO actually add the request to the db / requestRepository
+                            requestListPanel.addRequest(new RequestBar(request, session.getUser()));
                             bar.removeButton(btAsk);
                             bar.repaint();
                             bar.addButton(btSent);
@@ -203,22 +218,6 @@ public class Application {
             }
             return bars;
         });
-
-        var requestListPanel = new RequestListPanel();
-        for (var req : session.getRequests()) {
-            var reqBar = new RequestBar(req, session.getUser());
-            requestListPanel.addRequest(reqBar);
-            if (req.getState() == RequestState.PENDING && req.to().equals(session.getUser())) {
-                reqBar.onAccept(() -> {
-                    req.setState(RequestState.ACCEPTED);
-                    // TODO actually update request in the database
-                });
-                reqBar.onDecline(() -> {
-                    req.setState(RequestState.DECLINED);
-                    // TODO actually update request in the database
-                });
-            }
-        }
 
         var mainPanel = new JTabbedPane(JTabbedPane.TOP);
         mainPanel.addTab("Groups", groupTabs);
