@@ -10,6 +10,7 @@ import gui.*;
 import gui.GroupManagementPanel;
 import gui.MessagingPanel;
 import models.request.FriendshipRequest;
+import models.request.GroupInvite;
 import models.request.Request;
 import models.request.RequestState;
 import models.User;
@@ -106,6 +107,22 @@ public class Application {
     //     but then where do the set...Listener calls go?
     //     probably better to wait and do it when we're supposed to use MVC
     private void initializeMainPanel() {
+        var requestListPanel = new RequestListPanel();
+        for (var req : session.getRequests()) {
+            var reqBar = new RequestBar(req, session.getUser());
+            requestListPanel.addRequest(reqBar);
+            if (req.getState() == RequestState.PENDING && req.to().equals(session.getUser())) {
+                reqBar.onAccept(() -> {
+                    req.setState(RequestState.ACCEPTED);
+                    // TODO actually update request in the database
+                });
+                reqBar.onDecline(() -> {
+                    req.setState(RequestState.DECLINED);
+                    // TODO actually update request in the database
+                });
+            }
+        }
+
         // For now the tabs only have text, but we can add icons to them
         // when we implement groups and users having their profile pictures:
         // https://stackoverflow.com/q/17648780
@@ -115,7 +132,7 @@ public class Application {
         //     thus showing first the groups with most recent activity
 
         for (var group : session.getGroups()) {
-            JTabbedPane groupPanel = createGroupPanel(group, groupTabs);
+            JTabbedPane groupPanel = createGroupPanel(group, groupTabs, requestListPanel);
             groupTabs.addTab(group.getName(), groupPanel);
         }
 
@@ -129,7 +146,7 @@ public class Application {
                 groupTabs.insertTab(
                         group.getName(),
                         null,
-                        createGroupPanel(group, groupTabs),
+                        createGroupPanel(group, groupTabs, requestListPanel),
                         null,
                         groupTabs.getTabCount() - 1
                 );
@@ -145,22 +162,6 @@ public class Application {
             // TODO button to remove friend
             friendPanel.add(new JLabel(friend.getNickname()));
             friendListPanel.addTab(friend.getNickname(), friendPanel);  // no UserPanel yet...
-        }
-
-        var requestListPanel = new RequestListPanel();
-        for (var req : session.getRequests()) {
-            var reqBar = new RequestBar(req, session.getUser());
-            requestListPanel.addRequest(reqBar);
-            if (req.getState() == RequestState.PENDING && req.to().equals(session.getUser())) {
-                reqBar.onAccept(() -> {
-                    req.setState(RequestState.ACCEPTED);
-                    // TODO actually update request in the database
-                });
-                reqBar.onDecline(() -> {
-                    req.setState(RequestState.DECLINED);
-                    // TODO actually update request in the database
-                });
-            }
         }
 
         var userSearchPanel = new UserSearchPanel();
@@ -233,11 +234,12 @@ public class Application {
     // We had to extract createGroupPanel to a method because it needed to be done twice in the code:
     // when we load the user's groups, and when the user creates another group
 
-    public JTabbedPane createGroupPanel(Group group, JTabbedPane groupTabs) {
+    public JTabbedPane createGroupPanel(Group group, JTabbedPane groupTabs, RequestListPanel reqPanel) {
         var groupPanel = new JTabbedPane();
 
         groupPanel.addTab("Messages", createGroupMessagingPanel(group));
-        groupPanel.addTab("Members", createMembersPanel(group, groupTabs));
+        groupPanel.addTab("Members", createMembersPanel(group, groupTabs, reqPanel));
+        groupPanel.addTab("Invite", createGroupInvitePanel(group, reqPanel));
 
         if (group.getOwner().equals(session.getUser())) {
             groupPanel.addTab("Manage", createGroupManagementPanel(group, groupPanel, groupTabs).getJPanel());
@@ -291,7 +293,7 @@ public class Application {
         return managPanel;
     }
 
-    public UserListPanel createMembersPanel(Group group, JTabbedPane groupTabs) {
+    public UserListPanel createMembersPanel(Group group, JTabbedPane groupTabs, RequestListPanel reqPanel) {
         var membersPanel = new UserListPanel();
         for (var user : group.getUsers()) {
             var bar = new UserBar(user);
@@ -311,7 +313,7 @@ public class Application {
                     // TODO actually update owner in the database
 
                     // Recreate the GroupPanel, now with the other user as owner
-                    JTabbedPane groupPanel = createGroupPanel(group, groupTabs);
+                    JTabbedPane groupPanel = createGroupPanel(group, groupTabs, reqPanel);
                     // Replace the tab
                     int index = groupTabs.getSelectedIndex();
                     groupTabs.removeTabAt(index);
@@ -321,6 +323,32 @@ public class Application {
             membersPanel.addUserBar(bar);
         }
         return membersPanel;
+    }
+
+    public JPanel createGroupInvitePanel(Group group, RequestListPanel reqPanel) {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
+
+        for (var friend : session.getFriends()) {
+            var bar = new UserBar(friend);
+            panel.add(bar);
+            var btn = new JButton("Invite to group");
+            bar.addButton(btn);
+            btn.addActionListener(evt -> {
+                var invite = new GroupInvite(session.getUser(), friend, RequestState.PENDING, group);
+                session.getRequests().add(invite);
+                // TODO actually add request to the database
+                var reqBar = new RequestBar(invite, session.getUser());
+                reqPanel.addRequest(reqBar);
+                bar.removeButton(btn);
+                bar.repaint();
+                var btSent = new JButton("Invite sent");
+                btSent.setEnabled(false);
+                bar.addButton(btSent);
+            });
+        }
+
+        return panel;
     }
 
     public static void main(String[] args) {
