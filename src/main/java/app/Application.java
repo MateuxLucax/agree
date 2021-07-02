@@ -107,7 +107,43 @@ public class Application {
     //     but then where do the set...Listener calls go?
     //     probably better to wait and do it when we're supposed to use MVC
     private void initializeMainPanel() {
+        // The panels are created here in order of dependency
+
+        //
+        // Friend list panel
+        //
+        var friendsTabs = new JTabbedPane(JTabbedPane.LEFT);
+        friendsTabs.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+        for (var friend : session.getFriends()) {
+            friendsTabs.addTab(friend.getNickname(), createFriendPanel(friend));
+        }
+
+        // The request list panel and the group list panel
+        // mutually depend on each other because of createGroupPanel calls
+        // in both. So we needed to declare this variable above where
+        // we actually add stuff to the requestListPanel
         var requestListPanel = new RequestListPanel();
+
+        //
+        // Group list panel
+        // (see createGroupPanel() for what each group panel looks like)
+        //
+        // For now the tabs only have text, but we can add icons to them
+        // when we implement groups and users having their profile pictures:
+        // https://stackoverflow.com/q/17648780
+        var groupsTabs = new JTabbedPane(JTabbedPane.LEFT);
+        groupsTabs.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+        session.getGroups().sort(Group.mostRecentActivityFirst());
+        for (var group : session.getGroups()) {
+            JTabbedPane groupPanel = createGroupPanel(group, groupsTabs, requestListPanel);
+            groupsTabs.addTab(group.getName(), groupPanel);
+            // TODO idenfity groups with unread messages somehow
+        }
+
+
+        //
+        // Request list panel (friendship requests, group invites)
+        //
         for (var req : session.getRequests()) {
             var reqBar = new RequestBar(req, session.getUser());
             requestListPanel.addRequest(reqBar);
@@ -115,6 +151,28 @@ public class Application {
                 reqBar.onAccept(() -> {
                     req.setState(RequestState.ACCEPTED);
                     // TODO actually update request in the database
+                    if (req instanceof FriendshipRequest) {
+                        // TODO actually add friendship relationship in the database
+                        // Now we need to update the friend list panel to also show this new friend
+                        User newFriend = req.from();
+                        friendsTabs.addTab(newFriend.getNickname(), createFriendPanel(newFriend));
+                    } else {  // req instanceof GroupInvite
+                        // TODO actually add user to the group in the database
+                        // Now we need to make this group available to the user,
+                        // who just got invited to it and accepted,
+                        // which involves creating its groupPanel and also its tab in the groupsTabs panel
+                        var invite = (GroupInvite) req;
+                        Group group = invite.getGroup();
+                        invite.getGroup().addUser(req.to());
+                        JTabbedPane groupPanel = createGroupPanel(group, groupsTabs, requestListPanel);
+                        groupsTabs.insertTab(
+                                group.getName(),
+                                null,
+                                createGroupPanel(group, groupsTabs, requestListPanel),
+                                null,
+                                groupsTabs.getTabCount() - 1
+                        );
+                    }
                 });
                 reqBar.onDecline(() -> {
                     req.setState(RequestState.DECLINED);
@@ -123,20 +181,9 @@ public class Application {
             }
         }
 
-        // For now the tabs only have text, but we can add icons to them
-        // when we implement groups and users having their profile pictures:
-        // https://stackoverflow.com/q/17648780
-        var groupsTabs = new JTabbedPane(JTabbedPane.LEFT);
-        groupsTabs.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
-
-        // TODO order the groups with a Comparator that compares by last message date,
-        //     thus showing first the groups with most recent activity
-
-        for (var group : session.getGroups()) {
-            JTabbedPane groupPanel = createGroupPanel(group, groupsTabs, requestListPanel);
-            groupsTabs.addTab(group.getName(), groupPanel);
-        }
-
+        //
+        // Panel for creating a new group
+        //
         var groupCreationPanel = new CreateGroupPanel();
         groupsTabs.addTab("+ New group", groupCreationPanel.getJPanel());
 
@@ -151,21 +198,16 @@ public class Application {
                         null,
                         groupsTabs.getTabCount() - 1
                 );
+                // TODO extract the groupsTabs stuff to its own class,
+                //    so we can more easily add a new tab into it withuot
+                //    having to worry that it can't take the place of the
+                //    "+ New group" tab as the last tab
             }
         });
 
-        var friendsTabs = new JTabbedPane(JTabbedPane.LEFT);
-        friendsTabs.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
-        for (var friend : session.getFriends()) {
-            var friendPanel = new JPanel();
-            // not sure what to put here yet
-            // if having someone as a friend automatically creates a group with just you and the friend only
-            // then here we'll show a GroupPanel with said group
-            // TODO button to remove friend
-            friendPanel.add(new JLabel(friend.getNickname()));
-            friendsTabs.addTab(friend.getNickname(), friendPanel);  // no UserPanel yet...
-        }
-
+        //
+        // User search panel
+        //
         var userSearchPanel = new UserSearchPanel();
         // TODO consider if maybe this whole lambda should be a class of its own or something, given its size
         userSearchPanel.onSearch(searchString -> {
@@ -221,27 +263,55 @@ public class Application {
             return bars;
         });
 
+        //
+        // Panel listing the users who belong to the same groups as you
+        //
+
+        // "USG": [U]sers in the [S]ame [G]roup as you
+        // (couldn't think of a shorter term for this, so I made up an acronym to avoid really long variable names)
+        // TODO extract to its own panel
+        var usgScrollPane = new JScrollPane();
+        usgScrollPane.getVerticalScrollBar().setUnitIncrement(20);
+        var usgPanel = new JPanel();
+        usgScrollPane.setViewportView(usgPanel);
+        // We use a Set to ensure that a user who belongs to more
+        // than one group in common appears only once in here
+        Set<User> usgSet = new HashSet<>();
+        for (var group : session.getGroups()) {
+            usgSet.addAll(group.getUsers());
+        }
+        for (var user : usgSet) {
+            var bar = new UserBar(user);
+            usgPanel.add(bar);
+            // TODO "add friend" button
+            //    then this "add friend" functionality is implemented in two places, here and in the search panel
+        }
+
+        // Make all those panels available in the main/home panel by tabs
         var mainPanel = new JTabbedPane(JTabbedPane.TOP);
         mainPanel.addTab("Groups", groupsTabs);
         mainPanel.addTab("Friends", friendsTabs);
         mainPanel.addTab("Search", userSearchPanel);
         mainPanel.addTab("Requests", requestListPanel);
+        mainPanel.addTab("Users in the same groups as you", usgScrollPane);
         // TODO "settings" tab
 
         frame.add(mainPanel);
     }
 
+    // We had to extract createGroupPanel to a method because it needed to be done twice in the code:
+    // when we load the user's groups, and when the user creates another group.
+    // And from that it just seemed nice to also extract the procedures that create the group's subpanels
+    // to their own methods too.
     // The role of these 'create' methods is to configure the behaviour
     // using the set...listener or setOn... methods provided by the panels
-    // We had to extract createGroupPanel to a method because it needed to be done twice in the code:
-    // when we load the user's groups, and when the user creates another group
 
     public JTabbedPane createGroupPanel(Group group, JTabbedPane groupTabs, RequestListPanel reqPanel) {
         var groupPanel = new JTabbedPane();
 
         groupPanel.addTab("Messages", createGroupMessagingPanel(group));
         groupPanel.addTab("Members", createMembersPanel(group, groupTabs, reqPanel));
-        groupPanel.addTab("Invite", createGroupInvitePanel(group, reqPanel));
+        groupPanel.addTab("Invite friends", createGroupInvitePanel(group, reqPanel));
 
         if (group.getOwner().equals(session.getUser())) {
             groupPanel.addTab("Manage", createGroupManagementPanel(group, groupPanel, groupTabs).getJPanel());
@@ -297,6 +367,13 @@ public class Application {
 
     public UserListPanel createMembersPanel(Group group, JTabbedPane groupTabs, RequestListPanel reqPanel) {
         var membersPanel = new UserListPanel();
+
+        var ownerBar = new UserBar(group.getOwner());
+        var btOwner = new JButton("Owner");
+        btOwner.setEnabled(false);
+        ownerBar.addButton(btOwner);
+        membersPanel.addUserBar(ownerBar);
+
         for (var user : group.getUsers()) {
             var bar = new UserBar(user);
             if (session.getUser().equals(group.getOwner())) {
@@ -330,6 +407,16 @@ public class Application {
     public GroupInvitePanel createGroupInvitePanel(Group group, RequestListPanel reqPanel) {
         var panel = new GroupInvitePanel();
 
+        // TODO 1. don't show "invite to group" button for users already in the group,
+        //         and also not for the owner;
+        //         actually, just don't show them in the list!
+        //      2. don't show "invite to group" button for users for whom an invite has already been sent
+        //         instead show the "invite sent" button
+        //      again, doing a database query returning something like
+        //      | nickname | inGroup | groupInviteSent |
+        //      would be *very* useful here,
+        //      but, for now, we could just search in the userSession lists as we do in the user search panel
+
         for (var friend : session.getFriends()) {
             var bar = new UserBar(friend);
             panel.addBar(bar);
@@ -351,6 +438,21 @@ public class Application {
 
         return panel;
     }
+
+    // Again, we needed to create a new friend panel in two places
+    // (at startup, when we create the panels for each of the user's current friends
+    // and when the user accepts a friendship request from someone else),
+    // and thus this needed to be extracted to its own method
+    public JPanel createFriendPanel(User friend) {
+        // Although we don't know yet what we put in a friend panel
+        // Maybe a MessagingPanel for private messages
+        // For now we just have this placeholder panel
+        var lb = new JLabel(friend.getNickname());
+        var pn = new JPanel();
+        pn.add(lb);
+        return pn;
+    }
+
 
     public static void main(String[] args) {
         new Application();

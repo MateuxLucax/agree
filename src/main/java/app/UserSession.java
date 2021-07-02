@@ -50,28 +50,28 @@ public class UserSession {
         this.user = user;
         groups.addAll(groupRepo.getGroups(user));  // Already retrieves the users
         groups.forEach(msgRepo::getMostRecentMessages);
-
         // TODO friends.addAll(friendshipRepo.getFriends(user));
-        // For now some dummy data to test
-        User us1 = new User("john123", new Date());
-        User us2 = new User("asdf", new Date());
-        User us3 = new User("aeiou69", new Date());
-        friends.add(us1);
-        friends.add(us2);
-        friends.add(us3);
-        for (int i = 0; i < 40; i++) {
-            friends.add(new User(":^)", new Date()));
-        }
-
         // TODO requests.addAll(requestRepo.getRequests(user));
-        // For now some dummy data to test
-        requests.add(new FriendshipRequest(user, us1, RequestState.PENDING));
-        requests.add(new FriendshipRequest(us2, user, RequestState.PENDING));
-        requests.add(new FriendshipRequest(us3, user, RequestState.ACCEPTED));
-        if (!groups.isEmpty()) {
-            requests.add(new GroupInvite(user, us1, RequestState.DECLINED, groups.get(0)));
-            requests.add(new GroupInvite(us3, user, RequestState.ACCEPTED, groups.get(0)));
+
+        // Dummy data for testing, while we don't yet persist all of our data
+        groups.add(new Group("testGroup:)", user));
+        User us1 = new User("joao", new Date());
+        User us2 = new User("jose", new Date());
+        User us3 = new User("mario", new Date());
+        for (var group : groups) {
+            group.addUser(us1);
+            group.addUser(us2);
         }
+        friends.add(us3);
+        Request req1 = new FriendshipRequest(user, us1, RequestState.PENDING);
+        Request req2 = new FriendshipRequest(us2, user, RequestState.PENDING);
+        Request req3 = new GroupInvite(user, us3, RequestState.PENDING, groups.get(0));
+        requests.add(req1);
+        requests.add(req2);
+        requests.add(req3);
+        Group otherGroup = new Group(":o", us3);
+        Request req4 = new GroupInvite(us3, user, RequestState.PENDING, otherGroup);
+        requests.add(req4);
     }
 
     public User getUser() { return user; }

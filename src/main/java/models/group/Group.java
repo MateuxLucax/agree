@@ -108,4 +108,8 @@ public class Group {
     public int hashCode() {
         return Objects.hash(id);
     }
+
+    public static Comparator<Group> mostRecentActivityFirst() {
+        return new GroupsSortByRecentMessages();
+    }
 }

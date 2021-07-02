@@ -1,5 +1,6 @@
 package models.request;
 
+import app.UserSession;
 import models.User;
 
 public class FriendshipRequest extends Request {

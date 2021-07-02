@@ -11,6 +11,10 @@ public class GroupInvite extends Request {
         this.group = group;
     }
 
+    public Group getGroup() {
+        return group;
+    }
+
     public String getText() {
         return String.format("%s invites %s to join %s", from.getNickname(), to.getNickname(), group.getName());
     }
