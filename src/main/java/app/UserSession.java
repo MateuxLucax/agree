@@ -61,10 +61,6 @@ public class UserSession {
         friends.add(us3);
         for (int i = 0; i < 40; i++) {
             friends.add(new User(":^)", new Date()));
-            // FIXME this shows that we can't scroll tabs...
-            //     if we have too many friends it'll just start stacking the tabs on the left.
-            //     Unless we can scroll through the tabs instead of listing all of them,
-            //     we *can't* use tabs for this
         }
 
         // TODO requests.addAll(requestRepo.getRequests(user));

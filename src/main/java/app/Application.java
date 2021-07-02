@@ -126,34 +126,36 @@ public class Application {
         // For now the tabs only have text, but we can add icons to them
         // when we implement groups and users having their profile pictures:
         // https://stackoverflow.com/q/17648780
-        var groupTabs = new JTabbedPane(JTabbedPane.LEFT);
+        var groupsTabs = new JTabbedPane(JTabbedPane.LEFT);
+        groupsTabs.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 
         // TODO order the groups with a Comparator that compares by last message date,
         //     thus showing first the groups with most recent activity
 
         for (var group : session.getGroups()) {
-            JTabbedPane groupPanel = createGroupPanel(group, groupTabs, requestListPanel);
-            groupTabs.addTab(group.getName(), groupPanel);
+            JTabbedPane groupPanel = createGroupPanel(group, groupsTabs, requestListPanel);
+            groupsTabs.addTab(group.getName(), groupPanel);
         }
 
         var groupCreationPanel = new CreateGroupPanel();
-        groupTabs.addTab("+ New group", groupCreationPanel.getJPanel());
+        groupsTabs.addTab("+ New group", groupCreationPanel.getJPanel());
 
         groupCreationPanel.onCreation(groupName -> {
             var group = new Group(groupName, session.getUser());
             if (groupRepo.createGroup(group)) {
                 // insert the new tab before the "+ New group" one, so it's always last
-                groupTabs.insertTab(
+                groupsTabs.insertTab(
                         group.getName(),
                         null,
-                        createGroupPanel(group, groupTabs, requestListPanel),
+                        createGroupPanel(group, groupsTabs, requestListPanel),
                         null,
-                        groupTabs.getTabCount() - 1
+                        groupsTabs.getTabCount() - 1
                 );
             }
         });
 
-        var friendListPanel = new JTabbedPane(JTabbedPane.LEFT);
+        var friendsTabs = new JTabbedPane(JTabbedPane.LEFT);
+        friendsTabs.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
         for (var friend : session.getFriends()) {
             var friendPanel = new JPanel();
             // not sure what to put here yet
@@ -161,7 +163,7 @@ public class Application {
             // then here we'll show a GroupPanel with said group
             // TODO button to remove friend
             friendPanel.add(new JLabel(friend.getNickname()));
-            friendListPanel.addTab(friend.getNickname(), friendPanel);  // no UserPanel yet...
+            friendsTabs.addTab(friend.getNickname(), friendPanel);  // no UserPanel yet...
         }
 
         var userSearchPanel = new UserSearchPanel();
@@ -220,8 +222,8 @@ public class Application {
         });
 
         var mainPanel = new JTabbedPane(JTabbedPane.TOP);
-        mainPanel.addTab("Groups", groupTabs);
-        mainPanel.addTab("Friends", friendListPanel);
+        mainPanel.addTab("Groups", groupsTabs);
+        mainPanel.addTab("Friends", friendsTabs);
         mainPanel.addTab("Search", userSearchPanel);
         mainPanel.addTab("Requests", requestListPanel);
         // TODO "settings" tab
