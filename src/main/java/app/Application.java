@@ -8,7 +8,6 @@ import exceptions.UnauthorizedUserException;
 import exceptions.UnsafePasswordException;
 import gui.*;
 import gui.GroupManagementPanel;
-import gui.GroupPanel;
 import gui.MessagingPanel;
 import models.request.FriendshipRequest;
 import models.request.Request;
@@ -116,7 +115,7 @@ public class Application {
         //     thus showing first the groups with most recent activity
 
         for (var group : session.getGroups()) {
-            GroupPanel groupPanel = createGroupPanel(group, groupTabs);
+            JTabbedPane groupPanel = createGroupPanel(group, groupTabs);
             groupTabs.addTab(group.getName(), groupPanel);
         }
 
@@ -234,18 +233,14 @@ public class Application {
     // We had to extract createGroupPanel to a method because it needed to be done twice in the code:
     // when we load the user's groups, and when the user creates another group
 
-    public GroupPanel createGroupPanel(Group group, JTabbedPane groupTabs) {
-        var groupPanel = new GroupPanel();
+    public JTabbedPane createGroupPanel(Group group, JTabbedPane groupTabs) {
+        var groupPanel = new JTabbedPane();
 
-        MessagingPanel msgPanel = createGroupMessagingPanel(group);
-        groupPanel.setMessagingTab(msgPanel);
-
-        UserListPanel membersPanel = createMembersPanel(group, groupTabs);
-        groupPanel.setMembersTab(membersPanel);
+        groupPanel.addTab("Messages", createGroupMessagingPanel(group));
+        groupPanel.addTab("Members", createMembersPanel(group, groupTabs));
 
         if (group.getOwner().equals(session.getUser())) {
-            GroupManagementPanel managPanel = createGroupManagementPanel(group, groupPanel, groupTabs);
-            groupPanel.setManagementTab(managPanel);
+            groupPanel.addTab("Manage", createGroupManagementPanel(group, groupPanel, groupTabs).getJPanel());
         }
 
         return groupPanel;
@@ -278,7 +273,7 @@ public class Application {
         return msgPanel;
     }
 
-    public GroupManagementPanel createGroupManagementPanel(Group group, GroupPanel groupPanel, JTabbedPane groupTabs) {
+    public GroupManagementPanel createGroupManagementPanel(Group group, JTabbedPane groupPanel, JTabbedPane groupTabs) {
         var managPanel = new GroupManagementPanel(group.getName());
         managPanel.onRename(newName -> {
             group.setName(newName);
@@ -316,7 +311,7 @@ public class Application {
                     // TODO actually update owner in the database
 
                     // Recreate the GroupPanel, now with the other user as owner
-                    GroupPanel groupPanel = createGroupPanel(group, groupTabs);
+                    JTabbedPane groupPanel = createGroupPanel(group, groupTabs);
                     // Replace the tab
                     int index = groupTabs.getSelectedIndex();
                     groupTabs.removeTabAt(index);
