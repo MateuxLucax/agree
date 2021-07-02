@@ -29,9 +29,11 @@ public class RequestBar extends JPanel {
         var text = new JLabel(request.getText());
         add(text, BorderLayout.CENTER);
 
+        var stateContainer = new JPanel();  // So the button doesn't occupy the whole LINE_END segment
         btState = new JButton(request.getState().toString()); // TODO add colors (accepted green, declined red)
         btState.setEnabled(false);
-        add(btState, BorderLayout.LINE_END);
+        stateContainer.add(btState);
+        add(stateContainer, BorderLayout.LINE_END);
 
         buttonsPanel = new JPanel();
         buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.LINE_AXIS));
