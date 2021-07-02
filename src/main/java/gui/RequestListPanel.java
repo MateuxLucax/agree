@@ -2,11 +2,15 @@ package gui;
 
 import javax.swing.*;
 
-public class RequestListPanel extends JPanel {
+public class RequestListPanel extends JScrollPane {
+    private JPanel reqsPanel;
     public RequestListPanel() {
-        setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+        reqsPanel = new JPanel();
+        reqsPanel.setLayout(new BoxLayout(reqsPanel, BoxLayout.PAGE_AXIS));
+        setViewportView(reqsPanel);
+        getVerticalScrollBar().setUnitIncrement(20);
     }
     public void addRequest(RequestBar bar) {
-        add(bar);
+        reqsPanel.add(bar);
     }
 }

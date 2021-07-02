@@ -325,10 +325,14 @@ public class Application {
         return membersPanel;
     }
 
-    public JPanel createGroupInvitePanel(Group group, RequestListPanel reqPanel) {
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
+    public JScrollPane createGroupInvitePanel(Group group, RequestListPanel reqPanel) {
+        JScrollPane scrollPane = new JScrollPane();
 
+        JPanel panel = new JPanel();
+        scrollPane.setViewportView(panel);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(20);
+
+        panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
         for (var friend : session.getFriends()) {
             var bar = new UserBar(friend);
             panel.add(bar);
@@ -348,7 +352,7 @@ public class Application {
             });
         }
 
-        return panel;
+        return scrollPane;
     }
 
     public static void main(String[] args) {

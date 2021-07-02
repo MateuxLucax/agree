@@ -12,6 +12,7 @@ public class CreateGroupPanel {
         btCreate.addActionListener(evt -> {
             String groupName = tfGroupName.getText();
             onCreation.accept(groupName);
+            tfGroupName.setText("");
         });
     }
 
