@@ -43,7 +43,7 @@ public class GroupInFileRepository implements IGroupRepository {
     @Override
     public List<Group> getGroups(User user) {
         return groups.stream()
-                .filter(group -> group.getOwner().equals(user) || group.getUsers().contains(user))
+                .filter(g -> g.isMember(user))
                 .collect(Collectors.toList());
     }
 

@@ -59,7 +59,9 @@ public class Group {
         this.name = name;
     }
 
-    public User getOwner() { return owner; }
+    public User getOwner() {
+        return owner;
+    }
 
     public void setOwner(User newOwner) {
         if (newOwner == null)
@@ -71,13 +73,19 @@ public class Group {
         return Collections.unmodifiableList(users);
     }
 
-    public LinkedList<Message> getMessages() { return messages; }
-
     public void addUser(User user) { users.add(user); }
 
     public void removeUser(User user) {
         if (!user.equals(owner))
             users.remove(user);
+    }
+
+    public boolean isMember(User u) {
+        return u.equals(owner) || users.contains(u);
+    }
+
+    public LinkedList<Message> getMessages() {
+        return messages;
     }
 
     public void loadMessageAbove(Message msg) {
@@ -107,6 +115,11 @@ public class Group {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 
     public static Comparator<Group> mostRecentActivityFirst() {

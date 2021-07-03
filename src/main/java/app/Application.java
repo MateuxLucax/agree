@@ -9,6 +9,7 @@ import exceptions.UnsafePasswordException;
 import gui.*;
 import gui.GroupManagementPanel;
 import gui.MessagingPanel;
+import models.UserGroupsMap;
 import models.request.FriendshipRequest;
 import models.request.GroupInvite;
 import models.request.Request;
@@ -25,6 +26,7 @@ import utils.AssetsUtil;
 
 import javax.swing.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Application {
 
@@ -269,13 +271,19 @@ public class Application {
 
         // "USG": [U]sers in the [S]ame [G]roup as you
         // (couldn't think of a shorter term for this, so I made up an acronym to avoid really long variable names)
-        // TODO extract to its own panel
+        // TODO extract this to its own panel
         var usgScrollPane = new JScrollPane();
         usgScrollPane.getVerticalScrollBar().setUnitIncrement(20);
         var usgPanel = new JPanel();
         usgScrollPane.setViewportView(usgPanel);
-        // We use a Set to ensure that a user who belongs to more
-        // than one group in common appears only once in here
+        usgPanel.setLayout(new BoxLayout(usgPanel, BoxLayout.PAGE_AXIS));
+        /* We previously used a Set to show all the users who belong to the same
+         * groups as the user in session without showing duplicates when some user
+         * belongs to more than one group in common.
+         * But then the user seeing this list won't know which groups in common those are.
+         * So now instead we use a Map<User, List<Group>> to show, for each user,
+         * what are the groups they have in common with you.
+         * The previous Set implementation is commented below.
         Set<User> usgSet = new HashSet<>();
         for (var group : session.getGroups()) {
             usgSet.addAll(group.getUsers());
@@ -283,8 +291,30 @@ public class Application {
         for (var user : usgSet) {
             var bar = new UserBar(user);
             usgPanel.add(bar);
-            // TODO "add friend" button
-            //    then this "add friend" functionality is implemented in two places, here and in the search panel
+        }
+        */
+        var usgMap = new UserGroupsMap();
+        for (var group : session.getGroups()) {
+            // Don't show the user in session himself in this list
+            if (group.isMember(session.getUser()))
+                continue;
+            usgMap.add(group.getOwner(), group);
+            for (var user : group.getUsers())
+                usgMap.add(user, group);
+        }
+        for (var user : usgMap.userSet()) {
+            List<Group> groups = usgMap.get(user);
+            // Show which groups the user has in common in a string formatted like
+            // user123 belongs to group1, The Group and final group
+            var strGroups = new StringBuilder();
+            strGroups.append(user.getNickname()).append(" belongs to ");
+            strGroups.append(groups);
+
+            usgPanel.add(new JLabel(strGroups.toString()));
+            // Just in a JLabel for now
+            // TODO "ask to be friends" button
+            //     which would require this functionality to be extracted to a method and called here
+            //     otherwise it'd be implemented twice -- here and in the user search panel
         }
 
         // Make all those panels available in the main/home panel by tabs
@@ -388,6 +418,7 @@ public class Application {
                 JButton btSetOwner = new JButton("Set owner");
                 bar.addButton(btSetOwner);
                 btSetOwner.addActionListener(evt -> {
+                    group.removeUser(user);
                     group.setOwner(user);
                     // TODO actually update owner in the database
 
@@ -415,7 +446,7 @@ public class Application {
         var panel = new GroupInvitePanel();
         for (var friend : session.getFriends()) {
             // Don't show friends who already are in the group
-            if (group.getUsers().contains(friend) || group.getOwner().equals(friend))
+            if (group.isMember(friend))
                 continue;
             // Check whether we've already invited this friend to this group
             boolean alreadySentInvite = false;

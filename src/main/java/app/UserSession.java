@@ -54,14 +54,18 @@ public class UserSession {
         // TODO requests.addAll(requestRepo.getRequests(user));
 
         // Dummy data for testing, while we don't yet persist all of our data
-        groups.add(new Group("testGroup:)", user));
         User us1 = new User("joao", new Date());
         User us2 = new User("jose", new Date());
         User us3 = new User("mario", new Date());
-        for (var group : groups) {
-            group.addUser(us1);
-            group.addUser(us2);
-        }
+        Group g1 = new Group("test group :^)", user);
+        groups.add(g1);
+        g1.addUser(us1);
+        g1.addUser(us2);
+        Group g2 = new Group("yet another group", us1);
+        groups.add(g2);
+        g2.addUser(user);
+        g2.addUser(us2);
+        g2.addUser(us3);
         friends.add(us3);
         Request req1 = new FriendshipRequest(user, us1, RequestState.PENDING);
         Request req2 = new FriendshipRequest(us2, user, RequestState.PENDING);
