@@ -21,6 +21,6 @@ public class GroupInvite extends Request {
 
     public String getIcon() {
         // TODO
-        return "<group.picture()>";
+        return "";
     }
 }

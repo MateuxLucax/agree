@@ -1,6 +1,5 @@
 package models.request;
 
-import app.UserSession;
 import models.User;
 
 public class FriendshipRequest extends Request {
@@ -15,6 +14,6 @@ public class FriendshipRequest extends Request {
 
     public String getIcon() {
         // TODO
-        return "<from.picture()>";
+        return "";
     }
 }

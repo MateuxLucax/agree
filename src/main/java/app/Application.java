@@ -405,35 +405,49 @@ public class Application {
     }
 
     public GroupInvitePanel createGroupInvitePanel(Group group, RequestListPanel reqPanel) {
+        // TODO possible opportunity to use Map: (theoretically) speeding up these
+        //     queries that check whether a user is in the group or an invite has already been sent,
+        //     (somehow) replacing the linear search with a constant lookup.
+        //     -- could also be done in the user search panel, where we check
+        //        for each user whether it's already a friend of the user in session
+        //        and only show the "ask to be friends" button if they aren't or if
+        //        a friend request has already been sent
         var panel = new GroupInvitePanel();
-
-        // TODO 1. don't show "invite to group" button for users already in the group,
-        //         and also not for the owner;
-        //         actually, just don't show them in the list!
-        //      2. don't show "invite to group" button for users for whom an invite has already been sent
-        //         instead show the "invite sent" button
-        //      again, doing a database query returning something like
-        //      | nickname | inGroup | groupInviteSent |
-        //      would be *very* useful here,
-        //      but, for now, we could just search in the userSession lists as we do in the user search panel
-
         for (var friend : session.getFriends()) {
+            // Don't show friends who already are in the group
+            if (group.getUsers().contains(friend) || group.getOwner().equals(friend))
+                continue;
+            // Check whether we've already invited this friend to this group
+            boolean alreadySentInvite = false;
+            List<Request> reqs = session.getRequests();
+            for (int i = 0; !alreadySentInvite && i < reqs.size(); i++) {
+                Request req = reqs.get(i);
+                if (req instanceof GroupInvite && req.to().equals(friend))
+                    alreadySentInvite = true;
+            }
+            // If we've already sent a group invite to this friend,
+            // then don't show the "Invite to group" button, but rather
+            // the greyed-out "Invite sent" button
             var bar = new UserBar(friend);
             panel.addBar(bar);
-            var btn = new JButton("Invite to group");
-            bar.addButton(btn);
-            btn.addActionListener(evt -> {
-                var invite = new GroupInvite(session.getUser(), friend, RequestState.PENDING, group);
-                session.getRequests().add(invite);
-                // TODO actually add request to the database
-                var reqBar = new RequestBar(invite, session.getUser());
-                reqPanel.addRequest(reqBar);
-                bar.removeButton(btn);
-                bar.repaint();
-                var btSent = new JButton("Invite sent");
-                btSent.setEnabled(false);
+            var btSent = new JButton("Invite sent");
+            btSent.setEnabled(false);
+            if (alreadySentInvite) {
                 bar.addButton(btSent);
-            });
+            } else {
+                var btn = new JButton("Invite to group");
+                bar.addButton(btn);
+                btn.addActionListener(evt -> {
+                    var invite = new GroupInvite(session.getUser(), friend, RequestState.PENDING, group);
+                    session.getRequests().add(invite);
+                    // TODO actually add request to the database
+                    var reqBar = new RequestBar(invite, session.getUser());
+                    reqPanel.addRequest(reqBar);
+                    bar.removeButton(btn);
+                    bar.repaint();
+                    bar.addButton(btSent);
+                });
+            }
         }
 
         return panel;
