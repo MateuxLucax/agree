@@ -1,12 +1,14 @@
 package app;
 
-import models.request.FriendshipRequest;
-import models.request.GroupInvite;
-import models.request.Request;
 import models.User;
 import models.group.Group;
 import models.group.GroupsSortByRecentMessages;
-import models.request.RequestState;
+import models.invite.FriendshipInvite;
+import models.invite.GroupInvite;
+import models.invite.Invite;
+import models.invite.InviteState;
+import repositories.friendship.FriendshipInFileRepository;
+import repositories.friendship.IFriendshipRepository;
 import repositories.group.GroupInFileRepository;
 import repositories.group.IGroupRepository;
 import repositories.message.IMessageRepository;
@@ -25,20 +27,22 @@ public class UserSession {
     private       User user;
     private final List<Group> groups;
     private final List<User> friends;
-    private final List<Request> requests;
+    private final List<Invite> invites;
 
     private final IGroupRepository groupRepo;
     private final IMessageRepository msgRepo;
     private final IUserRepository userRepo;
+    private final IFriendshipRepository friendshipRepository;
 
     private UserSession() {
         groups = new ArrayList<>();
         friends = new ArrayList<>();
-        requests = new ArrayList<>();
+        invites = new ArrayList<>();
 
         groupRepo = new GroupInFileRepository();
         msgRepo = new MessageInFileRepository();
         userRepo = new UserRepositoryInFile();
+        friendshipRepository = new FriendshipInFileRepository();
     }
 
     public static synchronized UserSession getInstance() {
@@ -67,15 +71,15 @@ public class UserSession {
         g2.addUser(us2);
         g2.addUser(us3);
         friends.add(us3);
-        Request req1 = new FriendshipRequest(user, us1, RequestState.PENDING);
-        Request req2 = new FriendshipRequest(us2, user, RequestState.PENDING);
-        Request req3 = new GroupInvite(user, us3, RequestState.PENDING, groups.get(0));
-        requests.add(req1);
-        requests.add(req2);
-        requests.add(req3);
+        Invite req1 = new FriendshipInvite(user, us1, InviteState.PENDING);
+        Invite req2 = new FriendshipInvite(us2, user, InviteState.PENDING);
+        Invite req3 = new GroupInvite(user, us3, InviteState.PENDING, groups.get(0));
+        invites.add(req1);
+        invites.add(req2);
+        invites.add(req3);
         Group otherGroup = new Group(":o", us3);
-        Request req4 = new GroupInvite(us3, user, RequestState.PENDING, otherGroup);
-        requests.add(req4);
+        Invite req4 = new GroupInvite(us3, user, InviteState.PENDING, otherGroup);
+        invites.add(req4);
     }
 
     public User getUser() { return user; }
@@ -84,9 +88,10 @@ public class UserSession {
         return groups;
     }
     public List<User> getFriends() { return friends; }
-    public List<Request> getRequests() { return requests; }
+    public List<Invite> getInvites() { return invites; }
 
     public IMessageRepository getMessageRepository() { return msgRepo; }
     public IGroupRepository getGroupRepository() { return groupRepo; }
     public IUserRepository getUserRepository() { return userRepo; }
+    public IFriendshipRepository getFriendshipRepository() { return friendshipRepository; }
 }

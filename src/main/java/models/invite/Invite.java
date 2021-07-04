@@ -1,13 +1,13 @@
-package models.request;
+package models.invite;
 
 import models.User;
 
-public abstract class Request {
+public abstract class Invite {
     protected final User from;
     protected final User to;
-    protected RequestState state;
+    protected InviteState state;
 
-    public Request(User from, User to, RequestState state) {
+    public Invite(User from, User to, InviteState state) {
         this.from  = from;
         this.to    = to;
         this.state = state;
@@ -21,11 +21,11 @@ public abstract class Request {
         return this.to;
     }
 
-    public RequestState getState() {
+    public InviteState getState() {
         return state;
     }
 
-    public void setState(RequestState state) {
+    public void setState(InviteState state) {
         this.state = state;
     }
 

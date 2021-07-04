@@ -7,15 +7,13 @@ import exceptions.NameAlreadyInUseException;
 import exceptions.UnauthorizedUserException;
 import exceptions.UnsafePasswordException;
 import gui.*;
-import gui.GroupManagementPanel;
-import gui.MessagingPanel;
-import models.UserGroupsMap;
-import models.request.FriendshipRequest;
-import models.request.GroupInvite;
-import models.request.Request;
-import models.request.RequestState;
 import models.User;
+import models.UserGroupsMap;
 import models.group.Group;
+import models.invite.FriendshipInvite;
+import models.invite.GroupInvite;
+import models.invite.Invite;
+import models.invite.InviteState;
 import models.message.Message;
 import repositories.group.IGroupRepository;
 import repositories.message.IMessageRepository;
@@ -25,8 +23,10 @@ import services.login.LoginService;
 import utils.AssetsUtil;
 
 import javax.swing.*;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 public class Application {
 
@@ -123,8 +123,8 @@ public class Application {
         // The request list panel and the group list panel
         // mutually depend on each other because of createGroupPanel calls
         // in both. So we needed to declare this variable above where
-        // we actually add stuff to the requestListPanel
-        var requestListPanel = new RequestListPanel();
+        // we actually add stuff to the invitesPanel
+        var invitesPanel = new InvitesListPanel();
 
         //
         // Group list panel
@@ -137,7 +137,7 @@ public class Application {
         groupsTabs.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
         session.getGroups().sort(Group.mostRecentActivityFirst());
         for (var group : session.getGroups()) {
-            JTabbedPane groupPanel = createGroupPanel(group, groupsTabs, requestListPanel);
+            JTabbedPane groupPanel = createGroupPanel(group, groupsTabs, invitesPanel);
             groupsTabs.addTab(group.getName(), groupPanel);
             // TODO idenfity groups with unread messages somehow
         }
@@ -146,14 +146,14 @@ public class Application {
         //
         // Request list panel (friendship requests, group invites)
         //
-        for (var req : session.getRequests()) {
-            var reqBar = new RequestBar(req, session.getUser());
-            requestListPanel.addRequest(reqBar);
-            if (req.getState() == RequestState.PENDING && req.to().equals(session.getUser())) {
+        for (var req : session.getInvites()) {
+            var reqBar = new InvitesBar(req, session.getUser());
+            invitesPanel.addInvite(reqBar);
+            if (req.getState() == InviteState.PENDING && req.to().equals(session.getUser())) {
                 reqBar.onAccept(() -> {
-                    req.setState(RequestState.ACCEPTED);
+                    req.setState(InviteState.ACCEPTED);
                     // TODO actually update request in the database
-                    if (req instanceof FriendshipRequest) {
+                    if (req instanceof FriendshipInvite) {
                         // TODO actually add friendship relationship in the database
                         // Now we need to update the friend list panel to also show this new friend
                         User newFriend = req.from();
@@ -166,18 +166,18 @@ public class Application {
                         var invite = (GroupInvite) req;
                         Group group = invite.getGroup();
                         invite.getGroup().addUser(req.to());
-                        JTabbedPane groupPanel = createGroupPanel(group, groupsTabs, requestListPanel);
+                        JTabbedPane groupPanel = createGroupPanel(group, groupsTabs, invitesPanel);
                         groupsTabs.insertTab(
                                 group.getName(),
                                 null,
-                                createGroupPanel(group, groupsTabs, requestListPanel),
+                                createGroupPanel(group, groupsTabs, invitesPanel),
                                 null,
                                 groupsTabs.getTabCount() - 1
                         );
                     }
                 });
                 reqBar.onDecline(() -> {
-                    req.setState(RequestState.DECLINED);
+                    req.setState(InviteState.DECLINED);
                     // TODO actually update request in the database
                 });
             }
@@ -196,7 +196,7 @@ public class Application {
                 groupsTabs.insertTab(
                         group.getName(),
                         null,
-                        createGroupPanel(group, groupsTabs, requestListPanel),
+                        createGroupPanel(group, groupsTabs, invitesPanel),
                         null,
                         groupsTabs.getTabCount() - 1
                 );
@@ -237,7 +237,7 @@ public class Application {
                      */
 
                     boolean alreadySentRequest = false;
-                    List<Request> reqs = session.getRequests();
+                    List<Invite> reqs = session.getInvites();
                     for (int i = 0; !alreadySentRequest && i < reqs.size(); i++) {
                         if (reqs.get(i).to().equals(user))
                             alreadySentRequest = true;
@@ -248,10 +248,10 @@ public class Application {
                         var btAsk = new JButton("Ask to be friends");
                         bar.addButton(btAsk);
                         btAsk.addActionListener(evt -> {
-                            var request = new FriendshipRequest(session.getUser(), user, RequestState.PENDING);
-                            session.getRequests().add(request);
+                            var request = new FriendshipInvite(session.getUser(), user, InviteState.PENDING);
+                            session.getInvites().add(request);
                             // TODO actually add the request to the db / requestRepository
-                            requestListPanel.addRequest(new RequestBar(request, session.getUser()));
+                            invitesPanel.addInvite(new InvitesBar(request, session.getUser()));
                             bar.removeButton(btAsk);
                             bar.repaint();
                             bar.addButton(btSent);
@@ -322,7 +322,7 @@ public class Application {
         mainPanel.addTab("Groups", groupsTabs);
         mainPanel.addTab("Friends", friendsTabs);
         mainPanel.addTab("Search", userSearchPanel);
-        mainPanel.addTab("Requests", requestListPanel);
+        mainPanel.addTab("Requests", invitesPanel);
         mainPanel.addTab("Users in the same groups as you", usgScrollPane);
         // TODO "settings" tab
 
@@ -336,7 +336,7 @@ public class Application {
     // The role of these 'create' methods is to configure the behaviour
     // using the set...listener or setOn... methods provided by the panels
 
-    public JTabbedPane createGroupPanel(Group group, JTabbedPane groupTabs, RequestListPanel reqPanel) {
+    public JTabbedPane createGroupPanel(Group group, JTabbedPane groupTabs, InvitesListPanel reqPanel) {
         var groupPanel = new JTabbedPane();
 
         groupPanel.addTab("Messages", createGroupMessagingPanel(group));
@@ -395,7 +395,7 @@ public class Application {
         return managPanel;
     }
 
-    public UserListPanel createMembersPanel(Group group, JTabbedPane groupTabs, RequestListPanel reqPanel) {
+    public UserListPanel createMembersPanel(Group group, JTabbedPane groupTabs, InvitesListPanel reqPanel) {
         var membersPanel = new UserListPanel();
 
         var ownerBar = new UserBar(group.getOwner());
@@ -435,7 +435,7 @@ public class Application {
         return membersPanel;
     }
 
-    public GroupInvitePanel createGroupInvitePanel(Group group, RequestListPanel reqPanel) {
+    public GroupInvitePanel createGroupInvitePanel(Group group, InvitesListPanel reqPanel) {
         // TODO possible opportunity to use Map: (theoretically) speeding up these
         //     queries that check whether a user is in the group or an invite has already been sent,
         //     (somehow) replacing the linear search with a constant lookup.
@@ -450,9 +450,9 @@ public class Application {
                 continue;
             // Check whether we've already invited this friend to this group
             boolean alreadySentInvite = false;
-            List<Request> reqs = session.getRequests();
+            List<Invite> reqs = session.getInvites();
             for (int i = 0; !alreadySentInvite && i < reqs.size(); i++) {
-                Request req = reqs.get(i);
+                Invite req = reqs.get(i);
                 if (req instanceof GroupInvite && req.to().equals(friend))
                     alreadySentInvite = true;
             }
@@ -469,11 +469,11 @@ public class Application {
                 var btn = new JButton("Invite to group");
                 bar.addButton(btn);
                 btn.addActionListener(evt -> {
-                    var invite = new GroupInvite(session.getUser(), friend, RequestState.PENDING, group);
-                    session.getRequests().add(invite);
+                    var invite = new GroupInvite(session.getUser(), friend, InviteState.PENDING, group);
+                    session.getInvites().add(invite);
                     // TODO actually add request to the database
-                    var reqBar = new RequestBar(invite, session.getUser());
-                    reqPanel.addRequest(reqBar);
+                    var reqBar = new InvitesBar(invite, session.getUser());
+                    reqPanel.addInvite(reqBar);
                     bar.removeButton(btn);
                     bar.repaint();
                     bar.addButton(btSent);

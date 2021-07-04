@@ -1,9 +1,8 @@
 package gui;
 
 import javax.swing.*;
-import java.awt.BorderLayout;
+import java.awt.*;
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class UserSearchPanel extends JPanel {

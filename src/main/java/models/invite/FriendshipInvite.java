@@ -1,9 +1,9 @@
-package models.request;
+package models.invite;
 
 import models.User;
 
-public class FriendshipRequest extends Request {
-    public FriendshipRequest(User from, User to, RequestState state) {
+public class FriendshipInvite extends Invite {
+    public FriendshipInvite(User from, User to, InviteState state) {
         super(from, to, state);
     }
 

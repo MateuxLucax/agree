@@ -1,12 +1,12 @@
-package models.request;
+package models.invite;
 
 import models.User;
 import models.group.Group;
 
-public class GroupInvite extends Request {
-    private Group group;
+public class GroupInvite extends Invite {
+    private final Group group;
 
-    public GroupInvite(User from, User to, RequestState state, Group group) {
+    public GroupInvite(User from, User to, InviteState state, Group group) {
         super(from, to, state);
         this.group = group;
     }

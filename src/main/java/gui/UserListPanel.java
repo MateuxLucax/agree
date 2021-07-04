@@ -4,7 +4,7 @@ import javax.swing.*;
 
 public class UserListPanel extends JScrollPane {
 
-    private JPanel barsPanel;
+    private final JPanel barsPanel;
 
     public UserListPanel() {
         barsPanel = new JPanel();
