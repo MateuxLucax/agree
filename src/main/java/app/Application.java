@@ -353,16 +353,12 @@ public class Application {
         var msgPanel = new MessagingPanel();
         msgPanel.loadMessages(group.getMessages());
         msgPanel.onLoadOlder(() -> {
-            LinkedList<Message> messages = group.getMessages();
-            Date date = messages.isEmpty() ? new Date() : messages.getFirst().sentAt();
-            msgRepo.getMessagesBefore(group, date);
-            msgPanel.loadMessages(messages);
+            msgRepo.getMessagesBefore(group, group.oldestMessageDate());
+            msgPanel.loadMessages(group.getMessages());
         });
         msgPanel.onLoadNewer(() -> {
-            LinkedList<Message> messages = group.getMessages();
-            Date date = messages.isEmpty() ? new Date() : messages.getLast().sentAt();
-            msgRepo.getMessagesAfter(group, date);
-            msgPanel.loadMessages(messages);
+            msgRepo.getMessagesAfter(group, group.newestMessageDate());
+            msgPanel.loadMessages(group.getMessages());
         });
         msgPanel.onSendMessage(text -> {
             var msg = new Message(session.getUser(), text, new Date());

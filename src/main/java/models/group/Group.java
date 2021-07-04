@@ -100,6 +100,14 @@ public class Group {
         messages.addLast(msg);
     }
 
+    public Date oldestMessageDate() {
+        return messages.isEmpty() ? new Date() : messages.getFirst().sentAt();
+    }
+
+    public Date newestMessageDate() {
+        return messages.isEmpty() ? new Date() : messages.getLast().sentAt();
+    }
+
     public void setMessages(List<Message> messages) {
         this.messages.addAll(messages);
     }
