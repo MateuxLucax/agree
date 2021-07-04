@@ -24,7 +24,6 @@ public class FriendshipInFileRepository implements IFriendshipRepository {
 
     private Optional<UserFriendship> getUser(User user) {
         return friendships.stream().filter(userFriendship -> userFriendship.user.equals(user)).findFirst();
-
     }
 
     @Override

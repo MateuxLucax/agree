@@ -11,6 +11,8 @@ import repositories.friendship.FriendshipInFileRepository;
 import repositories.friendship.IFriendshipRepository;
 import repositories.group.GroupInFileRepository;
 import repositories.group.IGroupRepository;
+import repositories.invite.IInviteRepository;
+import repositories.invite.InviteRepositoryInFile;
 import repositories.message.IMessageRepository;
 import repositories.message.MessageInFileRepository;
 import repositories.user.IUserRepository;
@@ -33,6 +35,7 @@ public class UserSession {
     private final IMessageRepository msgRepo;
     private final IUserRepository userRepo;
     private final IFriendshipRepository friendshipRepository;
+    private final IInviteRepository inviteRepository;
 
     private UserSession() {
         groups = new ArrayList<>();
@@ -43,6 +46,7 @@ public class UserSession {
         msgRepo = new MessageInFileRepository();
         userRepo = new UserRepositoryInFile();
         friendshipRepository = new FriendshipInFileRepository();
+        inviteRepository = new InviteRepositoryInFile();
     }
 
     public static synchronized UserSession getInstance() {
@@ -94,4 +98,7 @@ public class UserSession {
     public IGroupRepository getGroupRepository() { return groupRepo; }
     public IUserRepository getUserRepository() { return userRepo; }
     public IFriendshipRepository getFriendshipRepository() { return friendshipRepository; }
+    public IInviteRepository getInviteRepository() {
+        return inviteRepository;
+    }
 }
