@@ -58,9 +58,12 @@ public class UserSession {
         this.user = user;
         groups.addAll(groupRepo.getGroups(user));  // Already retrieves the users
         groups.forEach(msgRepo::getMostRecentMessages);
-        // TODO friends.addAll(friendshipRepo.getFriends(user));
-        // TODO requests.addAll(requestRepo.getRequests(user));
+        friends.addAll(friendshipRepository.getFriends(user));
+        invites.addAll(inviteRepository.getInvites(user));
+//        generateDummyData(user);
+    }
 
+    private void generateDummyData(User user) {
         // Dummy data for testing, while we don't yet persist all of our data
         User us1 = new User("joao", new Date());
         User us2 = new User("jose", new Date());

@@ -8,6 +8,8 @@ import java.util.List;
 
 public interface IInviteRepository {
 
+    List<Invite> getInvites(User user);
+
     List<Invite> getInvites(User user, InviteState state);
 
     boolean addInvite(Invite invite);

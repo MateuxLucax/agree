@@ -248,10 +248,9 @@ public class Application {
                         var btAsk = new JButton("Ask to be friends");
                         bar.addButton(btAsk);
                         btAsk.addActionListener(evt -> {
-                            var request = new FriendshipInvite(session.getUser(), user, InviteState.PENDING);
-                            session.getInvites().add(request);
-                            // TODO actually add the request to the db / requestRepository
-                            invitesPanel.addInvite(new InvitesBar(request, session.getUser()));
+                            var invite = new FriendshipInvite(session.getUser(), user, InviteState.PENDING);
+                            session.getInviteRepository().addInvite(invite);
+                            invitesPanel.addInvite(new InvitesBar(invite, session.getUser()));
                             bar.removeButton(btAsk);
                             bar.repaint();
                             bar.addButton(btSent);
