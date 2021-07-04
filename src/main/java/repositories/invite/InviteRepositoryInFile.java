@@ -9,6 +9,7 @@ import utils.JsonDatabaseUtil;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class InviteRepositoryInFile implements IInviteRepository {
@@ -35,13 +36,15 @@ public class InviteRepositoryInFile implements IInviteRepository {
 
     @Override
     public boolean addInvite(Invite invite) {
+        if (invites.contains(invite))
+            return false;
         invites.add(invite);
         return JsonDatabaseUtil.writeToFile(invitesFile, invites);
     }
 
     @Override
     public boolean updateInvite(User user, InviteState state) {
-        var userInvite = invites.stream().filter(invite -> invite.to().equals(user)).findFirst();
+        Optional<Invite> userInvite = invites.stream().filter(invite -> invite.to().equals(user)).findFirst();
         if (userInvite.isPresent()) {
             userInvite.get().setState(state);
             return true;
