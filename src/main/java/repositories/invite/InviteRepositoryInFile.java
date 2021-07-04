@@ -39,7 +39,10 @@ public class InviteRepositoryInFile implements IInviteRepository {
         if (invites.contains(invite))
             return false;
         invites.add(invite);
-        return JsonDatabaseUtil.writeToFile(invitesFile, invites);
+        boolean success = JsonDatabaseUtil.writeToFile(invitesFile, invites);
+        if (!success)
+            invites.remove(invite);
+        return success;
     }
 
     @Override
