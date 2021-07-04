@@ -321,7 +321,7 @@ public class Application {
         mainPanel.addTab("Groups", groupsTabs);
         mainPanel.addTab("Friends", friendsTabs);
         mainPanel.addTab("Search", userSearchPanel);
-        mainPanel.addTab("Requests", invitesPanel);
+        mainPanel.addTab("Invites", invitesPanel);
         mainPanel.addTab("Users in the same groups as you", usgScrollPane);
         // TODO "settings" tab
 

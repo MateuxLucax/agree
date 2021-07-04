@@ -25,12 +25,12 @@ public class InviteRepositoryInFile implements IInviteRepository {
 
     @Override
     public List<Invite> getInvites(User user) {
-        return invites.stream().filter(invite -> invite.to().equals(user)).collect(Collectors.toList());
+        return invites.stream().filter(invite -> invite.involves(user)).collect(Collectors.toList());
     }
 
     @Override
     public List<Invite> getInvites(User user, InviteState state) {
-        return invites.stream().filter(invite -> invite.to().equals(user) && invite.getState().equals(state)).collect(Collectors.toList());
+        return invites.stream().filter(invite -> invite.involves(user) && invite.getState().equals(state)).collect(Collectors.toList());
     }
 
     @Override

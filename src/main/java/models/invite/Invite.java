@@ -21,6 +21,10 @@ public abstract class Invite {
         return this.to;
     }
 
+    public boolean involves(User user) {
+        return from.equals(user) || to.equals(user);
+    }
+
     public InviteState getState() {
         return state;
     }
