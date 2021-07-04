@@ -12,6 +12,14 @@ public class FriendshipInvite extends Invite {
             from.getNickname(), to.getNickname());
     }
 
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        GroupInvite that = (GroupInvite) o;
+        return to.equals(that.to)
+            && from.equals(that.from);
+    }
+
     public String getIcon() {
         // TODO
         return "";

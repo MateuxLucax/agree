@@ -15,6 +15,15 @@ public class GroupInvite extends Invite {
         return group;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        GroupInvite that = (GroupInvite) o;
+        return to.equals(that.to)
+            && from.equals(that.from)
+            && group.equals(that.group);
+    }
     public String getText() {
         return String.format("%s invites %s to join %s", from.getNickname(), to.getNickname(), group.getName());
     }
