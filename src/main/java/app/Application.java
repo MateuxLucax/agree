@@ -413,10 +413,9 @@ public class Application {
                 JButton btSetOwner = new JButton("Set owner");
                 bar.addButton(btSetOwner);
                 btSetOwner.addActionListener(evt -> {
-                    group.removeUser(user);
-                    group.setOwner(user);
                     // TODO actually update owner in the database
 
+                    group.changeOwner(user);
                     // Recreate the GroupPanel, now with the other user as owner
                     JTabbedPane groupPanel = createGroupPanel(group, groupTabs, reqPanel);
                     // Replace the tab
@@ -431,13 +430,6 @@ public class Application {
     }
 
     public GroupInvitePanel createGroupInvitePanel(Group group, InvitesListPanel reqPanel) {
-        // TODO possible opportunity to use Map: (theoretically) speeding up these
-        //     queries that check whether a user is in the group or an invite has already been sent,
-        //     (somehow) replacing the linear search with a constant lookup.
-        //     -- could also be done in the user search panel, where we check
-        //        for each user whether it's already a friend of the user in session
-        //        and only show the "ask to be friends" button if they aren't or if
-        //        a friend request has already been sent
         var panel = new GroupInvitePanel();
         for (var friend : session.getFriends()) {
             // Don't show friends who already are in the group
@@ -475,7 +467,6 @@ public class Application {
                 });
             }
         }
-
         return panel;
     }
 

@@ -38,7 +38,9 @@ public class Group {
 
     public Group(String name, User owner) {
         this.name = name;
-        setOwner(owner);
+        if (owner == null)
+            throw new NullPointerException("Groups need an owner");
+        this.owner = owner;
         this.users = new ArrayList<>();
         this.messages = new LinkedList<>();
     }
@@ -63,9 +65,13 @@ public class Group {
         return owner;
     }
 
-    public void setOwner(User newOwner) {
+    public void changeOwner(User newOwner) {
         if (newOwner == null)
             throw new NullPointerException("Groups need an owner");
+        // old owner becomes a user and is added to the user list
+        users.add(owner);
+        // new owner, former user, gets removed from the user list and set as owner
+        users.remove(newOwner);
         owner = newOwner;
     }
 
@@ -76,8 +82,7 @@ public class Group {
     public void addUser(User user) { users.add(user); }
 
     public void removeUser(User user) {
-        if (!user.equals(owner))
-            users.remove(user);
+        users.remove(user);
     }
 
     public boolean isMember(User u) {

@@ -60,10 +60,10 @@ public class UserSession {
         groups.forEach(msgRepo::getMostRecentMessages);
         friends.addAll(friendshipRepository.getFriends(user));
         invites.addAll(inviteRepository.getInvites(user));
-//        generateDummyData(user);
+        generateDummyData();
     }
 
-    private void generateDummyData(User user) {
+    private void generateDummyData() {
         // Dummy data for testing, while we don't yet persist all of our data
         User us1 = new User("joao", new Date());
         User us2 = new User("jose", new Date());
