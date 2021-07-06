@@ -71,8 +71,7 @@ public class Application {
             try {
                 session.initialize(loginService.authenticate(name, password));
                 authFrame.dispose();
-                // initializeMainFrame0();  // old gui
-                initializeMainFrame();  // new gui
+                initializeMainFrame();
             } catch (UnauthorizedUserException e) {
                 authPanel.warn("Incorrect username or password!");
             }
@@ -89,8 +88,7 @@ public class Application {
                     session.initialize(user);
                 }
                 authFrame.dispose();
-                // initializeMainFrame0();  // old gui
-                initializeMainFrame();  // new gui
+                initializeMainFrame();
             } catch (NameAlreadyInUseException e) {
                 authPanel.warn("Someone already uses the name " + name);
             } catch (UnsafePasswordException e) {
