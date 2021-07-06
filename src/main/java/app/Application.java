@@ -213,7 +213,7 @@ public class Application {
                 var invitesPanel = new InviteListPanel();
                 List<Invite> invites = session.getInviteRepository().getInvites(session.getUser());
                 for (var inv : invites) {
-                    var invBar = new InvitesBar(inv, session.getUser());
+                    var invBar = new InviteBar(inv, session.getUser());
                     invitesPanel.addInvite(invBar);
                     if (inv.getState() == InviteState.PENDING && inv.to().equals(session.getUser())) {
                         invBar.onAccept(() -> {
@@ -474,7 +474,7 @@ public class Application {
                     var invite = new GroupInvite(session.getUser(), friend, InviteState.PENDING, group);
                     session.getInvites().add(invite);
                     // TODO actually add invite to the database
-                    var invBar = new InvitesBar(invite, session.getUser());
+                    var invBar = new InviteBar(invite, session.getUser());
                     bar.removeButton(btn);
                     bar.repaint();
                     bar.addButton(btSent);

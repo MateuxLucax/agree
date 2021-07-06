@@ -10,7 +10,7 @@ public class InviteListPanel extends JScrollPane {
         setViewportView(invitesPanel);
         getVerticalScrollBar().setUnitIncrement(20);
     }
-    public void addInvite(InvitesBar bar) {
+    public void addInvite(InviteBar bar) {
         invitesPanel.add(bar);
     }
 }

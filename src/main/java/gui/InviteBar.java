@@ -7,7 +7,7 @@ import models.invite.InviteState;
 import javax.swing.*;
 import java.awt.*;
 
-public class InvitesBar extends JPanel {
+public class InviteBar extends JPanel {
     private final Invite invite;
     private User    viewer;
 
@@ -16,7 +16,7 @@ public class InvitesBar extends JPanel {
     private JButton btAccept;
     private JButton btDecline;
 
-    public InvitesBar(Invite invite, User viewer) {
+    public InviteBar(Invite invite, User viewer) {
         this.invite = invite;
         this.viewer  = viewer;
 
