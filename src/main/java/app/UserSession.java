@@ -60,33 +60,6 @@ public class UserSession {
         groups.forEach(msgRepo::getMostRecentMessages);
         friends.addAll(friendshipRepository.getFriends(user));
         invites.addAll(inviteRepository.getInvites(user));
-        generateDummyData();
-    }
-
-    private void generateDummyData() {
-        // Dummy data for testing, while we don't yet persist all of our data
-        User us1 = new User("joao", new Date());
-        User us2 = new User("jose", new Date());
-        User us3 = new User("mario", new Date());
-        Group g1 = new Group("test group :^)", user);
-        groups.add(g1);
-        g1.addUser(us1);
-        g1.addUser(us2);
-        Group g2 = new Group("yet another group", us1);
-        groups.add(g2);
-        g2.addUser(user);
-        g2.addUser(us2);
-        g2.addUser(us3);
-        friends.add(us3);
-        Invite req1 = new FriendshipInvite(user, us1, InviteState.PENDING);
-        Invite req2 = new FriendshipInvite(us2, user, InviteState.PENDING);
-        Invite req3 = new GroupInvite(user, us3, InviteState.PENDING, groups.get(0));
-        invites.add(req1);
-        invites.add(req2);
-        invites.add(req3);
-        Group otherGroup = new Group(":o", us3);
-        Invite req4 = new GroupInvite(us3, user, InviteState.PENDING, otherGroup);
-        invites.add(req4);
     }
 
     public User getUser() { return user; }
@@ -94,6 +67,8 @@ public class UserSession {
         groups.sort(new GroupsSortByRecentMessages());
         return groups;
     }
+
+    // TODO remove:
     public List<User> getFriends() { return friends; }
     public List<Invite> getInvites() { return invites; }
 

@@ -75,6 +75,10 @@ public class Group {
         owner = newOwner;
     }
 
+    public boolean isOwnedBy(User user) {
+        return owner.equals(user);
+    }
+
     public List<User> getUsers() {
         return Collections.unmodifiableList(users);
     }
@@ -86,7 +90,7 @@ public class Group {
     }
 
     public boolean isMember(User u) {
-        return u.equals(owner) || users.contains(u);
+        return owner.equals(u) || users.contains(u);
     }
 
     public LinkedList<Message> getMessages() {
