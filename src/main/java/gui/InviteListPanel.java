@@ -2,9 +2,9 @@ package gui;
 
 import javax.swing.*;
 
-public class InvitesListPanel extends JScrollPane {
+public class InviteListPanel extends JScrollPane {
     private JPanel invitesPanel;
-    public InvitesListPanel() {
+    public InviteListPanel() {
         invitesPanel = new JPanel();
         invitesPanel.setLayout(new BoxLayout(invitesPanel, BoxLayout.PAGE_AXIS));
         setViewportView(invitesPanel);
