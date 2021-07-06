@@ -20,17 +20,14 @@ import repositories.message.IMessageRepository;
 import repositories.user.IUserRepository;
 import services.login.ILoginService;
 import services.login.LoginService;
-import utils.AssetsUtil;
 
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 
 public class Application {
 
-    private final JFrame frame;
     private UserSession session;
     private IMessageRepository msgRepo;
     private IGroupRepository groupRepo;
@@ -46,21 +43,18 @@ public class Application {
             e.printStackTrace();
         }
 
-        frame = new JFrame("Agree");
-        frame.setIconImage(AssetsUtil.getImage(AssetsUtil.ICON));
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
         startUserSession();
     }
 
     private void startUserSession() {
+        var authFrame = new JFrame();
+
         ILoginService loginService = new LoginService();
         var authPanel = new AuthPanel();
-        frame.add(authPanel.getJPanel());
+        authFrame.setContentPane(authPanel.getJPanel());
 
-        frame.pack();
-        frame.setExtendedState(frame.getExtendedState() | JFrame.MAXIMIZED_BOTH);
-        frame.setVisible(true);
+        authFrame.pack();
+        authFrame.setVisible(true);
 
         session   = UserSession.getInstance();
         msgRepo   = session.getMessageRepository();
@@ -74,9 +68,8 @@ public class Application {
             }
             try {
                 session.initialize(loginService.authenticate(name, password));
-                frame.remove(authPanel.getJPanel());
-                initializeMainPanel();
-                frame.revalidate();
+                authFrame.dispose();
+                initializeMainFrame();
             } catch (UnauthorizedUserException e) {
                 authPanel.warn("Incorrect username or password!");
             }
@@ -92,9 +85,8 @@ public class Application {
                 if (loginService.createUser(user)) {
                     session.initialize(user);
                 }
-                frame.remove(authPanel.getJPanel());
-                initializeMainPanel();
-                frame.revalidate();
+                authFrame.dispose();
+                initializeMainFrame();
             } catch (NameAlreadyInUseException e) {
                 authPanel.warn("Someone already uses the name " + name);
             } catch (UnsafePasswordException e) {
@@ -108,7 +100,8 @@ public class Application {
     // TODO move the main panel into a gui.MainPanel class
     //     but then where do the set...Listener calls go?
     //     probably better to wait and do it when we're supposed to use MVC
-    private void initializeMainPanel() {
+    private void initializeMainFrame() {
+        var mainFrame = new JFrame();
         // The panels are created here in order of dependency
 
         //
@@ -325,7 +318,9 @@ public class Application {
         mainPanel.addTab("Users in the same groups as you", usgScrollPane);
         // TODO "settings" tab
 
-        frame.add(mainPanel);
+        mainFrame.setContentPane(mainPanel);
+        mainFrame.pack();
+        mainFrame.setVisible(true);
     }
 
     // We had to extract createGroupPanel to a method because it needed to be done twice in the code:
