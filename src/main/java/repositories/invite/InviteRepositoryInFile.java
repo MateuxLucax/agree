@@ -18,6 +18,7 @@ public class InviteRepositoryInFile implements IInviteRepository {
     private final List<Invite> invites = new ArrayList<>();
 
     public InviteRepositoryInFile() {
+        // FIXME? Does not work correctly; tries to instance Invite objects, but Invite is abstract
         invitesFile = JsonDatabaseUtil.getFile("invites.json");
         List<Invite> invitesFromFile = JsonDatabaseUtil.readFromFile(invitesFile, new TypeToken<List<Invite>>() {}.getType());
         if (invitesFromFile != null)
