@@ -3,6 +3,7 @@ package app;
 import com.github.weisj.darklaf.LafManager;
 import com.github.weisj.darklaf.theme.DarculaTheme;
 import com.github.weisj.darklaf.theme.laf.DarculaThemeDarklafLookAndFeel;
+import controllers.AuthController;
 import exceptions.NameAlreadyInUseException;
 import exceptions.UnauthorizedUserException;
 import exceptions.UnsafePasswordException;
@@ -36,7 +37,11 @@ public class Application {
     private IUserRepository userRepo;
 
     public Application() {
-        // Initialize theme
+        initializeTheme();
+        startUserSession();
+    }
+
+    private void initializeTheme() {
         LafManager.install();
         LafManager.setTheme(new DarculaTheme());
         try {
@@ -44,59 +49,26 @@ public class Application {
         } catch (UnsupportedLookAndFeelException e) {
             e.printStackTrace();
         }
-
-        startUserSession();
     }
 
     private void startUserSession() {
         var authFrame = new JFrame();
-
-        ILoginService loginService = new LoginService();
         var authPanel = new AuthPanel();
         authFrame.setContentPane(authPanel.getJPanel());
-
         authFrame.pack();
         authFrame.setVisible(true);
 
+        var authController = new AuthController(authFrame, authPanel);
+        authController.onSuccess(user -> {
+            session.initialize(user);
+            initializeMainFrame();
+        });
+
+        // Setting up some shortcuts
         session   = UserSession.getInstance();
         msgRepo   = session.getMessageRepository();
         groupRepo = session.getGroupRepository();
         userRepo  = session.getUserRepository();
-
-        authPanel.onLogin((name, password) -> {
-            if (name.isEmpty() || password.isEmpty()) {
-                authPanel.warn("Username and password are required!");
-                return;
-            }
-            try {
-                session.initialize(loginService.authenticate(name, password));
-                authFrame.dispose();
-                initializeMainFrame();
-            } catch (UnauthorizedUserException e) {
-                authPanel.warn("Incorrect username or password!");
-            }
-        });
-
-        authPanel.onRegistration((name, password) -> {
-            if (name.isEmpty() || password.isEmpty()) {
-                authPanel.warn("Username and password are required!");
-                return;
-            }
-            try {
-                var user = new User(name, password);
-                if (loginService.createUser(user)) {
-                    session.initialize(user);
-                }
-                authFrame.dispose();
-                initializeMainFrame();
-            } catch (NameAlreadyInUseException e) {
-                authPanel.warn("Someone already uses the name " + name);
-            } catch (UnsafePasswordException e) {
-                authPanel.warn("Unsafe password!");
-                // TODO tell what the password requirements are
-                //     also, do it when the user moves the focus away from the password text field
-            }
-        });
     }
 
     private void initializeMainFrame() {
