@@ -4,9 +4,6 @@ import com.github.weisj.darklaf.LafManager;
 import com.github.weisj.darklaf.theme.DarculaTheme;
 import com.github.weisj.darklaf.theme.laf.DarculaThemeDarklafLookAndFeel;
 import controllers.AuthController;
-import exceptions.NameAlreadyInUseException;
-import exceptions.UnauthorizedUserException;
-import exceptions.UnsafePasswordException;
 import gui.*;
 import models.User;
 import models.UserGroupsMap;
@@ -19,8 +16,6 @@ import models.message.Message;
 import repositories.group.IGroupRepository;
 import repositories.message.IMessageRepository;
 import repositories.user.IUserRepository;
-import services.login.ILoginService;
-import services.login.LoginService;
 
 import javax.swing.*;
 import java.awt.event.WindowAdapter;
@@ -445,7 +440,6 @@ public class Application {
                     var invite = new GroupInvite(session.getUser(), friend, InviteState.PENDING, group);
                     session.getInvites().add(invite);
                     // TODO actually add invite to the database
-                    var invBar = new InviteBar(invite, session.getUser());
                     bar.removeButton(btn);
                     bar.repaint();
                     bar.addButton(btSent);
