@@ -348,7 +348,6 @@ public class Application {
                 managePanel.onDelete(() -> {
                     groupRepo.removeGroup(group.getId());
                     groupsPanel.remove(groupBar);
-                    btManage.setEnabled(true);
                     manageFrame.dispose();
                 });
                 manageFrame.setContentPane(managePanel.getJPanel());
