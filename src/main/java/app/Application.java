@@ -3,16 +3,14 @@ package app;
 import com.github.weisj.darklaf.LafManager;
 import com.github.weisj.darklaf.theme.DarculaTheme;
 import com.github.weisj.darklaf.theme.laf.DarculaThemeDarklafLookAndFeel;
-import controllers.AuthController;
+import controllers.*;
 import gui.*;
 import models.User;
 import models.UserGroupsMap;
 import models.group.Group;
 import models.invite.FriendshipInvite;
-import models.invite.GroupInvite;
 import models.invite.Invite;
 import models.invite.InviteState;
-import models.message.Message;
 import repositories.group.IGroupRepository;
 import repositories.message.IMessageRepository;
 import repositories.user.IUserRepository;
@@ -21,7 +19,6 @@ import javax.swing.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class Application {
@@ -236,11 +233,8 @@ public class Application {
                     List<Group> groups = usgMap.get(user);
                     // Show which groups the user has in common in a string formatted like
                     // user123 belongs to group1, The Group and final group
-                    var strGroups = new StringBuilder();
-                    strGroups.append(user.getNickname()).append(" belongs to ");
-                    strGroups.append(groups);
-
-                    usgPanel.add(new JLabel(strGroups.toString()));
+                    String strGroups = user.getNickname() + " belongs to " + groups;
+                    usgPanel.add(new JLabel(strGroups));
                     // Just in a JLabel for now
                 }
                 usgFrame.setContentPane(usgScrollPane);
@@ -261,6 +255,11 @@ public class Application {
         var btChat = new JButton("Chat");
         groupBar.add(btChat);
         btChat.addActionListener(evt -> {
+            // TODO encapsulate frame stuff
+            //   not only by making a JFrame subclass with that WindowListener
+            //   preset, since a lot of frames are using it,
+            //   but also just so the code here doesn't have to do the
+            //   setContentPane, pack and setVisible stuff
             btChat.setEnabled(false);
             var chatFrame = new JFrame();
             chatFrame.addWindowListener(new WindowAdapter() {
@@ -271,7 +270,8 @@ public class Application {
                     chatFrame.dispose();
                 }
             });
-            MessagingPanel chatPanel = createGroupMessagingPanel(group);
+            MessagingPanel chatPanel = new MessagingPanel();
+            new GroupMessagingController(session.getUser(), group, chatPanel);
             chatFrame.setContentPane(chatPanel);
             chatFrame.pack();
             chatFrame.setVisible(true);
@@ -280,6 +280,7 @@ public class Application {
         var btMembers = new JButton("Members");
         groupBar.add(btMembers);
         btMembers.addActionListener(evt -> {
+            // TODO encapsulate frame stuff
             btMembers.setEnabled(false);
             var membersFrame = new JFrame();
             membersFrame.addWindowListener(new WindowAdapter() {
@@ -290,7 +291,8 @@ public class Application {
                     membersFrame.dispose();
                 }
             });
-            UserListPanel membersPanel = createMembersPanel(group, membersFrame);
+            var membersPanel = new UserListPanel();
+            new GroupMemberListController(session.getUser(), group, membersFrame, membersPanel);
             membersFrame.setContentPane(membersPanel);
             membersFrame.pack();
             membersFrame.setVisible(true);
@@ -300,6 +302,7 @@ public class Application {
         groupBar.add(btInviteFriends);
         btInviteFriends.addActionListener(evt -> {
             btInviteFriends.setEnabled(false);
+            // TODO encapsulate frame stuff
             var groupInviteFrame = new JFrame();
             groupInviteFrame.addWindowListener(new WindowAdapter() {
                 public void windowClosing(WindowEvent e) {
@@ -309,7 +312,8 @@ public class Application {
                     groupInviteFrame.dispose();
                 }
             });
-            GroupInvitePanel groupInvitePanel = createGroupInvitePanel(group);
+            var groupInvitePanel = new GroupInvitePanel();
+            new GroupInviteController(session.getUser(), group, groupInvitePanel);
             groupInviteFrame.setContentPane(groupInvitePanel);
             groupInviteFrame.pack();
             groupInviteFrame.setVisible(true);
@@ -319,6 +323,7 @@ public class Application {
             var btManage = new JButton("Manage");
             groupBar.add(btManage);
             btManage.addActionListener(evt -> {
+                // TODO encapsulate the frame stuff
                 btManage.setEnabled(false);
                 var manageFrame = new JFrame();
                 manageFrame.addWindowListener(new WindowAdapter() {
@@ -330,123 +335,13 @@ public class Application {
                     }
                 });
                 var managePanel = new GroupManagementPanel(group.getName());
-                managePanel.onRename(newName -> {
-                    group.setName(newName);
-                    if (groupRepo.updateGroup(group)) {
-                        groupLabel.setText(newName);
-                        groupBar.repaint();
-                        groupBar.revalidate();
-                    }
-                    btManage.setEnabled(true);
-                    manageFrame.dispose();
-                });
-                managePanel.onDelete(() -> {
-                    groupRepo.removeGroup(group.getId());
-                    groupsPanel.remove(groupBar);
-                    manageFrame.dispose();
-                });
                 manageFrame.setContentPane(managePanel.getJPanel());
                 manageFrame.pack();
                 manageFrame.setVisible(true);
+                new GroupManagementController(group, manageFrame, managePanel);
             });
         }
         return groupBar;
-    }
-
-    public MessagingPanel createGroupMessagingPanel(Group group) {
-        var msgPanel = new MessagingPanel();
-        msgPanel.loadMessages(group.getMessages());
-        msgPanel.onLoadOlder(() -> {
-            msgRepo.getMessagesBefore(group, group.oldestMessageDate());
-            msgPanel.loadMessages(group.getMessages());
-        });
-        msgPanel.onLoadNewer(() -> {
-            msgRepo.getMessagesAfter(group, group.newestMessageDate());
-            msgPanel.loadMessages(group.getMessages());
-        });
-        msgPanel.onSendMessage(text -> {
-            var msg = new Message(session.getUser(), text, new Date());
-            boolean ok = msgRepo.addMessage(group, msg);
-            if (ok) {
-                group.loadMessageBelow(msg);
-                msgPanel.loadMessages(group.getMessages());
-            }
-            return ok;
-        });
-        return msgPanel;
-    }
-
-    public UserListPanel createMembersPanel(Group group, JFrame membersFrame) {
-        var membersPanel = new UserListPanel();
-
-        var ownerBar = new UserBar(group.getOwner());
-        var btOwner = new JButton("Owner");
-        btOwner.setEnabled(false);
-        ownerBar.addButton(btOwner);
-        membersPanel.addUserBar(ownerBar);
-
-        for (var user : group.getUsers()) {
-            var bar = new UserBar(user);
-            if (session.getUser().equals(group.getOwner())) {
-                JButton btRemove = new JButton("Remove");
-                bar.addButton(btRemove);
-                btRemove.addActionListener(evt -> {
-                    group.removeUser(user);
-                    groupRepo.updateGroup(group);
-                    membersPanel.removeUserBar(bar);
-                });
-
-                JButton btSetOwner = new JButton("Set owner");
-                bar.addButton(btSetOwner);
-                btSetOwner.addActionListener(evt -> {
-                    group.changeOwner(user);
-                    groupRepo.updateGroup(group);
-                    membersFrame.dispose();
-                });
-            }
-            membersPanel.addUserBar(bar);
-        }
-        return membersPanel;
-    }
-
-    public GroupInvitePanel createGroupInvitePanel(Group group) {
-        var panel = new GroupInvitePanel();
-        List<User> friends = session.getFriendshipRepository().getFriends(session.getUser());
-        for (var friend : friends) {
-            // Don't show friends who already are in the group
-            if (group.isMember(friend))
-                continue;
-            // Check whether we've already invited this friend to this group
-            boolean alreadySentInvite = false;
-            List<Invite> invs = session.getInviteRepository().getInvites(session.getUser());
-            for (int i = 0; !alreadySentInvite && i < invs.size(); i++) {
-                Invite inv = invs.get(i);
-                if (inv instanceof GroupInvite && inv.to().equals(friend))
-                    alreadySentInvite = true;
-            }
-            // If we've already sent a group invite to this friend,
-            // then don't show the "Invite to group" button, but rather
-            // the greyed-out "Invite sent" button
-            var bar = new UserBar(friend);
-            panel.addBar(bar);
-            var btSent = new JButton("Invite sent");
-            btSent.setEnabled(false);
-            if (alreadySentInvite) {
-                bar.addButton(btSent);
-            } else {
-                var btn = new JButton("Invite to group");
-                bar.addButton(btn);
-                btn.addActionListener(evt -> {
-                    var invite = new GroupInvite(session.getUser(), friend, InviteState.PENDING, group);
-                    session.getInvites().add(invite);
-                    // TODO actually add invite to the database
-                    bar.removeButton(btn);
-                    bar.repaint();
-                    bar.addButton(btSent);
-                });
-            }
-        }
-        return panel;
     }
 
     public static void main(String[] args) {
