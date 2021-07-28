@@ -231,11 +231,6 @@ public class Application {
         var btChat = new JButton("Chat");
         groupBar.add(btChat);
         btChat.addActionListener(evt -> {
-            // TODO encapsulate frame stuff
-            //   not only by making a JFrame subclass with that WindowListener
-            //   preset, since a lot of frames are using it,
-            //   but also just so the code here doesn't have to do the
-            //   setContentPane, pack and setVisible stuff
             btChat.setEnabled(false);
             var chatFrame = new PopUpFrame(btChat);
             MessagingPanel chatPanel = new MessagingPanel();
@@ -248,7 +243,6 @@ public class Application {
         var btMembers = new JButton("Members");
         groupBar.add(btMembers);
         btMembers.addActionListener(evt -> {
-            // TODO encapsulate frame stuff
             btMembers.setEnabled(false);
             var membersFrame = new PopUpFrame(btMembers);
             var membersPanel = new UserListPanel();
@@ -262,7 +256,6 @@ public class Application {
         groupBar.add(btInviteFriends);
         btInviteFriends.addActionListener(evt -> {
             btInviteFriends.setEnabled(false);
-            // TODO encapsulate frame stuff
             var groupInviteFrame = new PopUpFrame(btInviteFriends);
             var groupInvitePanel = new GroupInvitePanel();
             new GroupInviteController(session.getUser(), group, groupInvitePanel);
@@ -275,14 +268,11 @@ public class Application {
             var btManage = new JButton("Manage");
             groupBar.add(btManage);
             btManage.addActionListener(evt -> {
-                // TODO encapsulate the frame stuff
                 btManage.setEnabled(false);
-                var manageFrame = new PopUpFrame(btManage);
-                var managePanel = new GroupManagementPanel(group.getName());
-                manageFrame.setContentPane(managePanel.getJPanel());
+                var manageFrame = new GroupManagementFrame(group.getName(), btManage);
                 manageFrame.pack();
                 manageFrame.setVisible(true);
-                new GroupManagementController(group, manageFrame, managePanel);
+                new GroupManagementController(group, manageFrame);
             });
         }
         return groupBar;

@@ -1,5 +1,6 @@
 package controllers;
 
+import gui.GroupManagementFrame;
 import gui.GroupManagementPanel;
 import models.group.Group;
 import repositories.group.GroupInFileRepository;
@@ -10,15 +11,15 @@ import javax.swing.*;
 public class GroupManagementController {
 
     private Group group;
-    private JFrame frame;
+    private JFrame view;
     private IGroupRepository groupRepo;
 
-    public GroupManagementController(Group model, JFrame frame, GroupManagementPanel view)
+    public GroupManagementController(Group model, GroupManagementFrame view)
     {
         this.groupRepo = new GroupInFileRepository();
         view.onDelete(this::delete);
         view.onRename(this::rename);
-        this.frame = frame;
+        this.view = view;
         this.group = model;
     }
 
@@ -45,7 +46,7 @@ public class GroupManagementController {
             // groupBar.revalidate();
         }
         // btManage.setEnabled(true);
-        frame.dispose();
+        view.dispose();
     }
 
     public void delete()
@@ -57,7 +58,7 @@ public class GroupManagementController {
         //
         // previous implementation:
         // groupsPanel.remove(groupBar);
-        frame.dispose();
+        view.dispose();
     }
 
 }

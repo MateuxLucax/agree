@@ -15,7 +15,7 @@ public class GroupManagementPanel {
 
     public void onRename(Consumer<String> onRename) {
         btRename.addActionListener(evt -> {
-            // TODO deal with empty names
+            // TODO deal with empty names, maybe involving a isNameFieldEmpty() public method?
             String text = tfNewName.getText();
             onRename.accept(text);
         });
