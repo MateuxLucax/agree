@@ -96,7 +96,7 @@ public class Application {
 
         var friendsPanel = new JPanel();
         mainPane.addTab("Friends", friendsPanel);
-        // TODO
+        // TODO add "friends" tab to the application
 
         var morePanel = new JPanel();
         mainPane.addTab("More", morePanel);
@@ -105,15 +105,7 @@ public class Application {
             morePanel.add(btSearchForUsers);
             btSearchForUsers.addActionListener(evt -> {
                 btSearchForUsers.setEnabled(false);
-                var searchFrame = new JFrame();
-                searchFrame.addWindowListener(new WindowAdapter() {
-                    public void windowClosing(WindowEvent e) {
-                        btSearchForUsers.setEnabled(true);
-                        btSearchForUsers.repaint();
-                        btSearchForUsers.revalidate();
-                        searchFrame.dispose();
-                    }
-                });
+                var searchFrame = new PopUpFrame(btSearchForUsers);
                 var searchPanel = new UserSearchPanel();
                 searchFrame.setContentPane(searchPanel);
                 searchPanel.onSearch(searchString -> {
@@ -165,15 +157,7 @@ public class Application {
             morePanel.add(btInvites);
             btInvites.addActionListener(evt -> {
                 btInvites.setEnabled(false);
-                var invitesFrame = new JFrame();
-                invitesFrame.addWindowListener(new WindowAdapter() {
-                    public void windowClosing(WindowEvent e) {
-                        btInvites.setEnabled(true);
-                        btInvites.repaint();
-                        btInvites.revalidate();
-                        invitesFrame.dispose();
-                    }
-                });
+                var invitesFrame = new PopUpFrame(btInvites);
                 var invitesPanel = new InviteListPanel();
                 List<Invite> invites = session.getInviteRepository().getInvites(session.getUser());
                 for (var inv : invites) {
@@ -200,21 +184,13 @@ public class Application {
                 invitesFrame.setVisible(true);
             });
 
-            // usg: Users in the Same Group as you
+            // usg: [U]sers in the [S]ame [G]roup as you
             // (couldn't think of a more concise name, so I just made up an acronym to avoid really long variable names)
             var btUsg = new JButton("Users in the same groups as you");
             morePanel.add(btUsg);
             btUsg.addActionListener(evt -> {
                 btUsg.setEnabled(false);
-                var usgFrame = new JFrame();
-                usgFrame.addWindowListener(new WindowAdapter() {
-                    public void windowClosing(WindowEvent e) {
-                        btUsg.setEnabled(true);
-                        btUsg.repaint();
-                        btUsg.revalidate();
-                        usgFrame.dispose();
-                    }
-                });
+                var usgFrame = new PopUpFrame(btUsg);
                 var usgScrollPane = new JScrollPane();
                 usgScrollPane.getVerticalScrollBar().setUnitIncrement(20);
                 var usgPanel = new JPanel();
@@ -261,15 +237,7 @@ public class Application {
             //   but also just so the code here doesn't have to do the
             //   setContentPane, pack and setVisible stuff
             btChat.setEnabled(false);
-            var chatFrame = new JFrame();
-            chatFrame.addWindowListener(new WindowAdapter() {
-                public void windowClosing(WindowEvent e) {
-                    btChat.setEnabled(true);
-                    btChat.repaint();
-                    btChat.revalidate();
-                    chatFrame.dispose();
-                }
-            });
+            var chatFrame = new PopUpFrame(btChat);
             MessagingPanel chatPanel = new MessagingPanel();
             new GroupMessagingController(session.getUser(), group, chatPanel);
             chatFrame.setContentPane(chatPanel);
@@ -282,15 +250,7 @@ public class Application {
         btMembers.addActionListener(evt -> {
             // TODO encapsulate frame stuff
             btMembers.setEnabled(false);
-            var membersFrame = new JFrame();
-            membersFrame.addWindowListener(new WindowAdapter() {
-                public void windowClosing(WindowEvent e) {
-                    btMembers.setEnabled(true);
-                    btMembers.repaint();
-                    btMembers.revalidate();
-                    membersFrame.dispose();
-                }
-            });
+            var membersFrame = new PopUpFrame(btMembers);
             var membersPanel = new UserListPanel();
             new GroupMemberListController(session.getUser(), group, membersFrame, membersPanel);
             membersFrame.setContentPane(membersPanel);
@@ -303,15 +263,7 @@ public class Application {
         btInviteFriends.addActionListener(evt -> {
             btInviteFriends.setEnabled(false);
             // TODO encapsulate frame stuff
-            var groupInviteFrame = new JFrame();
-            groupInviteFrame.addWindowListener(new WindowAdapter() {
-                public void windowClosing(WindowEvent e) {
-                    btInviteFriends.setEnabled(true);
-                    btInviteFriends.repaint();
-                    btInviteFriends.revalidate();
-                    groupInviteFrame.dispose();
-                }
-            });
+            var groupInviteFrame = new PopUpFrame(btInviteFriends);
             var groupInvitePanel = new GroupInvitePanel();
             new GroupInviteController(session.getUser(), group, groupInvitePanel);
             groupInviteFrame.setContentPane(groupInvitePanel);
@@ -325,15 +277,7 @@ public class Application {
             btManage.addActionListener(evt -> {
                 // TODO encapsulate the frame stuff
                 btManage.setEnabled(false);
-                var manageFrame = new JFrame();
-                manageFrame.addWindowListener(new WindowAdapter() {
-                    public void windowClosing(WindowEvent e) {
-                        btManage.setEnabled(true);
-                        btManage.repaint();
-                        btManage.revalidate();
-                        manageFrame.dispose();
-                    }
-                });
+                var manageFrame = new PopUpFrame(btManage);
                 var managePanel = new GroupManagementPanel(group.getName());
                 manageFrame.setContentPane(managePanel.getJPanel());
                 manageFrame.pack();
