@@ -5,7 +5,9 @@ import java.awt.*;
 import java.util.List;
 import java.util.function.Function;
 
-public class UserSearchPanel extends JPanel {
+public class UserSearchFrame extends PopUpFrame
+{
+    private JPanel     mainPanel;
     private JButton    btSearch;
     private JTextField tfSearch;
     private JPanel     resultsPanel;
@@ -14,7 +16,10 @@ public class UserSearchPanel extends JPanel {
     //    which would possibly be too much
     //    I guess we'll need a UserSearchModel that takes care of dynamically loading the users then
 
-    public UserSearchPanel() {
+    public UserSearchFrame(JButton btnThatOpenedTheFrame)
+    {
+        super(btnThatOpenedTheFrame);
+
         tfSearch = new JTextField();
         btSearch = new JButton("Search");
 
@@ -26,19 +31,24 @@ public class UserSearchPanel extends JPanel {
         resultsPanel = new JPanel();
         resultsPanel.setLayout(new BoxLayout(resultsPanel, BoxLayout.PAGE_AXIS));
 
-        setLayout(new BorderLayout());
-        add(formPanel, BorderLayout.PAGE_START);
-        add(resultsPanel, BorderLayout.CENTER);
+        mainPanel = new JPanel();
+        mainPanel.setLayout(new BorderLayout());
+        mainPanel.add(formPanel, BorderLayout.PAGE_START);
+        mainPanel.add(resultsPanel, BorderLayout.CENTER);
+
+        setContentPane(mainPanel);
     }
 
-    public void onSearch(Function<String, List<UserBar>> searchFn) {
+    public void onSearch(Function<String, List<UserBar>> searchFn)
+    {
         btSearch.addActionListener(evt -> {
             loadResults(searchFn.apply(tfSearch.getText()));
             tfSearch.setText("");
         });
     }
 
-    public void loadResults(List<UserBar> bars) {
+    public void loadResults(List<UserBar> bars)
+    {
         resultsPanel.removeAll();
         bars.forEach(resultsPanel::add);
         resultsPanel.repaint();

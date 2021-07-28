@@ -12,19 +12,15 @@ import models.invite.FriendshipInvite;
 import models.invite.Invite;
 import models.invite.InviteState;
 import repositories.group.IGroupRepository;
-import repositories.message.IMessageRepository;
 import repositories.user.IUserRepository;
 
 import javax.swing.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Application {
 
     private UserSession session;
-    private IMessageRepository msgRepo;
     private IGroupRepository groupRepo;
     private IUserRepository userRepo;
 
@@ -58,7 +54,6 @@ public class Application {
 
         // Setting up some shortcuts
         session   = UserSession.getInstance();
-        msgRepo   = session.getMessageRepository();
         groupRepo = session.getGroupRepository();
         userRepo  = session.getUserRepository();
     }
@@ -75,16 +70,13 @@ public class Application {
             var btNewGroup = new JButton("+ New group");
             groupsPanel.add(btNewGroup);
             btNewGroup.addActionListener(evt -> {
-                var groupCreationFrame = new JFrame();
-                var groupCreationPanel = new CreateGroupPanel();
-                groupCreationPanel.onCreation(groupName -> {
+                btNewGroup.setEnabled(false);
+                var groupCreationFrame = new GroupCreationFrame(btNewGroup);
+                groupCreationFrame.onCreation(groupName -> {
                     var group = new Group(groupName, session.getUser());
-                    if (groupRepo.createGroup(group)) {
+                    if (groupRepo.createGroup(group))
                         groupsPanel.add(createGroupBar(group, groupsPanel));
-                        groupCreationFrame.dispose();
-                    }
                 });
-                groupCreationFrame.setContentPane(groupCreationPanel.getJPanel());
                 groupCreationFrame.pack();
                 groupCreationFrame.setVisible(true);
             });
@@ -101,14 +93,16 @@ public class Application {
         var morePanel = new JPanel();
         mainPane.addTab("More", morePanel);
         {
+            // FIXME if you click on "ask to be friends" for some user
+            //   the button will turn into "invite sent", but if you
+            //   click "search" again, the button will become "ask to be friends" again
+            //   (this probably has to do with invites not being persisted correctly...)
             var btSearchForUsers = new JButton("Search for users");
             morePanel.add(btSearchForUsers);
             btSearchForUsers.addActionListener(evt -> {
                 btSearchForUsers.setEnabled(false);
-                var searchFrame = new PopUpFrame(btSearchForUsers);
-                var searchPanel = new UserSearchPanel();
-                searchFrame.setContentPane(searchPanel);
-                searchPanel.onSearch(searchString -> {
+                var searchFrame = new UserSearchFrame(btSearchForUsers);
+                searchFrame.onSearch(searchString -> {
                     List<User>    users = userRepo.searchUser(searchString);
                     List<UserBar> bars  = new ArrayList<>(users.size());
                     for (var user : users) {
@@ -157,12 +151,11 @@ public class Application {
             morePanel.add(btInvites);
             btInvites.addActionListener(evt -> {
                 btInvites.setEnabled(false);
-                var invitesFrame = new PopUpFrame(btInvites);
-                var invitesPanel = new InviteListPanel();
+                var invitesFrame = new InviteListFrame(btInvites);
                 List<Invite> invites = session.getInviteRepository().getInvites(session.getUser());
                 for (var inv : invites) {
                     var invBar = new InviteBar(inv, session.getUser());
-                    invitesPanel.addInvite(invBar);
+                    invitesFrame.addInvite(invBar);
                     if (inv.getState() == InviteState.PENDING && inv.to().equals(session.getUser())) {
                         invBar.onAccept(() -> {
                             inv.setState(InviteState.ACCEPTED);
@@ -179,13 +172,13 @@ public class Application {
                         });
                     }
                 }
-                invitesFrame.setContentPane(invitesPanel);
                 invitesFrame.pack();
                 invitesFrame.setVisible(true);
             });
 
             // usg: [U]sers in the [S]ame [G]roup as you
             // (couldn't think of a more concise name, so I just made up an acronym to avoid really long variable names)
+            // TODO encapsulate the GUI stuff into a UserInSameGroupFrame
             var btUsg = new JButton("Users in the same groups as you");
             morePanel.add(btUsg);
             btUsg.addActionListener(evt -> {
@@ -232,10 +225,8 @@ public class Application {
         groupBar.add(btChat);
         btChat.addActionListener(evt -> {
             btChat.setEnabled(false);
-            var chatFrame = new PopUpFrame(btChat);
-            MessagingPanel chatPanel = new MessagingPanel();
-            new GroupMessagingController(session.getUser(), group, chatPanel);
-            chatFrame.setContentPane(chatPanel);
+            var chatFrame = new MessagingFrame(btChat);
+            new GroupMessagingController(session.getUser(), group, chatFrame);
             chatFrame.pack();
             chatFrame.setVisible(true);
         });
@@ -244,10 +235,8 @@ public class Application {
         groupBar.add(btMembers);
         btMembers.addActionListener(evt -> {
             btMembers.setEnabled(false);
-            var membersFrame = new PopUpFrame(btMembers);
-            var membersPanel = new UserListPanel();
-            new GroupMemberListController(session.getUser(), group, membersFrame, membersPanel);
-            membersFrame.setContentPane(membersPanel);
+            var membersFrame = new UserListFrame(btMembers);
+            new GroupMemberListController(session.getUser(), group, membersFrame, membersFrame);
             membersFrame.pack();
             membersFrame.setVisible(true);
         });
@@ -256,10 +245,8 @@ public class Application {
         groupBar.add(btInviteFriends);
         btInviteFriends.addActionListener(evt -> {
             btInviteFriends.setEnabled(false);
-            var groupInviteFrame = new PopUpFrame(btInviteFriends);
-            var groupInvitePanel = new GroupInvitePanel();
-            new GroupInviteController(session.getUser(), group, groupInvitePanel);
-            groupInviteFrame.setContentPane(groupInvitePanel);
+            var groupInviteFrame = new GroupInviteFrame(btInviteFriends);
+            new GroupInviteController(session.getUser(), group, groupInviteFrame);
             groupInviteFrame.pack();
             groupInviteFrame.setVisible(true);
         });

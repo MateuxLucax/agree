@@ -3,7 +3,8 @@ package gui;
 import javax.swing.*;
 import java.util.function.Consumer;
 
-public class CreateGroupPanel {
+public class GroupCreationPanel
+{
     private JPanel mainPanel;
     private JTextField tfGroupName;
     private JButton btCreate;

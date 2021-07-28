@@ -8,14 +8,18 @@ import java.awt.*;
 import java.util.LinkedList;
 import java.util.function.Function;
 
-public class MessagingPanel extends JPanel {
+public class MessagingFrame extends PopUpFrame
+{
+    private final JPanel mainPanel;
     private final JPanel msgListPanel;
     private final JButton btLoadOlder;
     private final JButton btLoadNewer;
     private final JTextArea taNewMsg;
     private final JButton btSend;
 
-    public MessagingPanel() {
+    public MessagingFrame(JButton btnThatOpenedTheFrame) {
+        super(btnThatOpenedTheFrame);
+
         msgListPanel = new JPanel();
         msgListPanel.setLayout(new BoxLayout(msgListPanel, BoxLayout.PAGE_AXIS));
 
@@ -41,9 +45,12 @@ public class MessagingPanel extends JPanel {
         newMsgPanel.add(taNewMsg, BorderLayout.CENTER);
         newMsgPanel.add(btSend, BorderLayout.LINE_END);
 
-        setLayout(new BorderLayout());
-        add(scrollPane, BorderLayout.CENTER);
-        add(newMsgPanel, BorderLayout.PAGE_END);
+        mainPanel = new JPanel();
+        mainPanel.setLayout(new BorderLayout());
+        mainPanel.add(scrollPane, BorderLayout.CENTER);
+        mainPanel.add(newMsgPanel, BorderLayout.PAGE_END);
+
+        setContentPane(mainPanel);
     }
 
     public void loadMessages(LinkedList<Message> messages) {

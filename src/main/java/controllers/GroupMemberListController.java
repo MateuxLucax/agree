@@ -1,17 +1,16 @@
 package controllers;
 
 import gui.UserBar;
-import gui.UserListPanel;
+import gui.UserListFrame;
 import models.User;
 import models.group.Group;
 import repositories.group.GroupInFileRepository;
-import repositories.group.IGroupRepository;
 
 import javax.swing.*;
 
 public class GroupMemberListController {
 
-    public GroupMemberListController(User user, Group group, JFrame frame, UserListPanel view)
+    public GroupMemberListController(User user, Group group, JFrame frame, UserListFrame view)
     {
         var groupRepo = new GroupInFileRepository();
 

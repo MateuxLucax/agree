@@ -1,6 +1,6 @@
 package controllers;
 
-import gui.GroupInvitePanel;
+import gui.GroupInviteFrame;
 import gui.UserBar;
 import models.User;
 import models.group.Group;
@@ -15,7 +15,7 @@ import java.util.List;
 
 public class GroupInviteController {
 
-    public GroupInviteController(User user, Group group, GroupInvitePanel view)
+    public GroupInviteController(User user, Group group, GroupInviteFrame view)
     {
         var friendRepo = new FriendshipInFileRepository();
         var inviteRepo = new InviteRepositoryInFile();
@@ -39,7 +39,7 @@ public class GroupInviteController {
             }
 
             var bar = new UserBar(friend);
-            view.addBar(bar);
+            view.addFriendBar(bar);
 
             if (alreadySentInvite) {
                 bar.addButton(btSent);

@@ -2,15 +2,18 @@ package gui;
 
 import javax.swing.*;
 
-public class UserListPanel extends JScrollPane {
+public class UserListFrame extends PopUpFrame {
 
     private final JPanel barsPanel;
 
-    public UserListPanel() {
+    public UserListFrame(JButton btnThatOpenedTheFrame) {
+        super(btnThatOpenedTheFrame);
+        var scrollPane = new JScrollPane();
         barsPanel = new JPanel();
         barsPanel.setLayout(new BoxLayout(barsPanel, BoxLayout.PAGE_AXIS));
-        setViewportView(barsPanel);
-        getVerticalScrollBar().setUnitIncrement(20);
+        scrollPane.setViewportView(barsPanel);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(20);
+        setContentPane(scrollPane);
     }
 
     public void addUserBar(UserBar bar) {

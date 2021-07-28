@@ -1,6 +1,6 @@
 package controllers;
 
-import gui.MessagingPanel;
+import gui.MessagingFrame;
 import models.User;
 import models.group.Group;
 import models.message.Message;
@@ -11,12 +11,12 @@ import java.util.Date;
 
 public class GroupMessagingController {
 
-    private MessagingPanel view;
+    private MessagingFrame view;
     private IMessageRepository msgRepo;
     private User user;
     private Group group;
 
-    public GroupMessagingController(User user, Group group, MessagingPanel view)
+    public GroupMessagingController(User user, Group group, MessagingFrame view)
     {
         this.user = user;
         this.group = group;
