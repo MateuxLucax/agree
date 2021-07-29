@@ -21,31 +21,26 @@ public class GroupManagementController {
         this.group = model;
         this.barCon = barCon;
         view = new GroupManagementFrame(model.getName(), btnThatOpenedTheFrame);
-        view.onDelete(this::delete);
-        view.onRename(this::rename);
-    }
 
-    public void rename(String newName)
-    {
-        group.setName(newName);
-        if (groupRepo.updateGroup(group)) {
-            barCon.rename(newName);
-            barCon.reload();
-        }
-        // btManage.setEnabled(true);
-        view.dispose();
-    }
+        view.onDelete(() -> {
+            groupRepo.removeGroup(group.getId());
+            // TODO actually remove group bar from the list, something like
+            //   GroupListController groupListController; (taken as parameter in the constructor?)
+            //   groupListController.remove(this.group);
+            //
+            // previous implementation:
+            // groupsPanel.remove(groupBar);
+            view.dispose();
+        });
 
-    public void delete()
-    {
-        groupRepo.removeGroup(group.getId());
-        // TODO actually remove group bar from the list, something like
-        //   GroupListController groupListController; (taken as parameter in the constructor?)
-        //   groupListController.remove(this.group);
-        //
-        // previous implementation:
-        // groupsPanel.remove(groupBar);
-        view.dispose();
+        view.onRename(newName -> {
+            group.setName(newName);
+            if (groupRepo.updateGroup(group)) {
+                barCon.rename(newName);
+                barCon.reload();
+            }
+            view.dispose();
+        });
     }
 
     public void display()

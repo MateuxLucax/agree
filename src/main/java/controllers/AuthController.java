@@ -27,7 +27,7 @@ public class AuthController {
         this.frame = frame;
     }
 
-    public void login(String name, String password)
+    private void login(String name, String password)
     {
         if (name.isEmpty() || password.isEmpty()) {
             view.warn("Username and password are required");
@@ -42,7 +42,7 @@ public class AuthController {
         }
     }
 
-    public void register(String name, String password)
+    private void register(String name, String password)
     {
         if (name.isEmpty() || password.isEmpty()) {
             view.warn("Username and password are required!");

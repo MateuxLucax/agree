@@ -25,32 +25,26 @@ public class GroupMessagingController {
         this.msgRepo = new MessageInFileRepository();
 
         view.loadMessages(group.getMessages());
-        view.onLoadOlder(this::loadOlder);
-        view.onLoadNewer(this::loadNewer);
-        view.onSendMessage(this::sendMessage);
-    }
 
-    public void loadOlder()
-    {
-        msgRepo.getMessagesBefore(group, group.oldestMessageDate());
-        view.loadMessages(group.getMessages());
-    }
-
-    public void loadNewer()
-    {
-        msgRepo.getMessagesAfter(group, group.newestMessageDate());
-        view.loadMessages(group.getMessages());
-    }
-
-    public boolean sendMessage(String text)
-    {
-        var msg = new Message(user, text, new Date());
-        boolean ok = msgRepo.addMessage(group, msg);
-        if (ok) {
-            group.loadMessageBelow(msg);
+        view.onLoadOlder(() -> {
+            msgRepo.getMessagesBefore(group, group.oldestMessageDate());
             view.loadMessages(group.getMessages());
-        }
-        return ok;
+        });
+
+        view.onLoadNewer(() -> {
+            msgRepo.getMessagesAfter(group, group.newestMessageDate());
+            view.loadMessages(group.getMessages());
+        });
+
+        view.onSendMessage(text -> {
+            var msg = new Message(user, text, new Date());
+            boolean ok = msgRepo.addMessage(group, msg);
+            if (ok) {
+                group.loadMessageBelow(msg);
+                view.loadMessages(group.getMessages());
+            }
+            return ok;
+        });
     }
 
     public void display()

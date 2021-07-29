@@ -15,11 +15,20 @@ public class GroupBarController
         this.user = user;
         this.group = group;
         this.view = new GroupBar(group.getName());
-        view.onClickChat(this::chat);
-        view.onClickInvite(this::inviteFriends);
+
+        view.onClickChat(() -> {
+            new GroupMessagingController(user, group, view.getChatButton()).display();
+        });
+
+        view.onClickInvite(() -> {
+            new GroupInviteFriendsController(this.user, this.group, view.getInviteButton()).display();
+        });
+
         if (group.isOwnedBy(user)) {
             view.showManageButton();
-            view.onClickManage(this::manage);
+            view.onClickManage(() -> {
+                new GroupManagementController(this.group, this, view.getManageButton()).display();
+            });
         }
     }
 
@@ -35,24 +44,6 @@ public class GroupBarController
     {
         view.repaint();
         view.revalidate();
-    }
-
-    public void chat()
-    {
-        var chatCon = new GroupMessagingController(user, group, view.getChatButton());
-        chatCon.display();
-    }
-
-    public void inviteFriends()
-    {
-        var groupInviteCon = new GroupInviteFriendsController(user, group, view.getInviteButton());
-        groupInviteCon.display();
-    }
-
-    public void manage()
-    {
-        var manageCon = new GroupManagementController(group, this, view.getManageButton());
-        manageCon.display();
     }
 
     public void rename(String newName)

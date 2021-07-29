@@ -32,6 +32,9 @@ public class GroupBar extends JPanel
         lbName.setText(newName);
     }
 
+    // TODO consider if the .setEnabled(false) stuff should really be here
+    //   and not on the controller
+
     public void onClickChat(Runnable action)
     {
         btChat.addActionListener(e -> {
