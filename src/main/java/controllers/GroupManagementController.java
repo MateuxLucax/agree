@@ -11,16 +11,16 @@ import javax.swing.*;
 public class GroupManagementController {
 
     private Group group;
-    private JFrame view;
+    private GroupManagementFrame view;
     private IGroupRepository groupRepo;
 
-    public GroupManagementController(Group model, GroupManagementFrame view)
+    public GroupManagementController(Group model, JButton btnThatOpenedTheFrame)
     {
         this.groupRepo = new GroupInFileRepository();
+        this.group = model;
+        view = new GroupManagementFrame(model.getName(), btnThatOpenedTheFrame);
         view.onDelete(this::delete);
         view.onRename(this::rename);
-        this.view = view;
-        this.group = model;
     }
 
     // TODO update the panel listing the groups to rename and delete group bars accordingly
@@ -59,6 +59,12 @@ public class GroupManagementController {
         // previous implementation:
         // groupsPanel.remove(groupBar);
         view.dispose();
+    }
+
+    public void display()
+    {
+        view.pack();
+        view.setVisible(true);
     }
 
 }

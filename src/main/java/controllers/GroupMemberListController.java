@@ -10,10 +10,13 @@ import javax.swing.*;
 
 public class GroupMemberListController {
 
-    public GroupMemberListController(User user, Group group, JFrame frame, UserListFrame view)
-    {
-        var groupRepo = new GroupInFileRepository();
+    private UserListFrame view;
 
+    public GroupMemberListController(User user, Group group, JButton btnThatOpenedTheFrame)
+    {
+        view = new UserListFrame(btnThatOpenedTheFrame);
+
+        var groupRepo = new GroupInFileRepository();
         var ownerBar = new UserBar(group.getOwner());
         var btOwner = new JButton("Owner");
         btOwner.setEnabled(false);
@@ -37,10 +40,16 @@ public class GroupMemberListController {
                 btSetOwner.addActionListener(evt -> {
                     group.changeOwner(member);
                     groupRepo.updateGroup(group);
-                    frame.dispose();
+                    view.dispose();
                 });
             }
         }
+    }
+
+    public void display()
+    {
+        view.pack();
+        view.setVisible(true);
     }
 
 }

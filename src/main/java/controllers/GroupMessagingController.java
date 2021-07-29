@@ -7,6 +7,7 @@ import models.message.Message;
 import repositories.message.IMessageRepository;
 import repositories.message.MessageInFileRepository;
 
+import javax.swing.*;
 import java.util.Date;
 
 public class GroupMessagingController {
@@ -16,11 +17,11 @@ public class GroupMessagingController {
     private User user;
     private Group group;
 
-    public GroupMessagingController(User user, Group group, MessagingFrame view)
+    public GroupMessagingController(User user, Group group, JButton btnThatOpenedTheFrame)
     {
+        view = new MessagingFrame(btnThatOpenedTheFrame);
         this.user = user;
         this.group = group;
-        this.view = view;
         msgRepo = new MessageInFileRepository();
 
         view.loadMessages(group.getMessages());
@@ -50,5 +51,11 @@ public class GroupMessagingController {
             view.loadMessages(group.getMessages());
         }
         return ok;
+    }
+
+    public void display()
+    {
+        view.pack();
+        view.setVisible(true);
     }
 }

@@ -75,7 +75,7 @@ public class Application {
                 groupCreationFrame.onCreation(groupName -> {
                     var group = new Group(groupName, session.getUser());
                     if (groupRepo.createGroup(group))
-                        groupsPanel.add(createGroupBar(group, groupsPanel));
+                        groupsPanel.add(createGroupBar(group));
                 });
                 groupCreationFrame.pack();
                 groupCreationFrame.setVisible(true);
@@ -83,7 +83,7 @@ public class Application {
 
             List<Group> groups = groupRepo.getGroups(session.getUser());
             for (var group : groups)
-                groupsPanel.add(createGroupBar(group, groupsPanel));
+                groupsPanel.add(createGroupBar(group));
         }
 
         var friendsPanel = new JPanel();
@@ -216,7 +216,7 @@ public class Application {
         mainFrame.setVisible(true);
     }
 
-    public JPanel createGroupBar(Group group, JPanel groupsPanel) {
+    public JPanel createGroupBar(Group group) {
         var groupBar = new JPanel();
         var groupLabel = new JLabel(group.getName());
         groupBar.add(groupLabel);
@@ -225,30 +225,24 @@ public class Application {
         groupBar.add(btChat);
         btChat.addActionListener(evt -> {
             btChat.setEnabled(false);
-            var chatFrame = new MessagingFrame(btChat);
-            new GroupMessagingController(session.getUser(), group, chatFrame);
-            chatFrame.pack();
-            chatFrame.setVisible(true);
+            var chatCon = new GroupMessagingController(session.getUser(), group, btChat);
+            chatCon.display();
         });
 
         var btMembers = new JButton("Members");
         groupBar.add(btMembers);
         btMembers.addActionListener(evt -> {
             btMembers.setEnabled(false);
-            var membersFrame = new UserListFrame(btMembers);
-            new GroupMemberListController(session.getUser(), group, membersFrame, membersFrame);
-            membersFrame.pack();
-            membersFrame.setVisible(true);
+            var membersCon = new GroupMemberListController(session.getUser(), group, btMembers);
+            membersCon.display();
         });
 
         var btInviteFriends = new JButton("Invite friends");
         groupBar.add(btInviteFriends);
         btInviteFriends.addActionListener(evt -> {
             btInviteFriends.setEnabled(false);
-            var groupInviteFrame = new GroupInviteFrame(btInviteFriends);
-            new GroupInviteController(session.getUser(), group, groupInviteFrame);
-            groupInviteFrame.pack();
-            groupInviteFrame.setVisible(true);
+            var groupInviteCon = new GroupInviteController(session.getUser(), group, btInviteFriends);
+            groupInviteCon.display();
         });
 
         if (group.isOwnedBy(session.getUser())) {
@@ -256,10 +250,8 @@ public class Application {
             groupBar.add(btManage);
             btManage.addActionListener(evt -> {
                 btManage.setEnabled(false);
-                var manageFrame = new GroupManagementFrame(group.getName(), btManage);
-                manageFrame.pack();
-                manageFrame.setVisible(true);
-                new GroupManagementController(group, manageFrame);
+                var manageCon = new GroupManagementController(group, btManage);
+                manageCon.display();
             });
         }
         return groupBar;

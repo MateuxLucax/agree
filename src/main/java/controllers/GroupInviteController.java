@@ -15,8 +15,12 @@ import java.util.List;
 
 public class GroupInviteController {
 
-    public GroupInviteController(User user, Group group, GroupInviteFrame view)
+    private GroupInviteFrame view;
+
+    public GroupInviteController(User user, Group group, JButton btnThatOpenedTheFrame)
     {
+        view = new GroupInviteFrame(btnThatOpenedTheFrame);
+
         var friendRepo = new FriendshipInFileRepository();
         var inviteRepo = new InviteRepositoryInFile();
 
@@ -55,5 +59,11 @@ public class GroupInviteController {
                 });
             }
         }
+    }
+
+    public void display()
+    {
+        view.pack();
+        view.setVisible(true);
     }
 }
