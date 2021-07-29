@@ -25,8 +25,6 @@ public class GroupManagementController {
         view.onRename(this::rename);
     }
 
-    // TODO update the panel listing the groups to rename and delete group bars accordingly
-
     public void rename(String newName)
     {
         group.setName(newName);
@@ -41,7 +39,7 @@ public class GroupManagementController {
     public void delete()
     {
         groupRepo.removeGroup(group.getId());
-        // TODO GroupBarController barController;
+        // TODO actually remove group bar from the list, something like
         //   GroupListController groupListController; (taken as parameter in the constructor?)
         //   groupListController.remove(this.group);
         //
