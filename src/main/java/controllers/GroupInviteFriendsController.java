@@ -13,11 +13,11 @@ import repositories.invite.InviteRepositoryInFile;
 import javax.swing.*;
 import java.util.List;
 
-public class GroupInviteController {
+public class GroupInviteFriendsController {
 
     private GroupInviteFrame view;
 
-    public GroupInviteController(User user, Group group, JButton btnThatOpenedTheFrame)
+    public GroupInviteFriendsController(User user, Group group, JButton btnThatOpenedTheFrame)
     {
         view = new GroupInviteFrame(btnThatOpenedTheFrame);
 

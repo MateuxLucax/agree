@@ -1,12 +1,10 @@
 package gui;
 
-import controllers.GroupInviteController;
+import controllers.GroupInviteFriendsController;
 import controllers.GroupManagementController;
 import controllers.GroupMessagingController;
 import models.User;
 import models.group.Group;
-
-import javax.swing.*;
 
 public class GroupBarController
 {
@@ -49,7 +47,7 @@ public class GroupBarController
 
     public void inviteFriends()
     {
-        var groupInviteCon = new GroupInviteController(user, group, view.getInviteButton());
+        var groupInviteCon = new GroupInviteFriendsController(user, group, view.getInviteButton());
         groupInviteCon.display();
     }
 
