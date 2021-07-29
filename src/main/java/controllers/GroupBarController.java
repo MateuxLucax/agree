@@ -27,10 +27,12 @@ public class GroupBarController
         if (group.isOwnedBy(user)) {
             view.showManageButton();
             view.onClickManage(() -> {
-                // TODO make the GroupManagementController expose methods
-                //   for group renaming and removing
-                //   instead of making it take "this" and "groupListCon"
-                new GroupManagementController(this.group, this, groupListCon, view.getManageButton()).display();
+                var manageCon = new GroupManagementController(this.group,groupListCon, view.getManageButton());
+                manageCon.display();
+                manageCon.onRename(newName -> {
+                    rename(newName);
+                    reload();
+                });
             });
         }
     }

@@ -6,20 +6,19 @@ import repositories.group.GroupInFileRepository;
 import repositories.group.IGroupRepository;
 
 import javax.swing.*;
+import java.util.function.Consumer;
 
 public class GroupManagementController {
 
     private Group group;
-    // barCon is the group bar of this group
-    private GroupBarController barCon;
     private GroupManagementFrame view;
     private IGroupRepository groupRepo;
+    private Consumer<String> onRename;
 
-    public GroupManagementController(Group model, GroupBarController barCon, GroupListController listCon, JButton btnThatOpenedTheFrame)
+    public GroupManagementController(Group model, GroupListController listCon, JButton btnThatOpenedTheFrame)
     {
         this.groupRepo = new GroupInFileRepository();
         this.group = model;
-        this.barCon = barCon;
         view = new GroupManagementFrame(model.getName(), btnThatOpenedTheFrame);
 
         view.onDelete(() -> {
@@ -30,12 +29,15 @@ public class GroupManagementController {
 
         view.onRename(newName -> {
             group.setName(newName);
-            if (groupRepo.updateGroup(group)) {
-                barCon.rename(newName);
-                barCon.reload();
-            }
+            if (groupRepo.updateGroup(group))
+                onRename.accept(newName);
             view.dispose();
         });
+    }
+
+    public void onRename(Consumer<String> action)
+    {
+        this.onRename = action;
     }
 
     public void display()
