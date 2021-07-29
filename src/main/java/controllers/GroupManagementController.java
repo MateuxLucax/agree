@@ -1,8 +1,6 @@
 package controllers;
 
-import gui.GroupBarController;
 import gui.GroupManagementFrame;
-import gui.GroupManagementPanel;
 import models.group.Group;
 import repositories.group.GroupInFileRepository;
 import repositories.group.IGroupRepository;

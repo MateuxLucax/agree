@@ -1,8 +1,9 @@
-package gui;
+package controllers;
 
 import controllers.GroupInviteFriendsController;
 import controllers.GroupManagementController;
 import controllers.GroupMessagingController;
+import gui.GroupBar;
 import models.User;
 import models.group.Group;
 
