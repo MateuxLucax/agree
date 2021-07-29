@@ -14,14 +14,12 @@ import java.util.Map;
 
 public class GroupListController
 {
-    private Map<Group, GroupBar> groupToBarMap;
     private IGroupRepository groupRepo;
     private GroupListPanel view;
     private User user;
 
     public GroupListController(User user)
     {
-        this.groupToBarMap = new HashMap<>();
         this.groupRepo = new GroupInFileRepository();
         this.user = user;
         this.view = new GroupListPanel();
@@ -49,10 +47,8 @@ public class GroupListController
         con.onDelete(() -> {
             view.remove(bar);
             groupRepo.removeGroup(group.getId());
-            groupToBarMap.remove(group);
         });
 
-        groupToBarMap.put(group, bar);
         view.add(bar);
     }
 
