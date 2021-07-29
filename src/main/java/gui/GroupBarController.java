@@ -18,7 +18,7 @@ public class GroupBarController
     {
         this.user = user;
         this.group = group;
-        this.view = new GroupBar(user, group);
+        this.view = new GroupBar(group.getName());
         view.onClickChat(this::chat);
         view.onClickInvite(this::inviteFriends);
         if (group.isOwnedBy(user)) {

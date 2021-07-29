@@ -1,8 +1,5 @@
 package gui;
 
-import models.User;
-import models.group.Group;
-
 import javax.swing.*;
 
 public class GroupBar extends JPanel
@@ -12,9 +9,9 @@ public class GroupBar extends JPanel
     private JButton btInviteFriends;
     private JButton btManage;
 
-    public GroupBar(User user, Group group)
+    public GroupBar(String groupName)
     {
-        lbName = new JLabel(group.getName());
+        lbName = new JLabel(groupName);
         add(lbName);
 
         btChat = new JButton("Chat");
