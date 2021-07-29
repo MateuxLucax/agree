@@ -6,10 +6,11 @@ import java.util.*;
 
 // Maps users to the groups they belong to
 
-public class UserGroupsMap {
+public class UserToGroupsMap
+{
     private final Map<User, List<Group>> map;
 
-    public UserGroupsMap() {
+    public UserToGroupsMap() {
         map = new HashMap<>();
     }
 

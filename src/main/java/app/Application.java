@@ -6,7 +6,7 @@ import com.github.weisj.darklaf.theme.laf.DarculaThemeDarklafLookAndFeel;
 import controllers.*;
 import gui.*;
 import models.User;
-import models.UserGroupsMap;
+import models.UserToGroupsMap;
 import models.group.Group;
 import models.invite.FriendshipInvite;
 import models.invite.Invite;
@@ -189,7 +189,7 @@ public class Application {
                 var usgPanel = new JPanel();
                 usgScrollPane.setViewportView(usgPanel);
                 usgPanel.setLayout(new BoxLayout(usgPanel, BoxLayout.PAGE_AXIS));
-                var usgMap = new UserGroupsMap();
+                var usgMap = new UserToGroupsMap();
                 for (var group : session.getGroups()) {
                     // Don't show the user in session himself in this list
                     if (group.isMember(session.getUser()))
