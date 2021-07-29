@@ -27,9 +27,18 @@ public class GroupBarController
         }
     }
 
+    // TODO this method only exists because we need to add the bar
+    //   to the panel listing the group bars, so consider removing
+    //   it when we make a controller for that panel
     public GroupBar getBar()
     {
         return view;
+    }
+
+    public void reload()
+    {
+        view.repaint();
+        view.revalidate();
     }
 
     public void chat()
@@ -46,7 +55,7 @@ public class GroupBarController
 
     public void manage()
     {
-        var manageCon = new GroupManagementController(group, view.getManageButton());
+        var manageCon = new GroupManagementController(group, this, view.getManageButton());
         manageCon.display();
     }
 
