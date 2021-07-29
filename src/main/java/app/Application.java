@@ -75,7 +75,7 @@ public class Application {
                 groupCreationFrame.onCreation(groupName -> {
                     var group = new Group(groupName, session.getUser());
                     if (groupRepo.createGroup(group))
-                        groupsPanel.add(createGroupBar(group));
+                        groupsPanel.add(new GroupBarController(session.getUser(), group).getBar());
                 });
                 groupCreationFrame.pack();
                 groupCreationFrame.setVisible(true);
@@ -83,7 +83,7 @@ public class Application {
 
             List<Group> groups = groupRepo.getGroups(session.getUser());
             for (var group : groups)
-                groupsPanel.add(createGroupBar(group));
+                groupsPanel.add(new GroupBarController(session.getUser(), group).getBar());
         }
 
         var friendsPanel = new JPanel();
@@ -214,47 +214,6 @@ public class Application {
         mainFrame.setContentPane(mainPane);
         mainFrame.pack();
         mainFrame.setVisible(true);
-    }
-
-    public JPanel createGroupBar(Group group) {
-        var groupBar = new JPanel();
-        var groupLabel = new JLabel(group.getName());
-        groupBar.add(groupLabel);
-
-        var btChat = new JButton("Chat");
-        groupBar.add(btChat);
-        btChat.addActionListener(evt -> {
-            btChat.setEnabled(false);
-            var chatCon = new GroupMessagingController(session.getUser(), group, btChat);
-            chatCon.display();
-        });
-
-        var btMembers = new JButton("Members");
-        groupBar.add(btMembers);
-        btMembers.addActionListener(evt -> {
-            btMembers.setEnabled(false);
-            var membersCon = new GroupMemberListController(session.getUser(), group, btMembers);
-            membersCon.display();
-        });
-
-        var btInviteFriends = new JButton("Invite friends");
-        groupBar.add(btInviteFriends);
-        btInviteFriends.addActionListener(evt -> {
-            btInviteFriends.setEnabled(false);
-            var groupInviteCon = new GroupInviteController(session.getUser(), group, btInviteFriends);
-            groupInviteCon.display();
-        });
-
-        if (group.isOwnedBy(session.getUser())) {
-            var btManage = new JButton("Manage");
-            groupBar.add(btManage);
-            btManage.addActionListener(evt -> {
-                btManage.setEnabled(false);
-                var manageCon = new GroupManagementController(group, btManage);
-                manageCon.display();
-            });
-        }
-        return groupBar;
     }
 
     public static void main(String[] args) {

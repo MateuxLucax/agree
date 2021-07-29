@@ -19,10 +19,10 @@ public class GroupMessagingController {
 
     public GroupMessagingController(User user, Group group, JButton btnThatOpenedTheFrame)
     {
-        view = new MessagingFrame(btnThatOpenedTheFrame);
         this.user = user;
         this.group = group;
-        msgRepo = new MessageInFileRepository();
+        this.view = new MessagingFrame(btnThatOpenedTheFrame);
+        this.msgRepo = new MessageInFileRepository();
 
         view.loadMessages(group.getMessages());
         view.onLoadOlder(this::loadOlder);
