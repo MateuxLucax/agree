@@ -43,16 +43,19 @@ public class GroupListController
 
     private void addGroup(Group group)
     {
-        var con = new GroupBarController(user, group, this);
-        groupToBarMap.put(group, con.getPanel());
-        view.add(con.getPanel());
+        var con = new GroupBarController(user, group);
+        GroupBar bar = con.getBar();
+
+        con.onDelete(() -> {
+            view.remove(bar);
+            groupRepo.removeGroup(group.getId());
+            groupToBarMap.remove(group);
+        });
+
+        groupToBarMap.put(group, bar);
+        view.add(bar);
     }
 
-    public void removeGroup(Group group)
-    {
-        view.remove(groupToBarMap.get(group));
-        groupRepo.removeGroup(group.getId());
-    }
 
     public JPanel getPanel()
     {

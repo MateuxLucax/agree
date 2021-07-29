@@ -21,7 +21,7 @@ public class GroupManagementFrame extends PopUpFrame {
         setContentPane(panel.getJPanel());
     }
 
-    public void onRename(Consumer<String> onRename)
+    public void onClickRename(Consumer<String> onRename)
     {
         panel.onRename(newName -> {
             onRename.accept(newName);
@@ -29,7 +29,7 @@ public class GroupManagementFrame extends PopUpFrame {
         });
     }
 
-    public void onDelete(Runnable onDelete)
+    public void onClickDelete(Runnable onDelete)
     {
         panel.onDelete(() -> {
             onDelete.run();

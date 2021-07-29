@@ -14,23 +14,28 @@ public class GroupManagementController {
     private GroupManagementFrame view;
     private IGroupRepository groupRepo;
     private Consumer<String> onRename;
+    private Runnable onDelete;
 
-    public GroupManagementController(Group model, GroupListController listCon, JButton btnThatOpenedTheFrame)
+    public GroupManagementController(Group model, JButton btnThatOpenedTheFrame)
     {
         this.groupRepo = new GroupInFileRepository();
         this.group = model;
         view = new GroupManagementFrame(model.getName(), btnThatOpenedTheFrame);
 
-        view.onDelete(() -> {
+        view.onClickDelete(() -> {
             groupRepo.removeGroup(group.getId());
-            listCon.removeGroup(group);
+            if (this.onDelete != null)
+                onDelete.run();
             view.dispose();
         });
 
-        view.onRename(newName -> {
+        view.onClickRename(newName -> {
+            String oldName = group.getName();
             group.setName(newName);
-            if (groupRepo.updateGroup(group))
-                onRename.accept(newName);
+            if (groupRepo.updateGroup(group) && this.onRename != null)
+                this.onRename.accept(newName);
+            else  // renaming failed
+                group.setName(oldName);
             view.dispose();
         });
     }
@@ -38,6 +43,11 @@ public class GroupManagementController {
     public void onRename(Consumer<String> action)
     {
         this.onRename = action;
+    }
+
+    public void onDelete(Runnable action)
+    {
+        this.onDelete = action;
     }
 
     public void display()

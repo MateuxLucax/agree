@@ -9,8 +9,9 @@ public class GroupBarController
     private User user;
     private Group group;
     private GroupBar view;
+    private Runnable onDelete;
 
-    public GroupBarController(User user, Group group, GroupListController groupListCon)
+    public GroupBarController(User user, Group group)
     {
         this.user = user;
         this.group = group;
@@ -27,20 +28,23 @@ public class GroupBarController
         if (group.isOwnedBy(user)) {
             view.showManageButton();
             view.onClickManage(() -> {
-                var manageCon = new GroupManagementController(this.group,groupListCon, view.getManageButton());
-                manageCon.display();
+                var manageCon = new GroupManagementController(group, view.getManageButton());
                 manageCon.onRename(newName -> {
                     rename(newName);
                     reload();
                 });
+                manageCon.onDelete(this.onDelete);
+                manageCon.display();
             });
         }
     }
 
-    // TODO this method only exists because we need to add the bar
-    //   to the panel listing the group bars, so consider removing
-    //   it when we make a controller for that panel
-    public GroupBar getPanel()
+    public void onDelete(Runnable action)
+    {
+        this.onDelete = action;
+    }
+
+    public GroupBar getBar()
     {
         return view;
     }
