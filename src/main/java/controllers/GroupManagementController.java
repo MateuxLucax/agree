@@ -15,7 +15,7 @@ public class GroupManagementController {
     private GroupManagementFrame view;
     private IGroupRepository groupRepo;
 
-    public GroupManagementController(Group model, GroupBarController barCon, JButton btnThatOpenedTheFrame)
+    public GroupManagementController(Group model, GroupBarController barCon, GroupListController listCon, JButton btnThatOpenedTheFrame)
     {
         this.groupRepo = new GroupInFileRepository();
         this.group = model;
@@ -24,12 +24,7 @@ public class GroupManagementController {
 
         view.onDelete(() -> {
             groupRepo.removeGroup(group.getId());
-            // TODO actually remove group bar from the list, something like
-            //   GroupListController groupListController; (taken as parameter in the constructor?)
-            //   groupListController.remove(this.group);
-            //
-            // previous implementation:
-            // groupsPanel.remove(groupBar);
+            listCon.removeGroup(group);
             view.dispose();
         });
 

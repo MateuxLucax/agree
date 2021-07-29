@@ -10,7 +10,7 @@ public class GroupBarController
     private Group group;
     private GroupBar view;
 
-    public GroupBarController(User user, Group group)
+    public GroupBarController(User user, Group group, GroupListController groupListCon)
     {
         this.user = user;
         this.group = group;
@@ -27,7 +27,10 @@ public class GroupBarController
         if (group.isOwnedBy(user)) {
             view.showManageButton();
             view.onClickManage(() -> {
-                new GroupManagementController(this.group, this, view.getManageButton()).display();
+                // TODO make the GroupManagementController expose methods
+                //   for group renaming and removing
+                //   instead of making it take "this" and "groupListCon"
+                new GroupManagementController(this.group, this, groupListCon, view.getManageButton()).display();
             });
         }
     }
@@ -35,7 +38,7 @@ public class GroupBarController
     // TODO this method only exists because we need to add the bar
     //   to the panel listing the group bars, so consider removing
     //   it when we make a controller for that panel
-    public GroupBar getBar()
+    public GroupBar getPanel()
     {
         return view;
     }

@@ -63,28 +63,9 @@ public class Application {
         mainFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         var mainPane = new JTabbedPane();
-        var groupsPanel = new JPanel();
-        mainPane.addTab("Groups", groupsPanel);
-        {
-            groupsPanel.setLayout(new BoxLayout(groupsPanel, BoxLayout.PAGE_AXIS));
-            var btNewGroup = new JButton("+ New group");
-            groupsPanel.add(btNewGroup);
-            btNewGroup.addActionListener(evt -> {
-                btNewGroup.setEnabled(false);
-                var groupCreationFrame = new GroupCreationFrame(btNewGroup);
-                groupCreationFrame.onCreation(groupName -> {
-                    var group = new Group(groupName, session.getUser());
-                    if (groupRepo.createGroup(group))
-                        groupsPanel.add(new GroupBarController(session.getUser(), group).getBar());
-                });
-                groupCreationFrame.pack();
-                groupCreationFrame.setVisible(true);
-            });
 
-            List<Group> groups = groupRepo.getGroups(session.getUser());
-            for (var group : groups)
-                groupsPanel.add(new GroupBarController(session.getUser(), group).getBar());
-        }
+        var groupListCon = new GroupListController(session.getUser());
+        mainPane.addTab("Groups", groupListCon.getPanel());
 
         var friendsPanel = new JPanel();
         mainPane.addTab("Friends", friendsPanel);
