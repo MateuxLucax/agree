@@ -6,6 +6,7 @@ public class GroupBar extends JPanel
 {
     private JLabel lbName;
     private JButton btChat;
+    private JButton btMembers;
     private JButton btInviteFriends;
     private JButton btManage;
 
@@ -17,15 +18,19 @@ public class GroupBar extends JPanel
         btChat = new JButton("Chat");
         add(btChat);
 
+        btMembers = new JButton("Members");
+        add(btMembers);
+
         btInviteFriends = new JButton("Invite friends");
         add(btInviteFriends);
 
         btManage = new JButton("Manage");
     }
 
-    public JButton getChatButton()   { return btChat; }
-    public JButton getInviteButton() { return btInviteFriends; }
-    public JButton getManageButton() { return btManage; }
+    public JButton getChatButton()    { return btChat; }
+    public JButton getMembersButton() { return btMembers; }
+    public JButton getInviteButton()  { return btInviteFriends; }
+    public JButton getManageButton()  { return btManage; }
 
     public void rename(String newName)
     {
@@ -47,6 +52,14 @@ public class GroupBar extends JPanel
     {
         btInviteFriends.addActionListener(e -> {
             btInviteFriends.setEnabled(false);
+            action.run();
+        });
+    }
+
+    public void onClickMembers(Runnable action)
+    {
+        btMembers.addActionListener(e -> {
+            btMembers.setEnabled(false);
             action.run();
         });
     }

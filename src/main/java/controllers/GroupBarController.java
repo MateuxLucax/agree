@@ -18,11 +18,18 @@ public class GroupBarController
         this.view = new GroupBar(group.getName());
 
         view.onClickChat(() -> {
-            new GroupMessagingController(user, group, view.getChatButton()).display();
+            new GroupMessagingController(user, group, view.getChatButton())
+                    .display();
+        });
+
+        view.onClickMembers(() -> {
+            new GroupMemberListController(user, group, view.getMembersButton())
+                    .display();
         });
 
         view.onClickInvite(() -> {
-            new GroupInviteFriendsController(this.user, this.group, view.getInviteButton()).display();
+            new GroupInviteFriendsController(user, group, view.getInviteButton())
+                    .display();
         });
 
         if (group.isOwnedBy(user)) {
