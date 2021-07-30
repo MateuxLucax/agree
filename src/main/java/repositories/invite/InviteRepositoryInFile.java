@@ -2,6 +2,8 @@ package repositories.invite;
 
 import com.google.gson.reflect.TypeToken;
 import models.User;
+import models.invite.FriendInvite;
+import models.invite.GroupInvite;
 import models.invite.Invite;
 import models.invite.InviteState;
 import utils.JsonDatabaseUtil;
@@ -29,6 +31,17 @@ public class InviteRepositoryInFile implements IInviteRepository {
     public List<Invite> getInvites(User user) {
         return invites.stream().filter(invite -> invite.involves(user)).collect(Collectors.toList());
     }
+
+    @Override
+    public List<FriendInvite> getFriendInvites(User user) {
+        return getInvites(user).stream().filter(i -> i instanceof FriendInvite).map(i -> (FriendInvite) i).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<GroupInvite> getGroupInvites(User user) {
+        return getInvites(user).stream().filter(i -> i instanceof GroupInvite).map(i -> (GroupInvite) i).collect(Collectors.toList());
+    }
+
 
     @Override
     public List<Invite> getInvites(User user, InviteState state) {
