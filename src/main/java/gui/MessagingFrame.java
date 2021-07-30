@@ -10,7 +10,6 @@ import java.util.function.Function;
 
 public class MessagingFrame extends PopUpFrame
 {
-    private final JPanel mainPanel;
     private final JPanel msgListPanel;
     private final JButton btLoadOlder;
     private final JButton btLoadNewer;
@@ -45,7 +44,7 @@ public class MessagingFrame extends PopUpFrame
         newMsgPanel.add(taNewMsg, BorderLayout.CENTER);
         newMsgPanel.add(btSend, BorderLayout.LINE_END);
 
-        mainPanel = new JPanel();
+        JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BorderLayout());
         mainPanel.add(scrollPane, BorderLayout.CENTER);
         mainPanel.add(newMsgPanel, BorderLayout.PAGE_END);

@@ -3,16 +3,18 @@ package app;
 import com.github.weisj.darklaf.LafManager;
 import com.github.weisj.darklaf.theme.DarculaTheme;
 import com.github.weisj.darklaf.theme.laf.DarculaThemeDarklafLookAndFeel;
-import controllers.*;
-import controllers.group.*;
-import gui.*;
+import controllers.AuthController;
+import controllers.UserSearchController;
+import controllers.group.GroupListController;
+import gui.AuthPanel;
+import gui.InviteBar;
+import gui.InviteListFrame;
+import gui.PopUpFrame;
 import models.UserToGroupsMap;
 import models.group.Group;
 import models.invite.FriendshipInvite;
 import models.invite.Invite;
 import models.invite.InviteState;
-import repositories.group.IGroupRepository;
-import repositories.user.IUserRepository;
 
 import javax.swing.*;
 import java.util.List;
@@ -20,8 +22,6 @@ import java.util.List;
 public class Application {
 
     private UserSession session;
-    private IGroupRepository groupRepo;
-    private IUserRepository userRepo;
 
     public Application() {
         initializeTheme();
@@ -53,8 +53,6 @@ public class Application {
 
         // Setting up some shortcuts
         session   = UserSession.getInstance();
-        groupRepo = session.getGroupRepository();
-        userRepo  = session.getUserRepository();
     }
 
     private void initializeMainFrame() {

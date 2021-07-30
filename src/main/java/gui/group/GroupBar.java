@@ -4,11 +4,11 @@ import javax.swing.*;
 
 public class GroupBar extends JPanel
 {
-    private JLabel lbName;
-    private JButton btChat;
-    private JButton btMembers;
-    private JButton btInviteFriends;
-    private JButton btManage;
+    private final JLabel lbName;
+    private final JButton btChat;
+    private final JButton btMembers;
+    private final JButton btInviteFriends;
+    private final JButton btManage;
 
     public GroupBar(String groupName)
     {

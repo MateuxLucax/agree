@@ -7,12 +7,6 @@ import java.util.Objects;
 
 public class Message implements Comparable<Message> {
 
-    /*
-     * Message initially had a Member instead of a User attribute, which makes sense in the context of Servers.
-     * But Message now has an User instead of Member attribute because Groups have only Users in them, not Members.
-     * The problem is that if Message had a Member attribute then Groups, which have no 'members', wouldn't be able to have messages...
-     * This change might end up not being a problem at all. We'll see.
-     */
     private final User user;
     private final String text;
     private final Date sentAt;

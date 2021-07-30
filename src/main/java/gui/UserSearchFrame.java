@@ -6,10 +6,9 @@ import java.util.function.Consumer;
 
 public class UserSearchFrame extends PopUpFrame
 {
-    private JPanel     mainPanel;
-    private JButton    btSearch;
-    private JTextField tfSearch;
-    private JPanel     resultsPanel;
+    private final JButton    btSearch;
+    private final JTextField tfSearch;
+    private final JPanel     resultsPanel;
 
     // TODO "load more" button, because we won't load *all* the users that match the search, which would possibly be too much
 
@@ -32,7 +31,7 @@ public class UserSearchFrame extends PopUpFrame
         resultsScrollPane.setViewportView(resultsPanel);
         resultsScrollPane.getVerticalScrollBar().setUnitIncrement(20);
 
-        mainPanel = new JPanel();
+        JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BorderLayout());
         mainPanel.add(formPanel, BorderLayout.PAGE_START);
         mainPanel.add(resultsScrollPane, BorderLayout.CENTER);

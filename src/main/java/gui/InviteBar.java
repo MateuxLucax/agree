@@ -9,7 +9,6 @@ import java.awt.*;
 
 public class InviteBar extends JPanel {
     private final Invite invite;
-    private User    viewer;
 
     private final JPanel  buttonsPanel;
     private final JButton btState;
@@ -18,7 +17,6 @@ public class InviteBar extends JPanel {
 
     public InviteBar(Invite invite, User viewer) {
         this.invite = invite;
-        this.viewer  = viewer;
 
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createLineBorder(Color.BLACK));

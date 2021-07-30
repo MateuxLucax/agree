@@ -11,15 +11,12 @@ import java.util.List;
 public interface IInviteRepository {
 
     List<Invite> getInvites(User user);
-
-    List<FriendshipInvite> getFriendInvites(User user);
-
-    List<GroupInvite> getGroupInvites(User user);
-
     List<Invite> getInvites(User user, InviteState state);
 
+    List<FriendshipInvite> getFriendInvites(User user);
     List<FriendshipInvite> getFriendInvites(User user, InviteState state);
 
+    List<GroupInvite> getGroupInvites(User user);
     List<GroupInvite> getGroupInvites(User user, InviteState state);
 
     boolean addInvite(Invite invite);

@@ -64,14 +64,6 @@ public class UserSession {
         return groups;
     }
 
-    // TODO remove:
-    public List<User> getFriends() { return friends; }
-    public List<Invite> getInvites() { return invites; }
-
-    public IMessageRepository getMessageRepository() { return msgRepo; }
-    public IGroupRepository getGroupRepository() { return groupRepo; }
-    public IUserRepository getUserRepository() { return userRepo; }
-    public IFriendshipRepository getFriendshipRepository() { return friendshipRepository; }
     public IInviteRepository getInviteRepository() {
         return inviteRepository;
     }

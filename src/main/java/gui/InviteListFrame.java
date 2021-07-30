@@ -4,7 +4,7 @@ import javax.swing.*;
 
 public class InviteListFrame extends PopUpFrame
 {
-    private JPanel invitesPanel;
+    private final JPanel invitesPanel;
 
     public InviteListFrame(JButton btnThatOpenedTheFrame)
     {

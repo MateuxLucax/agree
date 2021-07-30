@@ -14,7 +14,7 @@ import java.util.function.Consumer;
 
 public class GroupManagementFrame extends PopUpFrame {
 
-    private GroupManagementPanel panel;
+    private final GroupManagementPanel panel;
 
     public GroupManagementFrame(String groupName, JButton btnThatOpenedTheFrame)
     {

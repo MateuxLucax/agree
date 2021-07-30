@@ -4,7 +4,7 @@ import javax.swing.*;
 
 public class GroupListPanel extends JPanel
 {
-    private JButton btNewGroup;
+    private final JButton btNewGroup;
 
     public GroupListPanel()
     {

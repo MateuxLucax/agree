@@ -9,8 +9,6 @@ public class User {
 
     private final Date createdAt;
 
-    private String email;
-
     private String password;
 
     // private String picture;

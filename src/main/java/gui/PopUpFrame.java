@@ -16,12 +16,12 @@ import java.awt.event.WindowEvent;
 
 public class PopUpFrame extends JFrame
 {
-    private JButton btn;
+    private final JButton btnThatOpenedTheFrame;
 
     public PopUpFrame(JButton btnThatOpenedTheFrame)
     {
         super();
-        btn = btnThatOpenedTheFrame;
+        this.btnThatOpenedTheFrame = btnThatOpenedTheFrame;
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 super.windowClosing(e);
@@ -31,9 +31,9 @@ public class PopUpFrame extends JFrame
     }
 
     public void close() {
-        btn.setEnabled(true);
-        btn.repaint();
-        btn.revalidate();
+        btnThatOpenedTheFrame.setEnabled(true);
+        btnThatOpenedTheFrame.repaint();
+        btnThatOpenedTheFrame.revalidate();
         dispose();
     }
 

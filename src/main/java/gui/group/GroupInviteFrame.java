@@ -7,7 +7,7 @@ import javax.swing.*;
 
 public class GroupInviteFrame extends PopUpFrame
 {
-    private JPanel friendsPanel;
+    private final JPanel friendsPanel;
 
     public GroupInviteFrame(JButton btnThatOpenedTheFrame)
     {
