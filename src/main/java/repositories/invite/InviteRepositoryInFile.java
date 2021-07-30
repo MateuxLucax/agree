@@ -2,7 +2,7 @@ package repositories.invite;
 
 import com.google.gson.reflect.TypeToken;
 import models.User;
-import models.invite.FriendInvite;
+import models.invite.FriendshipInvite;
 import models.invite.GroupInvite;
 import models.invite.Invite;
 import models.invite.InviteState;
@@ -33,8 +33,8 @@ public class InviteRepositoryInFile implements IInviteRepository {
     }
 
     @Override
-    public List<FriendInvite> getFriendInvites(User user) {
-        return getInvites(user).stream().filter(i -> i instanceof FriendInvite).map(i -> (FriendInvite) i).collect(Collectors.toList());
+    public List<FriendshipInvite> getFriendInvites(User user) {
+        return getInvites(user).stream().filter(i -> i instanceof FriendshipInvite).map(i -> (FriendshipInvite) i).collect(Collectors.toList());
     }
 
     @Override
@@ -42,6 +42,15 @@ public class InviteRepositoryInFile implements IInviteRepository {
         return getInvites(user).stream().filter(i -> i instanceof GroupInvite).map(i -> (GroupInvite) i).collect(Collectors.toList());
     }
 
+    @Override
+    public List<FriendshipInvite> getFriendInvites(User user, InviteState state) {
+        return getInvites(user).stream().filter(i -> i.getState().equals(state) && i instanceof FriendshipInvite).map(i -> (FriendshipInvite) i).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<GroupInvite> getGroupInvites(User user, InviteState state) {
+        return getInvites(user).stream().filter(i -> i.getState().equals(state) && i instanceof GroupInvite).map(i -> (GroupInvite) i).collect(Collectors.toList());
+    }
 
     @Override
     public List<Invite> getInvites(User user, InviteState state) {
