@@ -1,4 +1,4 @@
-package controllers;
+package controllers.group;
 
 import gui.GroupInviteFrame;
 import gui.UserBar;

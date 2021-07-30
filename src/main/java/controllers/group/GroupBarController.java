@@ -1,4 +1,4 @@
-package controllers;
+package controllers.group;
 
 import gui.GroupBar;
 import models.User;

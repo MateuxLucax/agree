@@ -1,7 +1,6 @@
-package controllers;
+package controllers.group;
 
 import gui.GroupBar;
-import gui.GroupCreationFrame;
 import gui.GroupListPanel;
 import models.User;
 import models.group.Group;
