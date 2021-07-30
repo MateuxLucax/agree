@@ -42,6 +42,9 @@ public class GroupInviteFriendsController {
                     break;
             }
 
+            /* TODO use a InviteableFriendBar and InviteableFriendBarController instead of UserBar
+               (I'm not a fan of long names, but just FriendBar is not enough here, since
+                we're specifically in the context of a group to which we want to invite friends)
             var bar = new UserBar(friend);
             view.addFriendBar(bar);
 
@@ -58,6 +61,7 @@ public class GroupInviteFriendsController {
                     bar.addButton(btSent);
                 });
             }
+             */
         }
     }
 

@@ -6,7 +6,6 @@ import com.github.weisj.darklaf.theme.laf.DarculaThemeDarklafLookAndFeel;
 import controllers.*;
 import controllers.group.*;
 import gui.*;
-import models.User;
 import models.UserToGroupsMap;
 import models.group.Group;
 import models.invite.FriendshipInvite;
@@ -16,7 +15,6 @@ import repositories.group.IGroupRepository;
 import repositories.user.IUserRepository;
 
 import javax.swing.*;
-import java.util.ArrayList;
 import java.util.List;
 
 public class Application {
@@ -83,50 +81,8 @@ public class Application {
             morePanel.add(btSearchForUsers);
             btSearchForUsers.addActionListener(evt -> {
                 btSearchForUsers.setEnabled(false);
-                var searchFrame = new UserSearchFrame(btSearchForUsers);
-                searchFrame.onSearch(searchString -> {
-                    List<User>    users = userRepo.searchUser(searchString);
-                    List<UserBar> bars  = new ArrayList<>(users.size());
-                    for (var user : users) {
-                        var bar = new UserBar(user);
-
-                        // If the user isn't in our friend list,
-                        // we either have or haven't sent a friend request to him.
-                        // If we have, we'll show the "invite sent" button, greyed-out.
-                        // If we haven't, we'll show the "ask to be friends" button,
-                        // which when pressed sends the request to the user and
-                        // also gets updated to the "request sent" button.
-                        if (!session.getUser().equals(user) && !session.getFriends().contains(user)) {
-                            var btSent = new JButton("Request sent");
-                            btSent.setEnabled(false);
-
-                            boolean alreadySentRequest = false;
-                            List<Invite> invs = session.getInvites();
-                            for (int i = 0; !alreadySentRequest && i < invs.size(); i++) {
-                                if (invs.get(i).to().equals(user))
-                                    alreadySentRequest = true;
-                            }
-                            if (alreadySentRequest) {
-                                bar.addButton(btSent);
-                            } else {
-                                var btAsk = new JButton("Ask to be friends");
-                                bar.addButton(btAsk);
-                                btAsk.addActionListener(evt0 -> {
-                                    var invite = new FriendshipInvite(session.getUser(), user, InviteState.PENDING);
-                                    session.getInviteRepository().addInvite(invite);
-                                    bar.removeButton(btAsk);
-                                    bar.addButton(btSent);
-                                    bar.repaint();
-                                    bar.revalidate();
-                                });
-                            }
-                        }
-                        bars.add(bar);
-                    }
-                    return bars;
-                });
-                searchFrame.pack();
-                searchFrame.setVisible(true);
+                var searchCon = new UserSearchController(session.getUser(), btSearchForUsers);
+                searchCon.display();
             });
 
             var btInvites = new JButton("Invites");

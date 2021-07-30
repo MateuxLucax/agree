@@ -3,10 +3,7 @@ package app;
 import models.User;
 import models.group.Group;
 import models.group.GroupsSortByRecentMessages;
-import models.invite.FriendshipInvite;
-import models.invite.GroupInvite;
 import models.invite.Invite;
-import models.invite.InviteState;
 import repositories.friendship.FriendshipInFileRepository;
 import repositories.friendship.IFriendshipRepository;
 import repositories.group.GroupInFileRepository;
@@ -19,7 +16,6 @@ import repositories.user.IUserRepository;
 import repositories.user.UserRepositoryInFile;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class UserSession {

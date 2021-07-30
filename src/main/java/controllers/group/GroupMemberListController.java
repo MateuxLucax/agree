@@ -16,6 +16,7 @@ public class GroupMemberListController {
     {
         view = new UserListFrame(btnThatOpenedTheFrame);
 
+        /* TODO use a MemberBar and MemberBarController instead of UserBar
         var groupRepo = new GroupInFileRepository();
         var ownerBar = new UserBar(group.getOwner());
         var btOwner = new JButton("Owner");
@@ -44,6 +45,7 @@ public class GroupMemberListController {
                 });
             }
         }
+         */
     }
 
     public void display()

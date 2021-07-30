@@ -2,8 +2,7 @@ package gui;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.List;
-import java.util.function.Function;
+import java.util.function.Consumer;
 
 public class UserSearchFrame extends PopUpFrame
 {
@@ -12,9 +11,7 @@ public class UserSearchFrame extends PopUpFrame
     private JTextField tfSearch;
     private JPanel     resultsPanel;
 
-    // TODO "load more" button, because we won't load *all* the users that match the search,
-    //    which would possibly be too much
-    //    I guess we'll need a UserSearchModel that takes care of dynamically loading the users then
+    // TODO "load more" button, because we won't load *all* the users that match the search, which would possibly be too much
 
     public UserSearchFrame(JButton btnThatOpenedTheFrame)
     {
@@ -31,27 +28,30 @@ public class UserSearchFrame extends PopUpFrame
         resultsPanel = new JPanel();
         resultsPanel.setLayout(new BoxLayout(resultsPanel, BoxLayout.PAGE_AXIS));
 
+        var resultsScrollPane = new JScrollPane();
+        resultsScrollPane.setViewportView(resultsPanel);
+        resultsScrollPane.getVerticalScrollBar().setUnitIncrement(20);
+
         mainPanel = new JPanel();
         mainPanel.setLayout(new BorderLayout());
         mainPanel.add(formPanel, BorderLayout.PAGE_START);
-        mainPanel.add(resultsPanel, BorderLayout.CENTER);
+        mainPanel.add(resultsScrollPane, BorderLayout.CENTER);
 
         setContentPane(mainPanel);
     }
 
-    public void onSearch(Function<String, List<UserBar>> searchFn)
+    public void addUserBar(UserBar bar)
     {
-        btSearch.addActionListener(evt -> {
-            loadResults(searchFn.apply(tfSearch.getText()));
-            tfSearch.setText("");
-        });
+        resultsPanel.add(bar);
     }
 
-    public void loadResults(List<UserBar> bars)
+    public void clearResults()
     {
         resultsPanel.removeAll();
-        bars.forEach(resultsPanel::add);
-        resultsPanel.repaint();
-        resultsPanel.revalidate();
+    }
+
+    public void onSearch(Consumer<String> action)
+    {
+        btSearch.addActionListener(e -> action.accept(tfSearch.getText()));
     }
 }
