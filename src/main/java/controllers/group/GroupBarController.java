@@ -1,6 +1,6 @@
 package controllers.group;
 
-import gui.GroupBar;
+import gui.group.GroupBar;
 import models.User;
 import models.group.Group;
 

@@ -1,7 +1,7 @@
 package controllers.group;
 
-import gui.GroupBar;
-import gui.GroupListPanel;
+import gui.group.GroupBar;
+import gui.group.GroupListPanel;
 import models.User;
 import models.group.Group;
 import repositories.group.GroupInFileRepository;

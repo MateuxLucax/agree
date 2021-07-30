@@ -1,10 +1,12 @@
-package gui;
+package gui.group;
 
 /* Since the GroupCreationPanel was created with the IntelliJ IDEA
    GUI design tool, we can't just extract its logic to this class.
    The result is that this is just a thin wrapper around the panel
    that puts it in a frame.
  */
+
+import gui.PopUpFrame;
 
 import javax.swing.*;
 import java.util.function.Consumer;

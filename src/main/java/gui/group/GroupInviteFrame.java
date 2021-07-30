@@ -1,4 +1,7 @@
-package gui;
+package gui.group;
+
+import gui.PopUpFrame;
+import gui.UserBar;
 
 import javax.swing.*;
 

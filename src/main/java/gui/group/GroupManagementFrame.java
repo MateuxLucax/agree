@@ -1,4 +1,6 @@
-package gui;
+package gui.group;
+
+import gui.PopUpFrame;
 
 import javax.swing.*;
 import java.util.function.Consumer;

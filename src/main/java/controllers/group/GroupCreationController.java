@@ -1,6 +1,6 @@
 package controllers.group;
 
-import gui.GroupCreationFrame;
+import gui.group.GroupCreationFrame;
 import models.User;
 import models.group.Group;
 import repositories.group.GroupInFileRepository;

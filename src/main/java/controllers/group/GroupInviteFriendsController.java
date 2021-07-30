@@ -1,6 +1,6 @@
 package controllers.group;
 
-import gui.GroupInviteFrame;
+import gui.group.GroupInviteFrame;
 import gui.UserBar;
 import models.User;
 import models.group.Group;
