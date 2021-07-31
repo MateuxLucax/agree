@@ -38,21 +38,15 @@ public class Application {
         }
     }
 
-    private void startUserSession() {
-        var authFrame = new JFrame();
-        var authPanel = new AuthPanel();
-        authFrame.setContentPane(authPanel.getJPanel());
-        authFrame.pack();
-        authFrame.setVisible(true);
-
-        var authController = new AuthController(authFrame, authPanel);
+    private void startUserSession()
+    {
+        session = UserSession.getInstance(); // Shortcut
+        var authController = new AuthController();
+        authController.display();
         authController.onSuccess(user -> {
             session.initialize(user);
             initializeMainFrame();
         });
-
-        // Setting up some shortcuts
-        session   = UserSession.getInstance();
     }
 
     private void initializeMainFrame() {

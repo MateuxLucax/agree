@@ -18,13 +18,16 @@ public class AuthController {
     private final JFrame frame;
     private       Consumer<User> onSuccess;
 
-    public AuthController(JFrame frame, AuthPanel view)
+    public AuthController()
     {
+        view = new AuthPanel();
+        frame = new JFrame();
+        frame.setContentPane(view.getJPanel());
+
         loginService = new LoginService();
         view.onLogin(this::login);
         view.onRegistration(this::register);
-        this.view = view;
-        this.frame = frame;
+
     }
 
     private void login(String name, String password)
@@ -69,6 +72,12 @@ public class AuthController {
     public void onSuccess(Consumer<User> action)
     {
         this.onSuccess = action;
+    }
+
+    public void display()
+    {
+        frame.pack();
+        frame.setVisible(true);
     }
 
 }
