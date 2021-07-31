@@ -21,6 +21,8 @@ public class Application {
 
         // Start the session
         // TODO get rid of UserSession, or figure out what it really is in this application, it only exists here)
+        //  maybe it centralizes access to the repositores or something?, so each Controller class
+        //  doesn't need to instance its own? idk
         var session = UserSession.getInstance();
         var authCon = new AuthController();
         authCon.display();
@@ -28,6 +30,7 @@ public class Application {
             session.initialize(user);
             var mainCon = new MainController(session.getUser());
             mainCon.display();
+            authCon.close();
         });
     }
 }

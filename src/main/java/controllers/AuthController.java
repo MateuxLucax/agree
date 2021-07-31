@@ -39,7 +39,6 @@ public class AuthController {
         try {
             User user = loginService.authenticate(name, password);
             onSuccess.accept(user);
-            frame.dispose();
         } catch (UnauthorizedUserException e) {
             view.warn("Incorrect username or password!");
         }
@@ -55,7 +54,6 @@ public class AuthController {
             var user = new User(name, password);
             if (loginService.createUser(user)) {
                 onSuccess.accept(user);
-                frame.dispose();
             }
         } catch (NameAlreadyInUseException e) {
             view.warn("Someone already uses the name " + name);
@@ -78,6 +76,11 @@ public class AuthController {
     {
         frame.pack();
         frame.setVisible(true);
+    }
+
+    public void close()
+    {
+        frame.dispose();
     }
 
 }
