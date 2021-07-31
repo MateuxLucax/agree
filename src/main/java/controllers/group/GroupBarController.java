@@ -6,30 +6,29 @@ import models.group.Group;
 
 public class GroupBarController
 {
-    private User user;
-    private Group group;
-    private GroupBar view;
+    private final GroupBar view;
     private Runnable onDelete;
 
     public GroupBarController(User user, Group group)
     {
-        this.user = user;
-        this.group = group;
         this.view = new GroupBar(group.getName());
 
         view.onClickChat(() -> {
+            view.getChatButton().setEnabled(false);
             var con = new GroupMessagingController(user, group);
             con.onClose(() -> view.getChatButton().setEnabled(true));
             con.display();
         });
 
         view.onClickMembers(() -> {
+            view.getMembersButton().setEnabled(false);
             var con = new GroupMemberListController(user, group);
             con.onClose(() -> view.getMembersButton().setEnabled(true));
             con.display();
         });
 
         view.onClickInvite(() -> {
+            view.getInviteButton().setEnabled(false);
             var con = new GroupInviteFriendsController(user, group);
             con.onClose(() -> view.getInviteButton().setEnabled(true));
             con.display();
@@ -38,6 +37,7 @@ public class GroupBarController
         if (group.isOwnedBy(user)) {
             view.showManageButton();
             view.onClickManage(() -> {
+                view.getManageButton().setEnabled(false);
                 var con = new GroupManagementController(group);
                 con.onClose(() -> view.getManageButton().setEnabled(true));
                 con.onRename(newName -> {

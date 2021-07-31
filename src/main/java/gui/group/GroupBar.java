@@ -42,29 +42,23 @@ public class GroupBar extends JPanel
 
     public void onClickChat(Runnable action)
     {
-        btChat.addActionListener(e -> {
-            btChat.setEnabled(false);
-            action.run();
-        });
+        btChat.addActionListener(e -> action.run());
     }
 
     public void onClickInvite(Runnable action)
     {
-        btInviteFriends.addActionListener(e -> {
-            btInviteFriends.setEnabled(false);
-            action.run();
-        });
+        btInviteFriends.addActionListener(e -> action.run());
     }
 
     public void onClickMembers(Runnable action)
     {
-        btMembers.addActionListener(e -> {
-            btMembers.setEnabled(false);
-            action.run();
-        });
+        btMembers.addActionListener(e -> action.run());
     }
 
-    public void showManageButton() { add(btManage); }
+    public void showManageButton()
+    {
+        add(btManage);
+    }
 
     public void onClickManage(Runnable action)
     {
