@@ -11,12 +11,14 @@ public class InviteListFrame extends JFrame
 
     public InviteListFrame()
     {
-        var invitesScrollPane = new JScrollPane();
         invitesPanel = new JPanel();
         invitesPanel.setLayout(new BoxLayout(invitesPanel, BoxLayout.PAGE_AXIS));
-        invitesScrollPane.setViewportView(invitesPanel);
-        invitesScrollPane.getVerticalScrollBar().setUnitIncrement(20);
-        setContentPane(invitesScrollPane);
+
+        var scrollPane = new JScrollPane();
+        scrollPane.setViewportView(invitesPanel);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(20);
+        setContentPane(scrollPane);
+
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 if (onClose != null)
@@ -26,7 +28,7 @@ public class InviteListFrame extends JFrame
         });
     }
 
-    public void addInvite(InviteBar bar)
+    public void addInviteBar(InviteBar bar)
     {
         invitesPanel.add(bar);
     }
@@ -34,6 +36,11 @@ public class InviteListFrame extends JFrame
     public void onClose(Runnable action)
     {
         onClose = action;
+    }
 
+    public void display()
+    {
+        pack();
+        setVisible(true);
     }
 }

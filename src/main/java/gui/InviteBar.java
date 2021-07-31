@@ -7,76 +7,73 @@ import models.invite.InviteState;
 import javax.swing.*;
 import java.awt.*;
 
-public class InviteBar extends JPanel {
+public class InviteBar extends JPanel
+{
     private final Invite invite;
-
     private final JPanel  buttonsPanel;
     private final JButton btState;
     private JButton btAccept;
     private JButton btDecline;
 
-    public InviteBar(Invite invite, User viewer) {
+    public InviteBar(Invite invite)
+    {
         this.invite = invite;
 
         setLayout(new BorderLayout());
-        setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
 
-        var icon = new JLabel(invite.getIcon());  // Placeholder, we'll have an actual picture later
-        add(icon, BorderLayout.LINE_START);
+        // TODO show invite icon here
+        // icon = (...) invite.getIcon() (...);
+        // add(icon, BorderLayout.LINE_START);
 
         var text = new JLabel(invite.getText());
         add(text, BorderLayout.CENTER);
 
-        var stateContainer = new JPanel();  // So the button doesn't occupy the whole LINE_END segment
-        btState = new JButton(invite.getState().toString()); // TODO add colors (accepted green, declined red)
+        // We put the button inside a JPanel (btnContainer) and the JPanel in the InviteBar
+        // because if we put the button directly into the InviteBar it'd fill the whole LINE_END
+        // part of the layout
+        var btnContainer = new JPanel();
+        // TODO add colors (accepted green, declined red)
+        btState = new JButton(invite.getState().toString());
         btState.setEnabled(false);
-        stateContainer.add(btState);
-        add(stateContainer, BorderLayout.LINE_END);
+        btnContainer.add(btState);
+        add(btnContainer, BorderLayout.LINE_END);
 
+        // Container for the "accept" and "decline" buttons
         buttonsPanel = new JPanel();
         buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.LINE_AXIS));
         add(buttonsPanel, BorderLayout.PAGE_END);
-
-        btAccept = null;
-        btDecline = null;
-        if (invite.getState() == InviteState.PENDING && invite.to().equals(viewer)) {
-            btAccept = new JButton("Accept");   // TODO add colors (accept green, decline red)
-            btDecline = new JButton("Decline");
-            buttonsPanel.add(btAccept);
-            buttonsPanel.add(btDecline);
-        }
     }
 
-    // Update the request when the user accepts or declines it
-    public void update() {
-        btState.setText(invite.getState().toString());
+    public void showAcceptAndDeclineButtons()
+    {
+        // TODO add colors (accept green, decline red)
+        btAccept = new JButton("Accept");
+        btDecline = new JButton("Decline");
+        buttonsPanel.add(btAccept);
+        buttonsPanel.add(btDecline);
+    }
+
+    public void onClickAccept(Runnable action)
+    {
+        if (btAccept != null)
+            btAccept.addActionListener(e -> action.run());
+    }
+
+    public void onClickDecline(Runnable action)
+    {
+        if (btDecline != null)
+            btDecline.addActionListener(e -> action.run());
+    }
+
+    public void removeAcceptAndDeclineButtons()
+    {
         buttonsPanel.removeAll();
         remove(buttonsPanel);
     }
 
-
-    public void onAccept(Runnable callback) {
-        if (btAccept == null) {
-            throw new UnsupportedOperationException(
-                "Can't add onAccept listener to request ("+ invite +"): not pending or not being viewer by the receiver"
-            );
-        }
-        btAccept.addActionListener(evt -> {
-            callback.run();
-            update();
-        });
+    public void updateStateButton()
+    {
+        btState.setText(invite.getState().toString());
     }
-
-    public void onDecline(Runnable callback) {
-        if (btDecline == null) {
-            throw new UnsupportedOperationException(
-                "Can't add onDecline listener to request ("+ invite +"): not pending or not being viewer by the receiver"
-            );
-        }
-        btDecline.addActionListener(evt -> {
-            callback.run();
-            update();
-        });
-    }
-
 }

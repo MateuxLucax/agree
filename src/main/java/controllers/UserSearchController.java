@@ -7,6 +7,7 @@ import models.invite.FriendshipInvite;
 import models.invite.InviteState;
 import repositories.friendship.FriendshipInFileRepository;
 import repositories.invite.InviteRepositoryInFile;
+import repositories.invite.InviteRepositoryTest;
 import repositories.user.UserRepositoryInFile;
 
 import java.util.List;
@@ -21,7 +22,7 @@ public class UserSearchController
 
         var userRepo   = new UserRepositoryInFile();
         var friendRepo = new FriendshipInFileRepository();
-        var inviteRepo = new InviteRepositoryInFile();
+        var inviteRepo = new InviteRepositoryTest();
 
         var friends = friendRepo.getFriends(userInSession);
         var pendingFriendInvs = inviteRepo.getFriendInvites(userInSession, InviteState.PENDING);
@@ -45,6 +46,7 @@ public class UserSearchController
                         if (inviteRepo.addInvite(inv)) {
                             pendingFriendInvs.add(inv);
                             bar.replaceWithInviteSentButton();
+                        }
                         // TODO else dialog "couldn't send invite" (also, some other places need dialogs like this too)
                     });
                 }

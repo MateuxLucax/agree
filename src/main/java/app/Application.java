@@ -4,6 +4,7 @@ import com.github.weisj.darklaf.LafManager;
 import com.github.weisj.darklaf.theme.DarculaTheme;
 import com.github.weisj.darklaf.theme.laf.DarculaThemeDarklafLookAndFeel;
 import controllers.AuthController;
+import controllers.InviteListController;
 import controllers.UserSearchController;
 import controllers.group.GroupListController;
 import gui.InviteBar;
@@ -78,30 +79,9 @@ public class Application {
             morePanel.add(btInvites);
             btInvites.addActionListener(evt -> {
                 btInvites.setEnabled(false);
-                var invitesFrame = new InviteListFrame();
-                invitesFrame.onClose(() -> btInvites.setEnabled(true));
-                List<Invite> invites = session.getInviteRepository().getInvites(session.getUser());
-                for (var inv : invites) {
-                    var invBar = new InviteBar(inv, session.getUser());
-                    invitesFrame.addInvite(invBar);
-                    if (inv.getState() == InviteState.PENDING && inv.to().equals(session.getUser())) {
-                        invBar.onAccept(() -> {
-                            inv.setState(InviteState.ACCEPTED);
-                            // TODO actually update invite in the database
-                            if (inv instanceof FriendshipInvite) {
-                                // TODO actually add friendship relationship in the database
-                            } else {  // inv instanceof GroupInvite
-                                // TODO actually add user to the group in the database
-                            }
-                        });
-                        invBar.onDecline(() -> {
-                            inv.setState(InviteState.DECLINED);
-                            // TODO actually update invite in the database
-                        });
-                    }
-                }
-                invitesFrame.pack();
-                invitesFrame.setVisible(true);
+                var invitesCon = new InviteListController(session.getUser());
+                invitesCon.onClose(() -> btInvites.setEnabled(true));
+                invitesCon.display();
             });
 
             // usg: [U]sers in the [S]ame [G]roup as you
