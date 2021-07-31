@@ -73,7 +73,8 @@ public class Application {
             morePanel.add(btSearchForUsers);
             btSearchForUsers.addActionListener(evt -> {
                 btSearchForUsers.setEnabled(false);
-                var searchCon = new UserSearchController(session.getUser(), btSearchForUsers);
+                var searchCon = new UserSearchController(session.getUser());
+                searchCon.onClose(() -> btSearchForUsers.setEnabled(true));
                 searchCon.display();
             });
 
@@ -81,7 +82,8 @@ public class Application {
             morePanel.add(btInvites);
             btInvites.addActionListener(evt -> {
                 btInvites.setEnabled(false);
-                var invitesFrame = new InviteListFrame(btInvites);
+                var invitesFrame = new InviteListFrame();
+                invitesFrame.onClose(() -> btInvites.setEnabled(true));
                 List<Invite> invites = session.getInviteRepository().getInvites(session.getUser());
                 for (var inv : invites) {
                     var invBar = new InviteBar(inv, session.getUser());
@@ -113,7 +115,8 @@ public class Application {
             morePanel.add(btUsg);
             btUsg.addActionListener(evt -> {
                 btUsg.setEnabled(false);
-                var usgFrame = new PopUpFrame(btUsg);
+                var usgFrame = new PopUpFrame();
+                usgFrame.onClose(() -> btUsg.setEnabled(true));
                 var usgScrollPane = new JScrollPane();
                 usgScrollPane.getVerticalScrollBar().setUnitIncrement(20);
                 var usgPanel = new JPanel();

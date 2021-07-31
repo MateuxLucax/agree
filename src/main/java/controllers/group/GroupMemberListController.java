@@ -12,9 +12,9 @@ public class GroupMemberListController {
 
     private UserListFrame view;
 
-    public GroupMemberListController(User user, Group group, JButton btnThatOpenedTheFrame)
+    public GroupMemberListController(User user, Group group)
     {
-        view = new UserListFrame(btnThatOpenedTheFrame);
+        view = new UserListFrame();
 
         /* TODO use a MemberBar and MemberBarController instead of UserBar
         var groupRepo = new GroupInFileRepository();
@@ -46,6 +46,11 @@ public class GroupMemberListController {
             }
         }
          */
+    }
+
+    public void onClose(Runnable action)
+    {
+        this.view.onClose(action);
     }
 
     public void display()

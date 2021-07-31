@@ -9,10 +9,8 @@ public class GroupInviteFrame extends PopUpFrame
 {
     private final JPanel friendsPanel;
 
-    public GroupInviteFrame(JButton btnThatOpenedTheFrame)
+    public GroupInviteFrame()
     {
-        super(btnThatOpenedTheFrame);
-
         var friendsScrollPane = new JScrollPane();
         friendsPanel = new JPanel();
         friendsPanel.setLayout(new BoxLayout(friendsPanel, BoxLayout.PAGE_AXIS));

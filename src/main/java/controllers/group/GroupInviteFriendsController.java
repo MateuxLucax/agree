@@ -17,9 +17,9 @@ public class GroupInviteFriendsController {
 
     private GroupInviteFrame view;
 
-    public GroupInviteFriendsController(User user, Group group, JButton btnThatOpenedTheFrame)
+    public GroupInviteFriendsController(User user, Group group)
     {
-        view = new GroupInviteFrame(btnThatOpenedTheFrame);
+        view = new GroupInviteFrame();
 
         var friendRepo = new FriendshipInFileRepository();
         var inviteRepo = new InviteRepositoryInFile();
@@ -63,6 +63,11 @@ public class GroupInviteFriendsController {
             }
              */
         }
+    }
+
+    public void onClose(Runnable action)
+    {
+        view.onClose(action);
     }
 
     public void display()

@@ -6,8 +6,8 @@ public class UserListFrame extends PopUpFrame {
 
     private final JPanel barsPanel;
 
-    public UserListFrame(JButton btnThatOpenedTheFrame) {
-        super(btnThatOpenedTheFrame);
+    public UserListFrame()
+    {
         var scrollPane = new JScrollPane();
         barsPanel = new JPanel();
         barsPanel.setLayout(new BoxLayout(barsPanel, BoxLayout.PAGE_AXIS));

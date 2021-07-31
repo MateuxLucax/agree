@@ -16,9 +16,8 @@ public class MessagingFrame extends PopUpFrame
     private final JTextArea taNewMsg;
     private final JButton btSend;
 
-    public MessagingFrame(JButton btnThatOpenedTheFrame) {
-        super(btnThatOpenedTheFrame);
-
+    public MessagingFrame()
+    {
         msgListPanel = new JPanel();
         msgListPanel.setLayout(new BoxLayout(msgListPanel, BoxLayout.PAGE_AXIS));
 

@@ -12,10 +12,8 @@ public class UserSearchFrame extends PopUpFrame
 
     // TODO "load more" button, because we won't load *all* the users that match the search, which would possibly be too much
 
-    public UserSearchFrame(JButton btnThatOpenedTheFrame)
+    public UserSearchFrame()
     {
-        super(btnThatOpenedTheFrame);
-
         tfSearch = new JTextField();
         btSearch = new JButton("Search");
 

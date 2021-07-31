@@ -13,15 +13,20 @@ public class GroupCreationController
     private GroupCreationFrame view;
     private Consumer<Group> onCreation;
 
-    public GroupCreationController(JButton btnThatOpenedTheFrame, User user)
+    public GroupCreationController(User user)
     {
         var groupRepo = new GroupInFileRepository();
-        this.view = new GroupCreationFrame(btnThatOpenedTheFrame);
+        this.view = new GroupCreationFrame();
         view.onCreation(groupName -> {
             var group = new Group(groupName, user);
             if (groupRepo.createGroup(group) && this.onCreation != null)
                 this.onCreation.accept(group);
         });
+    }
+
+    public void onClose(Runnable action)
+    {
+        this.view.onClose(action);
     }
 
     public void onCreation(Consumer<Group> action)

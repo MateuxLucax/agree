@@ -15,9 +15,8 @@ public class GroupCreationFrame extends PopUpFrame
 {
     public GroupCreationPanel panel;
 
-    public GroupCreationFrame(JButton btnThatOpenedTheFrame)
+    public GroupCreationFrame()
     {
-        super(btnThatOpenedTheFrame);
         panel = new GroupCreationPanel();
         setContentPane(panel.getJPanel());
     }

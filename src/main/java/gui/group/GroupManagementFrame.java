@@ -16,9 +16,8 @@ public class GroupManagementFrame extends PopUpFrame {
 
     private final GroupManagementPanel panel;
 
-    public GroupManagementFrame(String groupName, JButton btnThatOpenedTheFrame)
+    public GroupManagementFrame(String groupName)
     {
-        super(btnThatOpenedTheFrame);
         panel = new GroupManagementPanel(groupName);
         setContentPane(panel.getJPanel());
     }

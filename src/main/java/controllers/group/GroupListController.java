@@ -24,7 +24,8 @@ public class GroupListController
         groupRepo.getGroups(user).forEach(this::addGroup);
 
         view.onClickNewGroup(() -> {
-            var con = new GroupCreationController(view.getNewGroupButton(), user);
+            var con = new GroupCreationController(user);
+            con.onClose(() -> view.getNewGroupButton().setEnabled(true));
             con.onCreation(this::addGroup);
             con.display();
         });

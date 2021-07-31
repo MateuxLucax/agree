@@ -18,30 +18,35 @@ public class GroupBarController
         this.view = new GroupBar(group.getName());
 
         view.onClickChat(() -> {
-            new GroupMessagingController(user, group, view.getChatButton())
-                    .display();
+            var con = new GroupMessagingController(user, group);
+            con.onClose(() -> view.getChatButton().setEnabled(true));
+            con.display();
         });
 
         view.onClickMembers(() -> {
-            new GroupMemberListController(user, group, view.getMembersButton())
-                    .display();
+            var con = new GroupMemberListController(user, group);
+            con.onClose(() -> view.getMembersButton().setEnabled(true));
+            con.display();
         });
 
         view.onClickInvite(() -> {
-            new GroupInviteFriendsController(user, group, view.getInviteButton())
-                    .display();
+            var con = new GroupInviteFriendsController(user, group);
+            con.onClose(() -> view.getInviteButton().setEnabled(true));
+            con.display();
         });
 
         if (group.isOwnedBy(user)) {
             view.showManageButton();
             view.onClickManage(() -> {
-                var manageCon = new GroupManagementController(group, view.getManageButton());
-                manageCon.onRename(newName -> {
-                    rename(newName);
-                    reload();
+                var con = new GroupManagementController(group);
+                con.onClose(() -> view.getManageButton().setEnabled(true));
+                con.onRename(newName -> {
+                    view.rename(newName);
+                    view.repaint();
+                    view.revalidate();
                 });
-                manageCon.onDelete(this.onDelete);
-                manageCon.display();
+                con.onDelete(this.onDelete);
+                con.display();
             });
         }
     }
@@ -54,16 +59,5 @@ public class GroupBarController
     public GroupBar getBar()
     {
         return view;
-    }
-
-    public void reload()
-    {
-        view.repaint();
-        view.revalidate();
-    }
-
-    public void rename(String newName)
-    {
-        view.rename(newName);
     }
 }

@@ -6,9 +6,8 @@ public class InviteListFrame extends PopUpFrame
 {
     private final JPanel invitesPanel;
 
-    public InviteListFrame(JButton btnThatOpenedTheFrame)
+    public InviteListFrame()
     {
-        super(btnThatOpenedTheFrame);
         var invitesScrollPane = new JScrollPane();
         invitesPanel = new JPanel();
         invitesPanel.setLayout(new BoxLayout(invitesPanel, BoxLayout.PAGE_AXIS));

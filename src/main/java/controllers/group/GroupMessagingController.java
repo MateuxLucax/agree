@@ -17,11 +17,11 @@ public class GroupMessagingController {
     private User user;
     private Group group;
 
-    public GroupMessagingController(User user, Group group, JButton btnThatOpenedTheFrame)
+    public GroupMessagingController(User user, Group group)
     {
         this.user = user;
         this.group = group;
-        this.view = new MessagingFrame(btnThatOpenedTheFrame);
+        this.view = new MessagingFrame();
         this.msgRepo = new MessageInFileRepository();
 
         view.loadMessages(group.getMessages());
@@ -45,6 +45,11 @@ public class GroupMessagingController {
             }
             return ok;
         });
+    }
+
+    public void onClose(Runnable action)
+    {
+        this.view.onClose(action);
     }
 
     public void display()

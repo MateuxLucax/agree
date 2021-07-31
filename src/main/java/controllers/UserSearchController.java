@@ -16,9 +16,9 @@ public class UserSearchController
 {
     private final UserSearchFrame view;
 
-    public UserSearchController(User userInSession, JButton btnThatOpenedTheFrame)
+    public UserSearchController(User userInSession)
     {
-        this.view = new UserSearchFrame(btnThatOpenedTheFrame);
+        this.view = new UserSearchFrame();
 
         var userRepo   = new UserRepositoryInFile();
         var friendRepo = new FriendshipInFileRepository();
@@ -51,6 +51,11 @@ public class UserSearchController
             }
             view.pack();
         });
+    }
+
+    public void onClose(Runnable action)
+    {
+        this.view.onClose(action);
     }
 
     public void display()
