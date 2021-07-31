@@ -69,13 +69,8 @@ public class InviteRepositoryInFile implements IInviteRepository {
     }
 
     @Override
-    public boolean updateInvite(User user, InviteState state) {
-        Optional<Invite> userInvite = invites.stream().filter(invite -> invite.to().equals(user)).findFirst();
-        if (userInvite.isPresent()) {
-            userInvite.get().setState(state);
-            return true;
-        }
-
-        return false;
+    public boolean updateInvite(Invite inv)
+    {
+        return true;
     }
 }

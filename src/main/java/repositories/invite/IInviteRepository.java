@@ -21,5 +21,5 @@ public interface IInviteRepository {
 
     boolean addInvite(Invite invite);
 
-    boolean updateInvite(User user, InviteState state);
+    boolean updateInvite(Invite invite);
 }
