@@ -4,20 +4,13 @@ import com.github.weisj.darklaf.LafManager;
 import com.github.weisj.darklaf.theme.DarculaTheme;
 import com.github.weisj.darklaf.theme.laf.DarculaThemeDarklafLookAndFeel;
 import controllers.*;
-import controllers.group.GroupListController;
 
 import javax.swing.*;
 
 public class Application {
 
-    private UserSession session;
-
-    public Application() {
-        initializeTheme();
-        startUserSession();
-    }
-
-    private void initializeTheme() {
+    public static void main(String[] args) {
+        // Initialize the theme
         LafManager.install();
         LafManager.setTheme(new DarculaTheme());
         try {
@@ -25,41 +18,16 @@ public class Application {
         } catch (UnsupportedLookAndFeelException e) {
             e.printStackTrace();
         }
-    }
 
-    private void startUserSession()
-    {
-        session = UserSession.getInstance(); // Shortcut
+        // Start the session
+        // TODO get rid of UserSession, or figure out what it really is in this application, it only exists here)
+        var session = UserSession.getInstance();
         var authCon = new AuthController();
         authCon.display();
         authCon.onSuccess(user -> {
             session.initialize(user);
-            initializeMainFrame();
+            var mainCon = new MainController(session.getUser());
+            mainCon.display();
         });
-    }
-
-    private void initializeMainFrame() {
-        var mainFrame = new JFrame();
-        mainFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
-        var mainPane = new JTabbedPane();
-
-        var groupListCon = new GroupListController(session.getUser());
-        mainPane.addTab("Groups", groupListCon.getPanel());
-
-        var friendsPanel = new JPanel();
-        mainPane.addTab("Friends", friendsPanel);
-        // TODO add "friends" tab to the application
-
-        var moreCon = new MoreController(session.getUser());
-        mainPane.addTab("More", moreCon.getPanel());
-
-        mainFrame.setContentPane(mainPane);
-        mainFrame.pack();
-        mainFrame.setVisible(true);
-    }
-
-    public static void main(String[] args) {
-        new Application();
     }
 }

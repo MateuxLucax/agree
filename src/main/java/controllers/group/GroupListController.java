@@ -45,7 +45,7 @@ public class GroupListController
     }
 
 
-    public JPanel getPanel()
+    public GroupListPanel getPanel()
     {
         return view;
     }
