@@ -6,19 +6,10 @@ import com.github.weisj.darklaf.theme.laf.DarculaThemeDarklafLookAndFeel;
 import controllers.AuthController;
 import controllers.InviteListController;
 import controllers.UserSearchController;
+import controllers.UsersInSameGroupsController;
 import controllers.group.GroupListController;
-import gui.InviteBar;
-import gui.InviteListFrame;
-import models.UserToGroupsMap;
-import models.group.Group;
-import models.invite.FriendshipInvite;
-import models.invite.Invite;
-import models.invite.InviteState;
 
 import javax.swing.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.util.List;
 
 public class Application {
 
@@ -91,38 +82,9 @@ public class Application {
             morePanel.add(btUsg);
             btUsg.addActionListener(evt -> {
                 btUsg.setEnabled(false);
-                var usgFrame = new JFrame();
-                usgFrame.addWindowListener(new WindowAdapter() {
-                    public void windowClosing(WindowEvent e) {
-                        btUsg.setEnabled(true);
-                        usgFrame.dispose();
-                    }
-                });
-                var usgScrollPane = new JScrollPane();
-                usgScrollPane.getVerticalScrollBar().setUnitIncrement(20);
-                var usgPanel = new JPanel();
-                usgScrollPane.setViewportView(usgPanel);
-                usgPanel.setLayout(new BoxLayout(usgPanel, BoxLayout.PAGE_AXIS));
-                var usgMap = new UserToGroupsMap();
-                for (var group : session.getGroups()) {
-                    // Don't show the user in session himself in this list
-                    if (group.isMember(session.getUser()))
-                        continue;
-                    usgMap.add(group.getOwner(), group);
-                    for (var user : group.getUsers())
-                        usgMap.add(user, group);
-                }
-                for (var user : usgMap.userSet()) {
-                    List<Group> groups = usgMap.get(user);
-                    // Show which groups the user has in common in a string formatted like
-                    // user123 belongs to group1, The Group and final group
-                    String strGroups = user.getNickname() + " belongs to " + groups;
-                    usgPanel.add(new JLabel(strGroups));
-                    // Just in a JLabel for now
-                }
-                usgFrame.setContentPane(usgScrollPane);
-                usgFrame.pack();
-                usgFrame.setVisible(true);
+                var usgCon = new UsersInSameGroupsController(session.getUser());
+                usgCon.onClose(() -> btUsg.setEnabled(true));
+                usgCon.display();
             });
         }
         mainFrame.setContentPane(mainPane);
