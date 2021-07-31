@@ -13,7 +13,7 @@ public class GroupManagementPanel {
         tfNewName.setText(groupName);
     }
 
-    public void onRename(Consumer<String> onRename) {
+    public void onClickRename(Consumer<String> onRename) {
         btRename.addActionListener(evt -> {
             // TODO deal with empty names, maybe involving a isNameFieldEmpty() public method?
             String text = tfNewName.getText();
@@ -21,7 +21,7 @@ public class GroupManagementPanel {
         });
     }
 
-    public void onDelete(Runnable onDelete) {
+    public void onClickDelete(Runnable onDelete) {
         btDelete.addActionListener(evt -> onDelete.run());
     }
 

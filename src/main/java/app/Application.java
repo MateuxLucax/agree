@@ -41,9 +41,9 @@ public class Application {
     private void startUserSession()
     {
         session = UserSession.getInstance(); // Shortcut
-        var authController = new AuthController();
-        authController.display();
-        authController.onSuccess(user -> {
+        var authCon = new AuthController();
+        authCon.display();
+        authCon.onSuccess(user -> {
             session.initialize(user);
             initializeMainFrame();
         });

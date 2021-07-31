@@ -31,12 +31,12 @@ public class GroupManagementFrame extends JFrame {
 
     public void onClickRename(Consumer<String> action)
     {
-        panel.onRename(action);
+        panel.onClickRename(action);
     }
 
     public void onClickDelete(Runnable action)
     {
-        panel.onDelete(action);
+        panel.onClickDelete(action);
     }
 
     public void onClose(Runnable action)
@@ -50,5 +50,4 @@ public class GroupManagementFrame extends JFrame {
             onClose.run();
         dispose();
     }
-
 }
