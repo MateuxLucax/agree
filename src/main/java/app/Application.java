@@ -65,10 +65,6 @@ public class Application {
         var morePanel = new JPanel();
         mainPane.addTab("More", morePanel);
         {
-            // FIXME if you click on "ask to be friends" for some user
-            //   the button will turn into "invite sent", but if you
-            //   click "search" again, the button will become "ask to be friends" again
-            //   (this probably has to do with invites not being persisted correctly...)
             var btSearchForUsers = new JButton("Search for users");
             morePanel.add(btSearchForUsers);
             btSearchForUsers.addActionListener(evt -> {

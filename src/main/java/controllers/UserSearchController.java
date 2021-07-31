@@ -42,7 +42,8 @@ public class UserSearchController
                     bar.showAskToBeFriendsButton();
                     bar.onClickAskToBeFriends(() -> {
                         var inv = new FriendshipInvite(userInSession, res, InviteState.PENDING);
-                        if (inviteRepo.addInvite(inv))
+                        if (inviteRepo.addInvite(inv)) {
+                            pendingFriendInvs.add(inv);
                             bar.replaceWithInviteSentButton();
                         // TODO else dialog "couldn't send invite" (also, some other places need dialogs like this too)
                     });
