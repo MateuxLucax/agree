@@ -5,16 +5,19 @@ import models.message.Message;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.LinkedList;
 import java.util.function.Function;
 
-public class MessagingFrame extends PopUpFrame
+public class MessagingFrame extends JFrame
 {
     private final JPanel msgListPanel;
     private final JButton btLoadOlder;
     private final JButton btLoadNewer;
     private final JTextArea taNewMsg;
     private final JButton btSend;
+    private Runnable onClose;
 
     public MessagingFrame()
     {
@@ -49,6 +52,19 @@ public class MessagingFrame extends PopUpFrame
         mainPanel.add(newMsgPanel, BorderLayout.PAGE_END);
 
         setContentPane(mainPanel);
+
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                if (onClose != null)
+                    onClose.run();
+                dispose();
+            }
+        });
+    }
+
+    public void onClose(Runnable action)
+    {
+        onClose = action;
     }
 
     public void loadMessages(LinkedList<Message> messages) {

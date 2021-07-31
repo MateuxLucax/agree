@@ -6,10 +6,8 @@ import com.github.weisj.darklaf.theme.laf.DarculaThemeDarklafLookAndFeel;
 import controllers.AuthController;
 import controllers.UserSearchController;
 import controllers.group.GroupListController;
-import gui.AuthPanel;
 import gui.InviteBar;
 import gui.InviteListFrame;
-import gui.PopUpFrame;
 import models.UserToGroupsMap;
 import models.group.Group;
 import models.invite.FriendshipInvite;
@@ -17,6 +15,8 @@ import models.invite.Invite;
 import models.invite.InviteState;
 
 import javax.swing.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.List;
 
 public class Application {
@@ -115,8 +115,13 @@ public class Application {
             morePanel.add(btUsg);
             btUsg.addActionListener(evt -> {
                 btUsg.setEnabled(false);
-                var usgFrame = new PopUpFrame();
-                usgFrame.onClose(() -> btUsg.setEnabled(true));
+                var usgFrame = new JFrame();
+                usgFrame.addWindowListener(new WindowAdapter() {
+                    public void windowClosing(WindowEvent e) {
+                        btUsg.setEnabled(true);
+                        usgFrame.dispose();
+                    }
+                });
                 var usgScrollPane = new JScrollPane();
                 usgScrollPane.getVerticalScrollBar().setUnitIncrement(20);
                 var usgPanel = new JPanel();

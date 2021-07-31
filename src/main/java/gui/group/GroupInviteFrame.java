@@ -1,13 +1,15 @@
 package gui.group;
 
-import gui.PopUpFrame;
 import gui.UserBar;
 
 import javax.swing.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
-public class GroupInviteFrame extends PopUpFrame
+public class GroupInviteFrame extends JFrame
 {
     private final JPanel friendsPanel;
+    private Runnable onClose;
 
     public GroupInviteFrame()
     {
@@ -18,6 +20,19 @@ public class GroupInviteFrame extends PopUpFrame
         friendsScrollPane.setViewportView(friendsPanel);
         friendsScrollPane.getVerticalScrollBar().setUnitIncrement(20);
         setContentPane(friendsScrollPane);
+
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                if (onClose != null)
+                    onClose.run();
+                dispose();
+            }
+        });
+    }
+
+    public void onClose(Runnable action)
+    {
+        onClose = action;
     }
 
     public void addFriendBar(UserBar bar)

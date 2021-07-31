@@ -1,10 +1,13 @@
 package gui;
 
 import javax.swing.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
-public class UserListFrame extends PopUpFrame {
+public class UserListFrame extends JFrame {
 
     private final JPanel barsPanel;
+    private Runnable onClose;
 
     public UserListFrame()
     {
@@ -14,6 +17,18 @@ public class UserListFrame extends PopUpFrame {
         scrollPane.setViewportView(barsPanel);
         scrollPane.getVerticalScrollBar().setUnitIncrement(20);
         setContentPane(scrollPane);
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                if (onClose != null)
+                    onClose.run();
+                dispose();
+            }
+        });
+    }
+
+    public void onClose(Runnable action)
+    {
+        onClose = action;
     }
 
     public void addUserBar(UserBar bar) {

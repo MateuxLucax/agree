@@ -1,12 +1,8 @@
 package controllers.group;
 
-import gui.UserBar;
 import gui.UserListFrame;
 import models.User;
 import models.group.Group;
-import repositories.group.GroupInFileRepository;
-
-import javax.swing.*;
 
 public class GroupMemberListController {
 

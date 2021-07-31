@@ -6,7 +6,6 @@ import models.User;
 import models.group.Group;
 import models.invite.GroupInvite;
 import models.invite.Invite;
-import models.invite.InviteState;
 import repositories.friendship.FriendshipInFileRepository;
 import repositories.invite.InviteRepositoryInFile;
 

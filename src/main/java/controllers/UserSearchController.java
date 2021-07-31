@@ -9,7 +9,6 @@ import repositories.friendship.FriendshipInFileRepository;
 import repositories.invite.InviteRepositoryInFile;
 import repositories.user.UserRepositoryInFile;
 
-import javax.swing.*;
 import java.util.List;
 
 public class UserSearchController

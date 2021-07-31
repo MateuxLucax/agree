@@ -6,19 +6,40 @@ package gui.group;
    that puts it in a frame.
  */
 
-import gui.PopUpFrame;
 
 import javax.swing.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.function.Consumer;
 
-public class GroupCreationFrame extends PopUpFrame
+public class GroupCreationFrame extends JFrame
 {
     public GroupCreationPanel panel;
+    public Runnable onClose;
 
     public GroupCreationFrame()
     {
         panel = new GroupCreationPanel();
         setContentPane(panel.getJPanel());
+
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                close();
+            }
+        });
+    }
+
+    public void onClose(Runnable action)
+    {
+        onClose = action;
+    }
+
+
+    public void close()
+    {
+        if (onClose != null)
+            onClose.run();
+        dispose();
     }
 
     public void onCreation(Consumer<String> onCreation)
@@ -28,6 +49,4 @@ public class GroupCreationFrame extends PopUpFrame
             close();
         });
     }
-
-
 }

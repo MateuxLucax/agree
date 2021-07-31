@@ -49,7 +49,7 @@ public class GroupMessagingController {
 
     public void onClose(Runnable action)
     {
-        this.view.onClose(action);
+        view.onClose(action);
     }
 
     public void display()
