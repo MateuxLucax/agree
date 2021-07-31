@@ -17,12 +17,20 @@ public abstract class Invite {
         return this.from;
     }
 
+    public boolean from(User u) {
+        return this.from.equals(u);
+    }
+
     public User to() {
         return this.to;
     }
 
+    public boolean to(User u) {
+        return this.to.equals(u);
+    }
+
     public boolean involves(User user) {
-        return from.equals(user) || to.equals(user);
+        return from(user) || to(user);
     }
 
     public InviteState getState() {
@@ -33,8 +41,12 @@ public abstract class Invite {
         this.state = state;
     }
 
+    public boolean isState(InviteState s) {
+        return this.state.equals(s);
+    }
+
     public String toString() {
-        return String.format("%s request from %s to %s", state, from, to);
+        return String.format("%s invite from %s to %s", state, from, to);
     }
 
     public abstract String getIcon();
@@ -42,8 +54,4 @@ public abstract class Invite {
     // Shows the group's icon in GroupInvite
 
     public abstract String getText();
-
-    // With this abstract class and these abstract method
-    // we'll be able to use Request polymorphically when
-    // showing it to the user
 }

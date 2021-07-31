@@ -21,7 +21,7 @@ public class InviteRepositoryTest implements IInviteRepository
 
     @Override
     public List<Invite> getInvites(User user, InviteState state) {
-        return invites.stream().filter(i -> i.getState().equals(state)).collect(Collectors.toList());
+        return invites.stream().filter(i -> i.isState(state)).collect(Collectors.toList());
     }
 
     @Override
@@ -31,7 +31,7 @@ public class InviteRepositoryTest implements IInviteRepository
 
     @Override
     public List<FriendshipInvite> getFriendInvites(User user, InviteState state) {
-        return getFriendInvites(user).stream().filter(i -> i.getState().equals(state)).collect(Collectors.toList());
+        return getFriendInvites(user).stream().filter(i -> i.isState(state)).collect(Collectors.toList());
     }
 
     @Override
@@ -41,7 +41,7 @@ public class InviteRepositoryTest implements IInviteRepository
 
     @Override
     public List<GroupInvite> getGroupInvites(User user, InviteState state) {
-        return getGroupInvites(user).stream().filter(i -> i.getState().equals(state)).collect(Collectors.toList());
+        return getGroupInvites(user).stream().filter(i -> i.isState(state)).collect(Collectors.toList());
     }
 
     @Override

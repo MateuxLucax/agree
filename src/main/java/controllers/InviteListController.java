@@ -19,7 +19,7 @@ public class InviteListController
             var bar = new InviteBar(inv);
             view.addInviteBar(bar);
 
-            if (inv.to().equals(user) && inv.getState().equals(InviteState.PENDING)) {
+            if (inv.to(user) && inv.isState(InviteState.PENDING)) {
                 bar.showAcceptAndDeclineButtons();
 
                 bar.onClickAccept(() -> {

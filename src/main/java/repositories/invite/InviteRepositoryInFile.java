@@ -44,17 +44,17 @@ public class InviteRepositoryInFile implements IInviteRepository {
 
     @Override
     public List<FriendshipInvite> getFriendInvites(User user, InviteState state) {
-        return getInvites(user).stream().filter(i -> i.getState().equals(state) && i instanceof FriendshipInvite).map(i -> (FriendshipInvite) i).collect(Collectors.toList());
+        return getInvites(user).stream().filter(i -> i.isState(state) && i instanceof FriendshipInvite).map(i -> (FriendshipInvite) i).collect(Collectors.toList());
     }
 
     @Override
     public List<GroupInvite> getGroupInvites(User user, InviteState state) {
-        return getInvites(user).stream().filter(i -> i.getState().equals(state) && i instanceof GroupInvite).map(i -> (GroupInvite) i).collect(Collectors.toList());
+        return getInvites(user).stream().filter(i -> i.isState(state) && i instanceof GroupInvite).map(i -> (GroupInvite) i).collect(Collectors.toList());
     }
 
     @Override
     public List<Invite> getInvites(User user, InviteState state) {
-        return invites.stream().filter(invite -> invite.involves(user) && invite.getState().equals(state)).collect(Collectors.toList());
+        return invites.stream().filter(invite -> invite.involves(user) && invite.isState(state)).collect(Collectors.toList());
     }
 
     @Override

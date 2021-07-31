@@ -36,7 +36,7 @@ public class GroupInviteFriendsController {
 
             boolean alreadySentInvite = false;
             for (var inv : invitesSent) {
-                alreadySentInvite = (inv instanceof GroupInvite) && inv.to().equals(friend);
+                alreadySentInvite = (inv instanceof GroupInvite) && inv.to(friend);
                 if (alreadySentInvite)
                     break;
             }
