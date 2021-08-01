@@ -12,11 +12,10 @@ public class MainController
 
     public MainController(User user)
     {
-        var groupsCon = new GroupListController(user);
-        // TODO figure out what to put on the friends tab
-        var friendsPanel = new JPanel();
-        var moreCon = new MoreController(user);
-        view = new MainFrame(groupsCon.getPanel(), friendsPanel, moreCon.getPanel());
+        var groupsCon  = new GroupListController(user);
+        var friendsCon = new FriendListController(user);
+        var moreCon    = new MoreController(user);
+        view = new MainFrame(groupsCon.getPanel(), friendsCon.getPanel(), moreCon.getPanel());
         view.display();
     }
 
