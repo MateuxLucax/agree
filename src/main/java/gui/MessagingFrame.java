@@ -21,6 +21,9 @@ public class MessagingFrame extends JFrame
 
     public MessagingFrame()
     {
+        // TODO add a title to the frame so the user can identify
+        //   which group or friend he is talking to in this frame
+        //   (since the user can have many MessagingFrames open)
         msgListPanel = new JPanel();
         msgListPanel.setLayout(new BoxLayout(msgListPanel, BoxLayout.PAGE_AXIS));
 
@@ -89,6 +92,12 @@ public class MessagingFrame extends JFrame
                 taNewMsg.setText("");
             // TODO else warn that the message could not be sent
         });
+    }
+
+    public void display()
+    {
+        pack();
+        setVisible(true);
     }
 
 

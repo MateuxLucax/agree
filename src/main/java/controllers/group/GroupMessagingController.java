@@ -12,15 +12,11 @@ import java.util.Date;
 
 public class GroupMessagingController {
 
-    private MessagingFrame view;
-    private IMessageRepository msgRepo;
-    private User user;
-    private Group group;
+    private final MessagingFrame view;
+    private final IMessageRepository msgRepo;
 
     public GroupMessagingController(User user, Group group)
     {
-        this.user = user;
-        this.group = group;
         this.view = new MessagingFrame();
         this.msgRepo = new MessageInFileRepository();
 
@@ -54,7 +50,6 @@ public class GroupMessagingController {
 
     public void display()
     {
-        view.pack();
-        view.setVisible(true);
+        view.display();
     }
 }
