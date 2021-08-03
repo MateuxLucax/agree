@@ -23,6 +23,7 @@ public class AuthController {
         view = new AuthPanel();
         frame = new JFrame();
         frame.setContentPane(view.getJPanel());
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         loginService = new LoginService();
         view.onLogin(this::login);
