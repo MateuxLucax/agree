@@ -5,6 +5,7 @@ import exceptions.UnauthorizedUserException;
 import exceptions.UnsafePasswordException;
 import models.User;
 import repositories.user.IUserRepository;
+import repositories.user.UserRepository;
 import repositories.user.UserRepositoryInFile;
 
 import javax.crypto.SecretKeyFactory;
@@ -23,7 +24,8 @@ public class LoginService implements ILoginService {
     private final IUserRepository repository;
 
     public LoginService() {
-        this.repository = new UserRepositoryInFile();
+        // this.repository = new UserRepositoryInFile();
+        this.repository = new UserRepository();
     }
 
     @Override

@@ -13,6 +13,13 @@ public class User {
 
     // private String picture;
 
+    public User(String nickname, String password, Date createdAt)
+    {
+        this.nickname = nickname;
+        this.password = password;
+        this.createdAt = createdAt;
+    }
+
     public User(String nickname, Date createdAt) {
         this.nickname = nickname;
         this.createdAt = createdAt;
