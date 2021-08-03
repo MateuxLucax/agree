@@ -29,7 +29,7 @@ public class UserSearchController
 
         view.onSearch(text -> {
             view.clearResults();  // Otherwise results from previous searches will remain
-            List<User> searchResults = userRepo.searchUser(text);
+            List<User> searchResults = userRepo.searchUsers(text);
             for (var res : searchResults) {
                 var bar = new UserBar(res.getNickname());
                 view.addUserBar(bar);

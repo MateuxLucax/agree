@@ -36,7 +36,7 @@ public class UserRepositoryInFile implements IUserRepository {
     }
 
     @Override
-    public List<User> searchUser(String search) {
+    public List<User> searchUsers(String search) {
         return users.stream()
                 .filter(u -> u.getNickname().contains(search))
                 .collect(Collectors.toList());

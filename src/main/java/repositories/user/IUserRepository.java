@@ -10,7 +10,7 @@ public interface IUserRepository {
 
     User getUser(String username, String password);
 
-    List<User> searchUser(String search);
+    List<User> searchUsers(String search);
 
     boolean userExists(String username);
 }
