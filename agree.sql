@@ -11,7 +11,7 @@
 	
 CREATE TABLE IF NOT EXISTS Users (
 	nickname     varchar(32),
-	pass         char(40),      -- sha1
+	pass         varchar(256),
 	creationDate timestamp,
 	primary key (nickname)	
 );
