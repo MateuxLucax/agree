@@ -5,10 +5,13 @@ import exceptions.UnauthorizedUserException;
 import exceptions.UnsafePasswordException;
 import gui.AuthPanel;
 import models.User;
+import repositories.DBConnection;
 import services.login.ILoginService;
 import services.login.LoginService;
 
 import javax.swing.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.function.Consumer;
 
 public class AuthController {
@@ -23,7 +26,14 @@ public class AuthController {
         view = new AuthPanel();
         frame = new JFrame();
         frame.setContentPane(view.getJPanel());
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+
+        // If the user clicks on the X button on the window
+        frame.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                DBConnection.disconnect();
+                System.exit(0);
+            }
+        });
 
         loginService = new LoginService();
         view.onLogin(this::login);

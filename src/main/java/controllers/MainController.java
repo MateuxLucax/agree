@@ -3,8 +3,10 @@ package controllers;
 import controllers.group.GroupListController;
 import gui.MainFrame;
 import models.User;
+import repositories.DBConnection;
 
-import javax.swing.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class MainController
 {
@@ -17,6 +19,14 @@ public class MainController
         var moreCon    = new MoreController(user);
         view = new MainFrame(groupsCon.getPanel(), friendsCon.getPanel(), moreCon.getPanel());
         view.display();
+
+        // If the user clicks on the X button on the window
+        view.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                DBConnection.disconnect();
+                System.exit(0);
+            }
+        });
     }
 
     public void display()
