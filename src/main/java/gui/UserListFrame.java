@@ -19,15 +19,18 @@ public class UserListFrame extends JFrame {
         setContentPane(scrollPane);
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
-                if (onClose != null)
-                    onClose.run();
-                dispose();
+                close();
             }
         });
     }
 
-    public void onClose(Runnable action)
-    {
+    public void close() {
+        if (onClose != null)
+            onClose.run();
+        dispose();
+    }
+
+    public void onClose(Runnable action) {
         onClose = action;
     }
 

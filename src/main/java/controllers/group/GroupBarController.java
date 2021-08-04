@@ -23,6 +23,7 @@ public class GroupBarController
         view.onClickMembers(() -> {
             view.getMembersButton().setEnabled(false);
             var con = new GroupMemberListController(user, group);
+            con.onChangeOwner(view::removeManageButton);
             con.onClose(() -> view.getMembersButton().setEnabled(true));
             con.display();
         });

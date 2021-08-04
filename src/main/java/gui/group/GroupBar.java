@@ -67,4 +67,8 @@ public class GroupBar extends JPanel
             action.run();
         });
     }
+
+    public void removeManageButton() {
+        remove(btManage);
+    }
 }
