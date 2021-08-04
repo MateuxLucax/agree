@@ -3,10 +3,9 @@ package controllers;
 import gui.UserBar;
 import gui.UserSearchFrame;
 import models.User;
-import models.invite.FriendshipInvite;
 import models.invite.InviteState;
 import repositories.friendship.FriendshipRepository;
-import repositories.invite.InviteRepositoryTest;
+import repositories.invite.InviteRepositoryInFile;
 import repositories.user.UserRepository;
 
 import java.util.List;
@@ -21,7 +20,7 @@ public class UserSearchController
 
         var userRepo   = new UserRepository();
         var friendRepo = new FriendshipRepository();
-        var inviteRepo = new InviteRepositoryTest();
+        var inviteRepo = new InviteRepositoryInFile();
 
         var friends = friendRepo.getFriends(userInSession);
         var pendingFriendInvs = inviteRepo.getFriendInvites(userInSession, InviteState.PENDING);

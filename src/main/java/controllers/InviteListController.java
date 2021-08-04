@@ -4,7 +4,7 @@ import gui.InviteBar;
 import gui.InviteListFrame;
 import models.User;
 import models.invite.InviteState;
-import repositories.invite.InviteRepositoryTest;
+import repositories.invite.InviteRepositoryInFile;
 
 public class InviteListController
 {
@@ -14,7 +14,7 @@ public class InviteListController
     {
         view = new InviteListFrame();
 
-        var invRepo = new InviteRepositoryTest();
+        var invRepo = new InviteRepositoryInFile();
         for (var inv : invRepo.getInvites(user)) {
             var bar = new InviteBar(inv);
             view.addInviteBar(bar);
