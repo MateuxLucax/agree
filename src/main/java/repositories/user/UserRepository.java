@@ -36,12 +36,11 @@ public class UserRepository implements IUserRepository
     {
         if (userExists(user.getNickname()))
             return false;
-        String sql = "INSERT INTO users (nickname, pass, creationDate) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO users (nickname, pass, creationDate) VALUES (?, ?, current_timestamp)";
         try {
             PreparedStatement pstmt = con.prepareStatement(sql);
             pstmt.setString(1, user.getNickname());
             pstmt.setString(2, user.getPassword());
-            pstmt.setTimestamp(3, Timestamp.from(user.getCreationDate().toInstant()));
             pstmt.execute();
             return true;
         } catch (SQLException e) {
