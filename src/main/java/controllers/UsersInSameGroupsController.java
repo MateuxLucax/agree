@@ -3,7 +3,7 @@ package controllers;
 import gui.UsersInSameGroupsFrame;
 import models.User;
 import models.UserToGroupsMap;
-import repositories.group.GroupInFileRepository;
+import repositories.group.GroupRepository;
 
 import javax.swing.*;
 
@@ -15,7 +15,7 @@ public class UsersInSameGroupsController
     {
         view = new UsersInSameGroupsFrame();
 
-        var groupRepo = new GroupInFileRepository();
+        var groupRepo = new GroupRepository();
         var groups = groupRepo.getGroups(userInSession);
 
         var map = new UserToGroupsMap();

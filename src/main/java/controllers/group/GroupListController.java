@@ -4,10 +4,9 @@ import gui.group.GroupBar;
 import gui.group.GroupListPanel;
 import models.User;
 import models.group.Group;
-import repositories.group.GroupInFileRepository;
+import repositories.group.GroupRepository;
 import repositories.group.IGroupRepository;
 
-import javax.swing.*;
 
 public class GroupListController
 {
@@ -17,7 +16,7 @@ public class GroupListController
 
     public GroupListController(User user)
     {
-        this.groupRepo = new GroupInFileRepository();
+        this.groupRepo = new GroupRepository();
         this.user = user;
         this.view = new GroupListPanel();
 

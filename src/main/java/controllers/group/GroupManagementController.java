@@ -2,23 +2,22 @@ package controllers.group;
 
 import gui.group.GroupManagementFrame;
 import models.group.Group;
-import repositories.group.GroupInFileRepository;
+import repositories.group.GroupRepository;
 import repositories.group.IGroupRepository;
 
-import javax.swing.*;
 import java.util.function.Consumer;
 
 public class GroupManagementController {
 
-    private Group group;
-    private GroupManagementFrame view;
-    private IGroupRepository groupRepo;
+    private final Group group;
+    private final GroupManagementFrame view;
+    private final IGroupRepository groupRepo;
     private Consumer<String> onRename;
     private Runnable onDelete;
 
     public GroupManagementController(Group model)
     {
-        this.groupRepo = new GroupInFileRepository();
+        this.groupRepo = new GroupRepository();
         this.group = model;
         view = new GroupManagementFrame(model.getName());
 

@@ -3,9 +3,8 @@ package controllers.group;
 import gui.group.GroupCreationFrame;
 import models.User;
 import models.group.Group;
-import repositories.group.GroupInFileRepository;
+import repositories.group.GroupRepository;
 
-import javax.swing.*;
 import java.util.function.Consumer;
 
 public class GroupCreationController
@@ -15,7 +14,7 @@ public class GroupCreationController
 
     public GroupCreationController(User user)
     {
-        var groupRepo = new GroupInFileRepository();
+        var groupRepo = new GroupRepository();
         this.view = new GroupCreationFrame();
         view.onCreation(groupName -> {
             var group = new Group(groupName, user);
