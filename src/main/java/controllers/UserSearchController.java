@@ -6,9 +6,8 @@ import models.User;
 import models.invite.FriendshipInvite;
 import models.invite.InviteState;
 import repositories.friendship.FriendshipInFileRepository;
-import repositories.invite.InviteRepositoryInFile;
 import repositories.invite.InviteRepositoryTest;
-import repositories.user.UserRepositoryInFile;
+import repositories.user.UserRepository;
 
 import java.util.List;
 
@@ -20,7 +19,7 @@ public class UserSearchController
     {
         this.view = new UserSearchFrame();
 
-        var userRepo   = new UserRepositoryInFile();
+        var userRepo   = new UserRepository();
         var friendRepo = new FriendshipInFileRepository();
         var inviteRepo = new InviteRepositoryTest();
 

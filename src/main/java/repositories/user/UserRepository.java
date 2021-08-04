@@ -19,7 +19,7 @@ public class UserRepository implements IUserRepository
     @Override
     public boolean userExists(String username)
     {
-        var sql = "SELECT U.nickname FROM Users U WHERE U.nickname = ?";
+        var sql = "SELECT u.nickname FROM users u WHERE u.nickname = ?";
         try {
             PreparedStatement pstmt = con.prepareStatement(sql);
             pstmt.setString(1, username);
@@ -36,7 +36,7 @@ public class UserRepository implements IUserRepository
     {
         if (userExists(user.getNickname()))
             return false;
-        String sql = "INSERT INTO Users (nickname, pass, creationDate) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO users (nickname, pass, creationDate) VALUES (?, ?, ?)";
         try {
             PreparedStatement pstmt = con.prepareStatement(sql);
             pstmt.setString(1, user.getNickname());
@@ -53,7 +53,7 @@ public class UserRepository implements IUserRepository
     @Override
     public User getUser(String username, String password)
     {
-        var sql = "SELECT U.nickname, U.pass, U.creationDate FROM Users U WHERE U.nickname = ? AND U.pass = ?";
+        var sql = "SELECT u.nickname, u.pass, u.creationDate FROM users u WHERE u.nickname = ? AND u.pass = ?";
         try {
             PreparedStatement pstmt = con.prepareStatement(sql);
             pstmt.setString(1, username);
@@ -72,7 +72,7 @@ public class UserRepository implements IUserRepository
     @Override
     public List<User> searchUsers(String search) {
         List<User> users = new ArrayList<>();
-        var sql = "SELECT U.nickname, U.creationDate FROM Users U WHERE U.username LIKE ?";
+        var sql = "SELECT u.nickname, u.creationDate FROM users u WHERE u.nickname LIKE ?";
         try {
             PreparedStatement pstmt = con.prepareStatement(sql);
             pstmt.setString(1, '%'+search+'%');

@@ -6,7 +6,6 @@ import exceptions.UnsafePasswordException;
 import models.User;
 import repositories.user.IUserRepository;
 import repositories.user.UserRepository;
-import repositories.user.UserRepositoryInFile;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
