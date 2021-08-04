@@ -32,23 +32,12 @@ public class UserSearchController
             for (var res : searchResults) {
                 var bar = new UserBar(res.getNickname());
                 view.addUserBar(bar);
-                if (res.equals(userInSession)) {
-                    continue;
-                } else if (friends.contains(res)) {
-                    bar.showAlreadyFriendsButton();
-                } else if (pendingFriendInvs.stream().anyMatch(i -> i.involves(res))) {
-                    bar.showInviteSentButton();
-                } else {
-                    bar.showAskToBeFriendsButton();
-                    bar.onClickAskToBeFriends(() -> {
-                        var inv = new FriendshipInvite(userInSession, res, InviteState.PENDING);
-                        if (inviteRepo.addInvite(inv)) {
-                            pendingFriendInvs.add(inv);
-                            bar.replaceWithInviteSentButton();
-                        }
-                        // TODO else dialog "couldn't send invite" (also, some other places need dialogs like this too)
-                    });
-                }
+
+                UserBarController.setupUserBar(
+                        userInSession, res,
+                        friends, pendingFriendInvs,
+                        inviteRepo, bar
+                );
             }
             view.pack();
         });
