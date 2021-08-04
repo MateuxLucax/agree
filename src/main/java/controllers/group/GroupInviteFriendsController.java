@@ -1,12 +1,11 @@
 package controllers.group;
 
 import gui.group.GroupInviteFrame;
-import gui.UserBar;
 import models.User;
 import models.group.Group;
 import models.invite.GroupInvite;
 import models.invite.Invite;
-import repositories.friendship.FriendshipInFileRepository;
+import repositories.friendship.FriendshipRepository;
 import repositories.invite.InviteRepositoryInFile;
 
 import javax.swing.*;
@@ -20,7 +19,7 @@ public class GroupInviteFriendsController {
     {
         view = new GroupInviteFrame();
 
-        var friendRepo = new FriendshipInFileRepository();
+        var friendRepo = new FriendshipRepository();
         var inviteRepo = new InviteRepositoryInFile();
 
         List<User> friends = friendRepo.getFriends(user);

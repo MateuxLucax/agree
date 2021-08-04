@@ -4,7 +4,7 @@ import gui.FriendBar;
 import gui.FriendListPanel;
 import gui.FriendMessagingController;
 import models.User;
-import repositories.friendship.FriendshipInFileRepository;
+import repositories.friendship.FriendshipRepository;
 
 import javax.swing.*;
 
@@ -16,7 +16,7 @@ public class FriendListController
     {
         view = new FriendListPanel();
 
-        var friendRepo = new FriendshipInFileRepository();
+        var friendRepo = new FriendshipRepository();
         var friends = friendRepo.getFriends(user);
 
         for (var friend : friends) {

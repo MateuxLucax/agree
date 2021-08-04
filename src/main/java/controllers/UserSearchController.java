@@ -5,7 +5,7 @@ import gui.UserSearchFrame;
 import models.User;
 import models.invite.FriendshipInvite;
 import models.invite.InviteState;
-import repositories.friendship.FriendshipInFileRepository;
+import repositories.friendship.FriendshipRepository;
 import repositories.invite.InviteRepositoryTest;
 import repositories.user.UserRepository;
 
@@ -20,7 +20,7 @@ public class UserSearchController
         this.view = new UserSearchFrame();
 
         var userRepo   = new UserRepository();
-        var friendRepo = new FriendshipInFileRepository();
+        var friendRepo = new FriendshipRepository();
         var inviteRepo = new InviteRepositoryTest();
 
         var friends = friendRepo.getFriends(userInSession);
