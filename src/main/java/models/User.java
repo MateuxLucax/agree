@@ -21,14 +21,15 @@ public class User {
     }
 
     public User(String nickname, Date createdAt) {
-        this.nickname = nickname;
-        this.createdAt = createdAt;
+        this(nickname, null, createdAt);
     }
 
     public User(String nickname, String password) {
-        this.nickname = nickname;
-        this.password = password;
-        this.createdAt = new Date();
+        this(nickname, password, null);
+    }
+
+    public User(String nickname) {
+        this(nickname, null, null);
     }
 
     public String toString() {
