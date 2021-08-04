@@ -17,4 +17,10 @@ public interface IGroupRepository {
 
     // TODO remove getGroup(id), not used anywhere
     Group getGroup(String id);
+
+    List<User> getMembers(Group group);
+
+    boolean addMember(Group group, User member);
+
+    boolean removeMember(Group group, User member);
 }

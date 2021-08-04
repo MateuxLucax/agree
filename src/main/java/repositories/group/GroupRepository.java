@@ -116,4 +116,50 @@ public class GroupRepository implements IGroupRepository
         }
         return null;
     }
+
+    public List<User> getMembers(Group group) {
+        var users = new ArrayList<User>();
+        var sql = "SELECT m.userNickname FROM groupMembership m WHERE m.groupId = ?";
+        try {
+            PreparedStatement pstmt = con.prepareStatement(sql);
+            pstmt.setString(1, group.getId());
+            ResultSet res = pstmt.executeQuery();
+            while (res.next()) {
+                users.add(new User(res.getString(1)));
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return users;
+    }
+
+    public boolean addMember(Group group, User member) {
+        var sql = "INSERT INTO groupMembership (groupId, userNickname) VALUES (?, ?)";
+        try {
+            PreparedStatement pstmt = con.prepareStatement(sql);
+            pstmt.setString(1, group.getId());
+            pstmt.setString(2, member.getNickname());
+            pstmt.execute();
+            return pstmt.getUpdateCount() == 1;
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return false;
+    }
+
+    @Override
+    public boolean removeMember(Group group, User member) {
+        var sql = "DELETE FROM groupMembership WHERE groupId = ? AND userNickname = ?";
+        try {
+            PreparedStatement pstmt = con.prepareStatement(sql);
+            pstmt.setString(1, group.getId());
+            pstmt.setString(2, member.getNickname());
+            pstmt.execute();
+            return pstmt.getUpdateCount() == 1;
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return false;
+    }
+
 }

@@ -65,9 +65,10 @@ public class Group {
         return owner;
     }
 
-    public void changeOwner(User newOwner) {
+    public void setOwner(User newOwner) {
         if (newOwner == null)
             throw new NullPointerException("Groups need an owner");
+        // TODO remove the users. stuff; Group won't a List<User>
         // old owner becomes a user and is added to the user list
         users.add(owner);
         // new owner, former user, gets removed from the user list and set as owner

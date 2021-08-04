@@ -81,4 +81,19 @@ public class GroupInFileRepository implements IGroupRepository {
             if (group.getId().equals(id)) return group;
         return null;
     }
+
+    @Override
+    public List<User> getMembers(Group group) {
+        return null;
+    }
+
+    @Override
+    public boolean addMember(Group group, User member) {
+        return false;
+    }
+
+    @Override
+    public boolean removeMember(Group group, User member) {
+        return false;
+    }
 }
