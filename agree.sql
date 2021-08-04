@@ -15,3 +15,15 @@ CREATE TABLE IF NOT EXISTS Users (
 	creationDate timestamp,
 	primary key (nickname)	
 );
+
+CREATE TABLE IF NOT EXISTS Friendship (
+    nickname1 varchar(32),
+    nickname2 varchar(32),
+    primary key (nickname1, nickname2),
+    foreign key (nickname1) references Users(nickname)
+        on delete cascade
+        on update cascade,
+    foreign key (nickname2) references Users(nickname)
+        on delete cascade
+        on update cascade
+);
