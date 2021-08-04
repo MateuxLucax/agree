@@ -49,3 +49,31 @@ CREATE TABLE IF NOT EXISTS GroupMembership (
 		on delete cascade
 		on update cascade
 );
+
+CREATE TABLE IF NOT EXISTS FriendshipInvites (
+	nicknameFrom varchar(32),
+	nicknameTo   varchar(32),
+	primary key(nicknameFrom, nicknameTo),
+	foreign key (nicknameFrom) references Users(nickname)
+		on delete cascade
+		on update cascade,
+	foreign key (nicknameTo) references Users(nickname)
+		on delete cascade
+		on update cascade
+);
+
+CREATE TABLE IF NOT EXISTS GroupInvites (
+	nicknameFrom varchar(32),
+	nicknameTo   varchar(32),
+	groupId      char(36),
+	primary key(nicknameFrom, nicknameTo, groupId),
+	foreign key (nicknameFrom) references Users(nickname)
+		on delete cascade
+		on update cascade,
+	foreign key (nicknameTo) references Users(nickname)
+		on delete cascade
+		on update cascade,
+	foreign key (groupId) references Groups(id)
+		on delete cascade
+		on update cascade
+);
