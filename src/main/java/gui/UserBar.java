@@ -5,7 +5,7 @@ import java.awt.*;
 
 public class UserBar extends JPanel
 {
-    private final JPanel buttonPanel;
+    protected final JPanel buttonsPanel;
     private JButton btAskToBeFriends;
 
     public UserBar(String username)
@@ -15,33 +15,33 @@ public class UserBar extends JPanel
 
         // TODO add profile picture icon on LINE_START
 
-        buttonPanel = new JPanel();
-        add(buttonPanel, BorderLayout.CENTER);
+        buttonsPanel = new JPanel();
+        add(buttonsPanel, BorderLayout.CENTER);
     }
 
     public void showAskToBeFriendsButton()
     {
         btAskToBeFriends = new JButton("Ask to be friends");
-        buttonPanel.add(btAskToBeFriends);
+        buttonsPanel.add(btAskToBeFriends);
     }
 
     public void showAlreadyFriendsButton()
     {
         var btAlreadyFriends = new JButton("Already friends");
         btAlreadyFriends.setEnabled(false);
-        buttonPanel.add(btAlreadyFriends);
+        buttonsPanel.add(btAlreadyFriends);
     }
 
     public void showInviteSentButton()
     {
         var btInviteSent = new JButton("Invite sent");
         btInviteSent.setEnabled(false);
-        buttonPanel.add(btInviteSent);
+        buttonsPanel.add(btInviteSent);
     }
 
     public void replaceWithInviteSentButton()
     {
-        buttonPanel.remove(btAskToBeFriends);
+        buttonsPanel.remove(btAskToBeFriends);
         showInviteSentButton();
         repaint();
         revalidate();
