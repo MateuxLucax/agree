@@ -27,3 +27,25 @@ CREATE TABLE IF NOT EXISTS Friendship (
         on delete cascade
         on update cascade
 );
+
+CREATE TABLE IF NOT EXISTS Groups (
+	id            char(36),
+	name          varchar(128),
+	ownerNickname varchar(32),
+	primary key(id),
+	foreign key (ownerNickname) references Users(nickname)
+		on delete no action
+		on update cascade
+);
+
+CREATE TABLE IF NOT EXISTS GroupMembership (
+	groupId      char(36),
+	userNickname varchar(32),
+	primary key (groupId, userNickname),
+	foreign key (groupId) references Groups(id)
+		on delete cascade
+		on update cascade,
+	foreign key (userNickname) references Users(nickname)
+		on delete cascade
+		on update cascade
+);
