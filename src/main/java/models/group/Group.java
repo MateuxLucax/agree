@@ -33,15 +33,13 @@ public class Group {
     private       String id;
     private       String name;
     private       User   owner;
-    private final List<User> users;
     private final LinkedList<Message> messages;
 
     public Group(String name, User owner) {
-        this.name = name;
         if (owner == null)
             throw new NullPointerException("Groups need an owner");
+        this.name = name;
         this.owner = owner;
-        this.users = new ArrayList<>();
         this.messages = new LinkedList<>();
     }
 
@@ -68,30 +66,11 @@ public class Group {
     public void setOwner(User newOwner) {
         if (newOwner == null)
             throw new NullPointerException("Groups need an owner");
-        // TODO remove the users. stuff; Group won't a List<User>
-        // old owner becomes a user and is added to the user list
-        users.add(owner);
-        // new owner, former user, gets removed from the user list and set as owner
-        users.remove(newOwner);
         owner = newOwner;
     }
 
-    public boolean isOwnedBy(User user) {
+    public boolean ownedBy(User user) {
         return owner.equals(user);
-    }
-
-    public List<User> getUsers() {
-        return Collections.unmodifiableList(users);
-    }
-
-    public void addUser(User user) { users.add(user); }
-
-    public void removeUser(User user) {
-        users.remove(user);
-    }
-
-    public boolean isMember(User u) {
-        return owner.equals(u) || users.contains(u);
     }
 
     public LinkedList<Message> getMessages() {
@@ -105,7 +84,7 @@ public class Group {
     }
 
     public void loadMessageBelow(Message msg) {
-        if (messages.size() + 1> MAX_MESSAGES_LOADED_AT_ONCE)
+        if (messages.size() + 1 > MAX_MESSAGES_LOADED_AT_ONCE)
             messages.removeFirst();
         messages.addLast(msg);
     }
@@ -116,10 +95,6 @@ public class Group {
 
     public Date newestMessageDate() {
         return messages.isEmpty() ? new Date() : messages.getLast().sentAt();
-    }
-
-    public void setMessages(List<Message> messages) {
-        this.messages.addAll(messages);
     }
 
     @Override
@@ -138,9 +113,5 @@ public class Group {
     @Override
     public String toString() {
         return name;
-    }
-
-    public static Comparator<Group> mostRecentActivityFirst() {
-        return new GroupsSortByRecentMessages();
     }
 }

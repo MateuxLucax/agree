@@ -35,7 +35,7 @@ public class GroupBarController
             con.display();
         });
 
-        if (group.isOwnedBy(user)) {
+        if (group.ownedBy(user)) {
             view.showManageButton();
             view.onClickManage(() -> {
                 view.getManageButton().setEnabled(false);

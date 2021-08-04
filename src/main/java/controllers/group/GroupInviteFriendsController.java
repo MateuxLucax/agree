@@ -6,6 +6,7 @@ import models.group.Group;
 import models.invite.GroupInvite;
 import models.invite.Invite;
 import repositories.friendship.FriendshipRepository;
+import repositories.group.GroupRepository;
 import repositories.invite.InviteRepositoryInFile;
 
 import javax.swing.*;
@@ -21,20 +22,22 @@ public class GroupInviteFriendsController {
 
         var friendRepo = new FriendshipRepository();
         var inviteRepo = new InviteRepositoryInFile();
+        var groupRepo  = new GroupRepository();
 
-        List<User> friends = friendRepo.getFriends(user);
-        List<Invite> invitesSent = inviteRepo.getInvites(user);
+        List<User>   friends = friendRepo.getFriends(user);
+        List<Invite> invites = inviteRepo.getInvites(user);
+        List<User>   members = groupRepo.getMembers(group);
 
         var btSent = new JButton("Invite sent");
         btSent.setEnabled(false);
 
         for (var friend : friends) {
             // Don't show friends who are already in the group
-            if (group.isMember(friend))
+            if (members.contains(friend))
                 continue;
 
             boolean alreadySentInvite = false;
-            for (var inv : invitesSent) {
+            for (var inv : invites) {
                 alreadySentInvite = (inv instanceof GroupInvite) && inv.to(friend);
                 if (alreadySentInvite)
                     break;

@@ -70,9 +70,7 @@ public class GroupInFileRepository implements IGroupRepository {
 
     @Override
     public List<Group> getGroups(User user) {
-        return groups.stream()
-                .filter(g -> g.isMember(user))
-                .collect(Collectors.toList());
+        return null;
     }
 
     @Override

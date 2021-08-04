@@ -40,7 +40,7 @@ public class GroupMemberListController {
         for (var member : groupRepo.getMembers(group)) {
             var bar = new MemberBar(member.getNickname());
             view.addUserBar(bar);
-            if (group.isOwnedBy(userInSession)) {
+            if (group.ownedBy(userInSession)) {
                 bar.showRemoveButton();
                 bar.onClickRemove(() -> {
                     if (groupRepo.removeMember(group, member)) {
