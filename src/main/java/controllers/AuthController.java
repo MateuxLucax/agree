@@ -24,7 +24,9 @@ public class AuthController {
     public AuthController()
     {
         view = new AuthPanel();
+        // TODO extract frame to AuthFrame? no good reason other than uniformity though
         frame = new JFrame();
+        frame.setTitle("Agree: authentication");
         frame.setContentPane(view.getJPanel());
 
         // If the user clicks on the X button on the window
@@ -75,9 +77,6 @@ public class AuthController {
         }
     }
 
-    // This is mostly to insulate this class from the way login/registration
-    // is actually handled -- userSession.initialize(user), initializeMainPanel() --
-    // because it's bad and it should be changed later
     public void onSuccess(Consumer<User> action)
     {
         this.onSuccess = action;

@@ -19,6 +19,8 @@ public class GroupCreationFrame extends JFrame
 
     public GroupCreationFrame()
     {
+        setTitle("Create a group");
+
         panel = new GroupCreationPanel();
         setContentPane(panel.getJPanel());
 

@@ -8,6 +8,7 @@ public class MainFrame extends JFrame
 {
     public MainFrame(GroupListPanel groupsTab, JPanel friendsTab, MorePanel moreTab)
     {
+        setTitle("Agree");
         var mainPane = new JTabbedPane();
         mainPane.addTab("Groups", groupsTab);
         mainPane.addTab("Friends", friendsTab);

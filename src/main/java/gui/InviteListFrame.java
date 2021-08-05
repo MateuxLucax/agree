@@ -11,6 +11,8 @@ public class InviteListFrame extends JFrame
 
     public InviteListFrame()
     {
+        setTitle("Invites");
+
         invitesPanel = new JPanel();
         invitesPanel.setLayout(new BoxLayout(invitesPanel, BoxLayout.PAGE_AXIS));
 

@@ -18,7 +18,7 @@ public class GroupMemberListController {
 
     public GroupMemberListController(User userInSession, Group group)
     {
-        view = new UserListFrame();
+        view = new UserListFrame(group.getName() + ": members");
         groupRepo = new GroupRepository();
 
         var inviteRepo = new InviteRepository();

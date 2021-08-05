@@ -19,6 +19,8 @@ public class GroupManagementFrame extends JFrame {
 
     public GroupManagementFrame(String groupName)
     {
+        setTitle(groupName + ": manage");
+
         panel = new GroupManagementPanel(groupName);
         setContentPane(panel.getJPanel());
 

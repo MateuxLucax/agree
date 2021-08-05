@@ -18,7 +18,7 @@ public class GroupInviteFriendsController {
 
     public GroupInviteFriendsController(User user, Group group)
     {
-        view = new GroupInviteFrame();
+        view = new GroupInviteFrame(group.getName());
 
         var friendRepo = new FriendshipRepository();
         var inviteRepo = new InviteRepository();

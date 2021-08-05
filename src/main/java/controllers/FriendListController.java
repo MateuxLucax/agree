@@ -33,7 +33,7 @@ public class FriendListController
 
             bar.onClickChat(() -> {
                 bar.chatButtonSetEnabled(false);
-                var chatCon = new FriendMessagingController();
+                var chatCon = new FriendMessagingController(user, friend);
                 chatCon.onClose(() -> bar.chatButtonSetEnabled(true));
                 chatCon.display();
             });

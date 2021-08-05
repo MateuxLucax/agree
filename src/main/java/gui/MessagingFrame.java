@@ -19,11 +19,10 @@ public class MessagingFrame extends JFrame
     private final JButton btSend;
     private Runnable onClose;
 
-    public MessagingFrame()
+    public MessagingFrame(String title)
     {
-        // TODO add a title to the frame so the user can identify
-        //   which group or friend he is talking to in this frame
-        //   (since the user can have many MessagingFrames open)
+        setTitle(title);
+
         msgListPanel = new JPanel();
         msgListPanel.setLayout(new BoxLayout(msgListPanel, BoxLayout.PAGE_AXIS));
 

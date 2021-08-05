@@ -17,6 +17,8 @@ public class UserSearchFrame extends JFrame
 
     public UserSearchFrame()
     {
+        setTitle("Search for users");
+
         tfSearch = new JTextField();
         btSearch = new JButton("Search");
 

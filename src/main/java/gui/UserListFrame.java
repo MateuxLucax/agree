@@ -9,14 +9,19 @@ public class UserListFrame extends JFrame {
     private final JPanel barsPanel;
     private Runnable onClose;
 
-    public UserListFrame()
+    public UserListFrame(String title)
     {
-        var scrollPane = new JScrollPane();
+        setTitle(title);
+
         barsPanel = new JPanel();
         barsPanel.setLayout(new BoxLayout(barsPanel, BoxLayout.PAGE_AXIS));
+
+        var scrollPane = new JScrollPane();
         scrollPane.setViewportView(barsPanel);
         scrollPane.getVerticalScrollBar().setUnitIncrement(20);
+
         setContentPane(scrollPane);
+
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 close();

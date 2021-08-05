@@ -17,7 +17,7 @@ public class GroupMessagingController {
 
     public GroupMessagingController(User user, Group group)
     {
-        this.view = new MessagingFrame();
+        this.view = new MessagingFrame(group.getName() + " (group): chat");
         this.msgRepo = new MessageInFileRepository();
 
         view.loadMessages(group.getMessages());

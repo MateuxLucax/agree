@@ -11,8 +11,10 @@ public class GroupInviteFrame extends JFrame
     private final JPanel friendsPanel;
     private Runnable onClose;
 
-    public GroupInviteFrame()
+    public GroupInviteFrame(String groupName)
     {
+        setTitle(groupName + ": invite friends");
+
         var friendsScrollPane = new JScrollPane();
         friendsPanel = new JPanel();
         friendsPanel.setLayout(new BoxLayout(friendsPanel, BoxLayout.PAGE_AXIS));

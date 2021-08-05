@@ -6,11 +6,16 @@ import java.awt.event.WindowEvent;
 
 public class UsersInSameGroupsFrame extends JFrame
 {
+    // TODO consider reusing the UserListFrame here, the classes are very similar,
+    //   and the UserListFrame was intended to be a more generic one
+
     private Runnable onClose;
     private final JPanel panel;
 
     public UsersInSameGroupsFrame()
     {
+        setTitle("Users in the same group as you");
+
         panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
 
