@@ -39,8 +39,7 @@ public class UserRepository implements IUserRepository
         try (var pstmt = con.prepareStatement(sql)) {
             pstmt.setString(1, user.getNickname());
             pstmt.setString(2, user.getPassword());
-            pstmt.execute();
-            return true;
+            return pstmt.executeUpdate() == 1;
         } catch (SQLException e) {
             e.printStackTrace();
         }

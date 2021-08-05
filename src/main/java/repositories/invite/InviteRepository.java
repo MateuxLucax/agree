@@ -8,7 +8,6 @@ import models.invite.Invite;
 import repositories.DBConnection;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -91,8 +90,7 @@ public class InviteRepository implements IInviteRepository
         try (var pstmt = con.prepareStatement(sql)) {
             pstmt.setString(1, inv.from().getNickname());
             pstmt.setString(2, inv.to().getNickname());
-            pstmt.execute();
-            return pstmt.getUpdateCount() == 1;
+            return pstmt.executeUpdate() == 1;
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -105,8 +103,7 @@ public class InviteRepository implements IInviteRepository
             pstmt.setString(1, inv.from().getNickname());
             pstmt.setString(2, inv.to().getNickname());
             pstmt.setString(3, inv.getGroup().getId());
-            pstmt.execute();
-            return pstmt.getUpdateCount() == 1;
+            return pstmt.executeUpdate() == 1;
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -125,8 +122,7 @@ public class InviteRepository implements IInviteRepository
         try (var pstmt = con.prepareStatement(sql)) {
             pstmt.setString(1, invite.from().getNickname());
             pstmt.setString(2, invite.to().getNickname());
-            pstmt.execute();
-            return pstmt.getUpdateCount() == 1;
+            return pstmt.executeUpdate() == 1;
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -139,8 +135,7 @@ public class InviteRepository implements IInviteRepository
             pstmt.setString(1, invite.from().getNickname());
             pstmt.setString(2, invite.to().getNickname());
             pstmt.setString(3, invite.getGroup().getId());
-            pstmt.execute();
-            return pstmt.getUpdateCount() == 1;
+            return pstmt.executeUpdate() == 1;
         } catch (SQLException e) {
             e.printStackTrace();
         }

@@ -45,8 +45,7 @@ public class FriendshipRepository implements IFriendshipRepository
             pstmt.setString(2, nick2);
             pstmt.setString(3, nick2);
             pstmt.setString(4, nick1);
-            pstmt.execute();
-            return pstmt.getUpdateCount() == 2;
+            return pstmt.executeUpdate() == 2;
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -65,8 +64,7 @@ public class FriendshipRepository implements IFriendshipRepository
             pstmt.setString(2, nick2);
             pstmt.setString(3, nick2);
             pstmt.setString(4, nick1);
-            pstmt.execute();
-            return pstmt.getUpdateCount() == 2;
+            return pstmt.executeUpdate() == 2;
         } catch (SQLException e) {
             e.printStackTrace();
         }

@@ -30,8 +30,7 @@ public class GroupRepository implements IGroupRepository
             pstmt.setString(1, uuid);
             pstmt.setString(2, group.getOwner().getNickname());
             pstmt.setString(3, group.getName());
-            pstmt.execute();
-            return pstmt.getUpdateCount() == 1;
+            return pstmt.executeUpdate() == 1;
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -43,8 +42,7 @@ public class GroupRepository implements IGroupRepository
         var sql = "DELETE FROM groups g WHERE g.id = ?";
         try (var pstmt = con.prepareStatement(sql)) {
             pstmt.setString(1, id);
-            pstmt.execute();
-            return pstmt.getUpdateCount() == 1;
+            return pstmt.executeUpdate() == 1;
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -58,8 +56,7 @@ public class GroupRepository implements IGroupRepository
             pstmt.setString(1, group.getOwner().getNickname());
             pstmt.setString(2, group.getName());
             pstmt.setString(3, group.getId());
-            pstmt.execute();
-            return pstmt.getUpdateCount() == 1;
+            return pstmt.executeUpdate() == 1;
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -132,8 +129,7 @@ public class GroupRepository implements IGroupRepository
         try (var pstmt = con.prepareStatement(sql)) {
             pstmt.setString(1, group.getId());
             pstmt.setString(2, member.getNickname());
-            pstmt.execute();
-            return pstmt.getUpdateCount() == 1;
+            return pstmt.executeUpdate() == 1;
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -146,8 +142,7 @@ public class GroupRepository implements IGroupRepository
         try (var pstmt = con.prepareStatement(sql)) {
             pstmt.setString(1, group.getId());
             pstmt.setString(2, member.getNickname());
-            pstmt.execute();
-            return pstmt.getUpdateCount() == 1;
+            return pstmt.executeUpdate() == 1;
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
