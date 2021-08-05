@@ -4,7 +4,6 @@ import models.User;
 import repositories.DBConnection;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -23,8 +22,7 @@ public class FriendshipRepository implements IFriendshipRepository
     public List<User> getFriends(User user) {
         var friends = new ArrayList<User>();
         var sql = "SELECT f.nickname2 FROM friendship f WHERE f.nickname1 = ?";
-        try {
-            PreparedStatement pstmt = con.prepareStatement(sql);
+        try (var pstmt = con.prepareStatement(sql)) {
             pstmt.setString(1, user.getNickname());
             ResultSet res = pstmt.executeQuery();
             while (res.next()) {
@@ -42,8 +40,7 @@ public class FriendshipRepository implements IFriendshipRepository
         var nick1 = friend1.getNickname();
         var nick2 = friend2.getNickname();
         var sql = "INSERT INTO friendship(nickname1, nickname2) VALUES (?, ?), (?, ?)";
-        try {
-            PreparedStatement pstmt = con.prepareStatement(sql);
+        try (var pstmt = con.prepareStatement(sql)) {
             pstmt.setString(1, nick1);
             pstmt.setString(2, nick2);
             pstmt.setString(3, nick2);
@@ -63,8 +60,7 @@ public class FriendshipRepository implements IFriendshipRepository
         var sql = "DELETE FROM friendship f WHERE " +
                   "(f.nickname1 = ? AND f.nickname2 = ?) OR " +
                   "(f.nickname1 = ? AND f.nickname2 = ?)";
-        try {
-            PreparedStatement pstmt = con.prepareStatement(sql);
+        try (var pstmt = con.prepareStatement(sql)) {
             pstmt.setString(1, nick1);
             pstmt.setString(2, nick2);
             pstmt.setString(3, nick2);

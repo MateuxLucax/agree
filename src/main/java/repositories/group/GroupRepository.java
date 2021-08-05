@@ -26,8 +26,7 @@ public class GroupRepository implements IGroupRepository
         var sql = "INSERT INTO groups (id, ownerNickname, name) VALUES (?, ?, ?)";
         var uuid = UUID.randomUUID().toString();
         group.setId(uuid);
-        try {
-            PreparedStatement pstmt = con.prepareStatement(sql);
+        try (var pstmt = con.prepareStatement(sql)) {
             pstmt.setString(1, uuid);
             pstmt.setString(2, group.getOwner().getNickname());
             pstmt.setString(3, group.getName());
@@ -42,8 +41,7 @@ public class GroupRepository implements IGroupRepository
     @Override
     public boolean removeGroup(String id) {
         var sql = "DELETE FROM groups g WHERE g.id = ?";
-        try {
-            PreparedStatement pstmt = con.prepareStatement(sql);
+        try (var pstmt = con.prepareStatement(sql)) {
             pstmt.setString(1, id);
             pstmt.execute();
             return pstmt.getUpdateCount() == 1;
@@ -56,8 +54,7 @@ public class GroupRepository implements IGroupRepository
     @Override
     public boolean updateGroup(Group group) {
         var sql = "UPDATE groups SET ownerNickname = ?, name = ? WHERE id = ?";
-        try {
-            PreparedStatement pstmt = con.prepareStatement(sql);
+        try (var pstmt = con.prepareStatement(sql)) {
             pstmt.setString(1, group.getOwner().getNickname());
             pstmt.setString(2, group.getName());
             pstmt.setString(3, group.getId());
@@ -80,8 +77,7 @@ public class GroupRepository implements IGroupRepository
                   "FROM groups g2, groupMembership m " +
                   "WHERE g2.id = m.groupId " +
                   "AND m.userNickname = ?";
-        try {
-            PreparedStatement pstmt = con.prepareStatement(sql);
+        try (var pstmt = con.prepareStatement(sql)) {
             pstmt.setString(1, user.getNickname());
             pstmt.setString(2, user.getNickname());
             ResultSet res = pstmt.executeQuery();
@@ -102,8 +98,7 @@ public class GroupRepository implements IGroupRepository
     @Override
     public Group getGroup(String id) {
         var sql = "SELECT g,name, g.ownerNickname FROM groups g WHERE g.id = ?";
-        try {
-            PreparedStatement pstmt = con.prepareStatement(sql);
+        try (var pstmt = con.prepareStatement(sql)) {
             pstmt.setString(1, id);
             ResultSet res = pstmt.executeQuery();
             if (!res.next())
@@ -120,8 +115,7 @@ public class GroupRepository implements IGroupRepository
     public List<User> getMembers(Group group) {
         var users = new ArrayList<User>();
         var sql = "SELECT m.userNickname FROM groupMembership m WHERE m.groupId = ?";
-        try {
-            PreparedStatement pstmt = con.prepareStatement(sql);
+        try (var pstmt = con.prepareStatement(sql)) {
             pstmt.setString(1, group.getId());
             ResultSet res = pstmt.executeQuery();
             while (res.next()) {
@@ -135,8 +129,7 @@ public class GroupRepository implements IGroupRepository
 
     public boolean addMember(Group group, User member) {
         var sql = "INSERT INTO groupMembership (groupId, userNickname) VALUES (?, ?)";
-        try {
-            PreparedStatement pstmt = con.prepareStatement(sql);
+        try (var pstmt = con.prepareStatement(sql)) {
             pstmt.setString(1, group.getId());
             pstmt.setString(2, member.getNickname());
             pstmt.execute();
@@ -150,8 +143,7 @@ public class GroupRepository implements IGroupRepository
     @Override
     public boolean removeMember(Group group, User member) {
         var sql = "DELETE FROM groupMembership WHERE groupId = ? AND userNickname = ?";
-        try {
-            PreparedStatement pstmt = con.prepareStatement(sql);
+        try (var pstmt = con.prepareStatement(sql)) {
             pstmt.setString(1, group.getId());
             pstmt.setString(2, member.getNickname());
             pstmt.execute();

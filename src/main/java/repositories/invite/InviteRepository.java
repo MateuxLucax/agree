@@ -29,8 +29,7 @@ public class InviteRepository implements IInviteRepository
         var sql = "SELECT nicknameFrom, nicknameTo " +
                   "FROM FriendInvites " +
                   "WHERE nicknameFrom = ? OR nicknameTo = ?";
-        try {
-            PreparedStatement pstmt = con.prepareStatement(sql);
+        try (var pstmt = con.prepareStatement(sql)) {
             pstmt.setString(1, user.getNickname());
             pstmt.setString(2, user.getNickname());
             ResultSet res = pstmt.executeQuery();
@@ -52,8 +51,7 @@ public class InviteRepository implements IInviteRepository
                   "FROM   GroupInvites i, Groups g " +
                   "WHERE  i.groupId = g.id " +
                   "AND    (nicknameFrom = ? OR nicknameTo = ?)";
-        try {
-            PreparedStatement pstmt = con.prepareStatement(sql);
+        try (var pstmt = con.prepareStatement(sql)) {
             pstmt.setString(1, user.getNickname());
             pstmt.setString(2, user.getNickname());
             ResultSet res = pstmt.executeQuery();
@@ -90,12 +88,11 @@ public class InviteRepository implements IInviteRepository
 
     private boolean addFriendInvite(FriendInvite inv) {
         var sql = "INSERT INTO FriendInvites (nicknameFrom, nicknameTo) VALUES (?, ?)";
-        try {
-            var stmt = con.prepareStatement(sql);
-            stmt.setString(1, inv.from().getNickname());
-            stmt.setString(2, inv.to().getNickname());
-            stmt.execute();
-            return stmt.getUpdateCount() == 1;
+        try (var pstmt = con.prepareStatement(sql)) {
+            pstmt.setString(1, inv.from().getNickname());
+            pstmt.setString(2, inv.to().getNickname());
+            pstmt.execute();
+            return pstmt.getUpdateCount() == 1;
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -104,13 +101,12 @@ public class InviteRepository implements IInviteRepository
 
     private boolean addGroupInvite(GroupInvite inv) {
         var sql = "INSERT INTO GroupInvites (nicknameFrom, nicknameTo, groupId) VALUES (?, ?, ?)";
-        try {
-            var stmt = con.prepareStatement(sql);
-            stmt.setString(1, inv.from().getNickname());
-            stmt.setString(2, inv.to().getNickname());
-            stmt.setString(3, inv.getGroup().getId());
-            stmt.execute();
-            return stmt.getUpdateCount() == 1;
+        try (var pstmt = con.prepareStatement(sql)) {
+            pstmt.setString(1, inv.from().getNickname());
+            pstmt.setString(2, inv.to().getNickname());
+            pstmt.setString(3, inv.getGroup().getId());
+            pstmt.execute();
+            return pstmt.getUpdateCount() == 1;
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -126,12 +122,11 @@ public class InviteRepository implements IInviteRepository
 
     private boolean removeFriendInvite(FriendInvite invite) {
         var sql = "DELETE FROM FriendInvites WHERE nicknameFrom = ? AND nicknameTo = ?";
-        try {
-            var stmt = con.prepareStatement(sql);
-            stmt.setString(1, invite.from().getNickname());
-            stmt.setString(2, invite.to().getNickname());
-            stmt.execute();
-            return stmt.getUpdateCount() == 1;
+        try (var pstmt = con.prepareStatement(sql)) {
+            pstmt.setString(1, invite.from().getNickname());
+            pstmt.setString(2, invite.to().getNickname());
+            pstmt.execute();
+            return pstmt.getUpdateCount() == 1;
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -140,13 +135,12 @@ public class InviteRepository implements IInviteRepository
 
     private boolean removeGroupInvite(GroupInvite invite) {
         var sql = "DELETE FROM GroupInvites WHERE nicknameFrom = ? AND nicknameTo = ? AND groupId = ?";
-        try {
-            var stmt = con.prepareStatement(sql);
-            stmt.setString(1, invite.from().getNickname());
-            stmt.setString(2, invite.to().getNickname());
-            stmt.setString(3, invite.getGroup().getId());
-            stmt.execute();
-            return stmt.getUpdateCount() == 1;
+        try (var pstmt = con.prepareStatement(sql)) {
+            pstmt.setString(1, invite.from().getNickname());
+            pstmt.setString(2, invite.to().getNickname());
+            pstmt.setString(3, invite.getGroup().getId());
+            pstmt.execute();
+            return pstmt.getUpdateCount() == 1;
         } catch (SQLException e) {
             e.printStackTrace();
         }
