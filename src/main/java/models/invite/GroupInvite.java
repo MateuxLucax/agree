@@ -6,8 +6,8 @@ import models.group.Group;
 public class GroupInvite extends Invite {
     private final Group group;
 
-    public GroupInvite(User from, User to, InviteState state, Group group) {
-        super(from, to, state);
+    public GroupInvite(User from, User to, Group group) {
+        super(from, to);
         this.group = group;
     }
 

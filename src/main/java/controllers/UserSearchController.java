@@ -3,9 +3,8 @@ package controllers;
 import gui.UserBar;
 import gui.UserSearchFrame;
 import models.User;
-import models.invite.InviteState;
 import repositories.friendship.FriendshipRepository;
-import repositories.invite.InviteRepositoryInFile;
+import repositories.invite.InviteRepository;
 import repositories.user.UserRepository;
 
 import java.util.List;
@@ -20,10 +19,10 @@ public class UserSearchController
 
         var userRepo   = new UserRepository();
         var friendRepo = new FriendshipRepository();
-        var inviteRepo = new InviteRepositoryInFile();
+        var inviteRepo = new InviteRepository();
 
         var friends = friendRepo.getFriends(userInSession);
-        var pendingFriendInvs = inviteRepo.getFriendInvites(userInSession, InviteState.PENDING);
+        var friendInvs = inviteRepo.getFriendInvites(userInSession);
 
         view.onSearch(text -> {
             view.clearResults();  // Otherwise results from previous searches will remain
@@ -34,7 +33,7 @@ public class UserSearchController
 
                 UserBarController.setupUserBar(
                         userInSession, res,
-                        friends, pendingFriendInvs,
+                        friends, friendInvs,
                         inviteRepo, bar
                 );
             }

@@ -50,11 +50,9 @@ CREATE TABLE IF NOT EXISTS GroupMembership (
 		on update cascade
 );
 
-
-CREATE TABLE IF NOT EXISTS FriendshipInvites (
+CREATE TABLE IF NOT EXISTS FriendInvites (
 	nicknameFrom varchar(32),
 	nicknameTo   varchar(32),
-	state        integer,
 	primary key(nicknameFrom, nicknameTo),
 	foreign key (nicknameFrom) references Users(nickname)
 		on delete cascade
@@ -68,7 +66,6 @@ CREATE TABLE IF NOT EXISTS GroupInvites (
 	nicknameFrom varchar(32),
 	nicknameTo   varchar(32),
 	groupId      char(36),
-	state        integer,
 	primary key(nicknameFrom, nicknameTo, groupId),
 	foreign key (nicknameFrom) references Users(nickname)
 		on delete cascade

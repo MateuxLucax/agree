@@ -5,11 +5,10 @@ import gui.UserListFrame;
 import gui.group.MemberBar;
 import models.User;
 import models.group.Group;
-import models.invite.InviteState;
 import repositories.friendship.FriendshipRepository;
 import repositories.group.GroupRepository;
 import repositories.group.IGroupRepository;
-import repositories.invite.InviteRepositoryInFile;
+import repositories.invite.InviteRepository;
 
 public class GroupMemberListController {
 
@@ -22,10 +21,10 @@ public class GroupMemberListController {
         view = new UserListFrame();
         groupRepo = new GroupRepository();
 
-        var inviteRepo = new InviteRepositoryInFile();
+        var inviteRepo = new InviteRepository();
 
         var friends = (new FriendshipRepository()).getFriends(userInSession);
-        var pendingFriendInvites = inviteRepo.getFriendInvites(userInSession, InviteState.PENDING);
+        var pendingFriendInvites = inviteRepo.getFriendInvites(userInSession);
 
         var owner = group.getOwner();
         var ownerBar = new MemberBar(owner.getNickname());

@@ -5,12 +5,10 @@ import models.User;
 public abstract class Invite {
     protected final User from;
     protected final User to;
-    protected InviteState state;
 
-    public Invite(User from, User to, InviteState state) {
+    public Invite(User from, User to) {
         this.from  = from;
         this.to    = to;
-        this.state = state;
     }
 
     public User from() {
@@ -33,20 +31,8 @@ public abstract class Invite {
         return from(user) || to(user);
     }
 
-    public InviteState getState() {
-        return state;
-    }
-
-    public void setState(InviteState state) {
-        this.state = state;
-    }
-
-    public boolean isState(InviteState s) {
-        return this.state.equals(s);
-    }
-
     public String toString() {
-        return String.format("%s invite from %s to %s", state, from, to);
+        return String.format("Invite from %s to %s", from, to);
     }
 
     public abstract String getIcon();

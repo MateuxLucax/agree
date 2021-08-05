@@ -29,7 +29,7 @@ public class UserBarController {
         } else {
             bar.showAskToBeFriendsButton();
             bar.onClickAskToBeFriends(() -> {
-                var inv = new FriendshipInvite(userInSession, userInBar, InviteState.PENDING);
+                var inv = new FriendInvite(userInSession, userInBar);
                 if (inviteRepo.addInvite(inv)) {
                     pendingFriendInvites.add(inv);
                     bar.replaceWithInviteSentButton();

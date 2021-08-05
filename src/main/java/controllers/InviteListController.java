@@ -3,8 +3,9 @@ package controllers;
 import gui.InviteBar;
 import gui.InviteListFrame;
 import models.User;
-import models.invite.InviteState;
-import repositories.invite.InviteRepositoryInFile;
+import repositories.friendship.FriendshipRepository;
+import repositories.group.GroupRepository;
+import repositories.invite.InviteRepository;
 
 public class InviteListController
 {
@@ -14,34 +15,26 @@ public class InviteListController
     {
         view = new InviteListFrame();
 
-        var invRepo = new InviteRepositoryInFile();
-        for (var inv : invRepo.getInvites(user)) {
+        var inviteRepo  = new InviteRepository();
+        var groupRepo   = new GroupRepository();
+        var friendRepo  = new FriendshipRepository();
+
+        for (var inv : inviteRepo.getInvites(user)) {
             var bar = new InviteBar(inv);
             view.addInviteBar(bar);
 
-            if (inv.to(user) && inv.isState(InviteState.PENDING)) {
+            if (inv.to(user)) {
                 bar.showAcceptAndDeclineButtons();
-
                 bar.onClickAccept(() -> {
-                    inv.setState(InviteState.ACCEPTED);
-                    if (invRepo.updateInvite(inv)) {
-                        bar.updateStateButton();
-                        bar.removeAcceptAndDeclineButtons();
-                    } else {
-                        // TODO show a dialog telling that we couldn't accept the invite
-                        inv.setState(InviteState.PENDING);  // Back to pending
-                    }
+
+                    // TODO
+
                 });
 
                 bar.onClickDecline(() -> {
-                    inv.setState(InviteState.DECLINED);
-                    if (invRepo.updateInvite(inv)) {
-                        bar.updateStateButton();
-                        bar.removeAcceptAndDeclineButtons();
-                    } else {
-                        // TODO show a dialog telling that we couldn't accept the invite
-                        inv.setState(InviteState.PENDING);  // Back to pending
-                    }
+
+                    // TODO
+
                 });
             }
         }
