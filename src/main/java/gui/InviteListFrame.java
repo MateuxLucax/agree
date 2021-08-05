@@ -33,6 +33,13 @@ public class InviteListFrame extends JFrame
         invitesPanel.add(bar);
     }
 
+    public void removeInviteBar(InviteBar bar)
+    {
+        invitesPanel.remove(bar);
+        invitesPanel.repaint();
+        invitesPanel.revalidate();
+    }
+
     public void onClose(Runnable action)
     {
         onClose = action;
@@ -43,4 +50,5 @@ public class InviteListFrame extends JFrame
         pack();
         setVisible(true);
     }
+
 }

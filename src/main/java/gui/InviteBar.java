@@ -7,15 +7,14 @@ import java.awt.*;
 
 public class InviteBar extends JPanel
 {
-    private JPanel buttonsPanel;
+    private final JPanel buttonsPanel;
     private JButton btAccept;
     private JButton btDecline;
 
     public InviteBar(Invite invite)
     {
-
         setLayout(new BorderLayout());
-        setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
+        setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
         // TODO show invite icon here
         // icon = (...) invite.getIcon() (...);

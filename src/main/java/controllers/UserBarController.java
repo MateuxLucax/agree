@@ -2,8 +2,7 @@ package controllers;
 
 import gui.UserBar;
 import models.User;
-import models.invite.FriendshipInvite;
-import models.invite.InviteState;
+import models.invite.FriendInvite;
 import repositories.invite.IInviteRepository;
 
 import java.util.List;
@@ -14,7 +13,7 @@ public class UserBarController {
             User userInSession,
             User userInBar,
             List<User> friends,
-            List<FriendshipInvite> pendingFriendInvites,
+            List<FriendInvite> pendingFriendInvites,
             IInviteRepository inviteRepo,
             UserBar bar)
     {

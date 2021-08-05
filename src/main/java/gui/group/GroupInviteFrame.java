@@ -35,7 +35,7 @@ public class GroupInviteFrame extends JFrame
         onClose = action;
     }
 
-    public void addFriendBar(UserBar bar)
+    public void addFriendBar(InviteableFriendBar bar)
     {
         friendsPanel.add(bar);
     }

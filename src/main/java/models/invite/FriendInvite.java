@@ -2,9 +2,10 @@ package models.invite;
 
 import models.User;
 
-public class FriendshipInvite extends Invite {
-    public FriendshipInvite(User from, User to, InviteState state) {
-        super(from, to, state);
+public class FriendInvite extends Invite
+{
+    public FriendInvite(User from, User to) {
+        super(from, to);
     }
 
     public String getText() {
@@ -15,7 +16,7 @@ public class FriendshipInvite extends Invite {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        FriendshipInvite that = (FriendshipInvite) o;
+        FriendInvite that = (FriendInvite) o;
         return to.equals(that.to)
             && from.equals(that.from);
     }
