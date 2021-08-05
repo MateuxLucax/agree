@@ -1,5 +1,6 @@
-package gui;
+package controllers;
 
+import gui.MessagingFrame;
 import models.User;
 
 public class FriendMessagingController

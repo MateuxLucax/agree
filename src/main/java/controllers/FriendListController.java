@@ -2,7 +2,6 @@ package controllers;
 
 import gui.FriendBar;
 import gui.FriendListPanel;
-import gui.FriendMessagingController;
 import models.User;
 import repositories.friendship.FriendshipRepository;
 
