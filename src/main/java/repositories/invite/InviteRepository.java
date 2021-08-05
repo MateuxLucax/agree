@@ -17,7 +17,7 @@ import java.util.List;
 
 public class InviteRepository implements IInviteRepository
 {
-    private Connection con;
+    private final Connection con;
 
     public InviteRepository() {
         con = DBConnection.get();
@@ -124,12 +124,33 @@ public class InviteRepository implements IInviteRepository
              : addFriendInvite((FriendInvite) invite);
     }
 
-    private boolean removeGroupInvite(GroupInvite invite) {
-        return false;  // TODO
+    private boolean removeFriendInvite(FriendInvite invite) {
+        var sql = "DELETE FROM FriendInvites WHERE nicknameFrom = ? AND nicknameTo = ?";
+        try {
+            var stmt = con.prepareStatement(sql);
+            stmt.setString(1, invite.from().getNickname());
+            stmt.setString(2, invite.to().getNickname());
+            stmt.execute();
+            return stmt.getUpdateCount() == 1;
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return false;
     }
 
-    private boolean removeFriendInvite(FriendInvite invite) {
-        return false;  // TODO
+    private boolean removeGroupInvite(GroupInvite invite) {
+        var sql = "DELETE FROM GroupInvites WHERE nicknameFrom = ? AND nicknameTo = ? AND groupId = ?";
+        try {
+            var stmt = con.prepareStatement(sql);
+            stmt.setString(1, invite.from().getNickname());
+            stmt.setString(2, invite.to().getNickname());
+            stmt.setString(3, invite.getGroup().getId());
+            stmt.execute();
+            return stmt.getUpdateCount() == 1;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     @Override
