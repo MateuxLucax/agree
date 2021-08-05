@@ -15,7 +15,7 @@ public class GroupBarController
 
         view.onClickChat(() -> {
             view.getChatButton().setEnabled(false);
-            var con = new GroupMessagingController(user, group);
+            var con = new GroupChatController(user, group);
             con.onClose(() -> view.getChatButton().setEnabled(true));
             con.display();
         });

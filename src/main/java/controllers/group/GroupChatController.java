@@ -1,23 +1,23 @@
 package controllers.group;
 
-import gui.MessagingFrame;
+import gui.ChatFrame;
 import models.User;
 import models.group.Group;
 import models.message.Message;
 import repositories.message.IMessageRepository;
 import repositories.message.MessageInFileRepository;
 
-import javax.swing.*;
 import java.util.Date;
 
-public class GroupMessagingController {
+public class GroupChatController
+{
 
-    private final MessagingFrame view;
+    private final ChatFrame view;
     private final IMessageRepository msgRepo;
 
-    public GroupMessagingController(User user, Group group)
+    public GroupChatController(User user, Group group)
     {
-        this.view = new MessagingFrame(group.getName() + " (group): chat");
+        this.view = new ChatFrame(group.getName() + " (group): chat");
         this.msgRepo = new MessageInFileRepository();
 
         view.loadMessages(group.getMessages());

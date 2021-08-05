@@ -10,7 +10,7 @@ import java.awt.event.WindowEvent;
 import java.util.LinkedList;
 import java.util.function.Function;
 
-public class MessagingFrame extends JFrame
+public class ChatFrame extends JFrame
 {
     private final JPanel msgListPanel;
     private final JButton btLoadOlder;
@@ -19,7 +19,7 @@ public class MessagingFrame extends JFrame
     private final JButton btSend;
     private Runnable onClose;
 
-    public MessagingFrame(String title)
+    public ChatFrame(String title)
     {
         setTitle(title);
 

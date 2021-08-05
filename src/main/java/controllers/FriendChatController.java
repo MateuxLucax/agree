@@ -1,15 +1,15 @@
 package controllers;
 
-import gui.MessagingFrame;
+import gui.ChatFrame;
 import models.User;
 
-public class FriendMessagingController
+public class FriendChatController
 {
-    private final MessagingFrame view;
+    private final ChatFrame view;
 
-    public FriendMessagingController(User user, User friend)
+    public FriendChatController(User user, User friend)
     {
-        view = new MessagingFrame(friend.getNickname() + " (friend): chat");
+        view = new ChatFrame(friend.getNickname() + " (friend): chat");
 
         // TODO (requires IMessageRepository supporting
         //   messagens between friends)
