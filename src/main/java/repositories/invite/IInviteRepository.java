@@ -17,6 +17,7 @@ public interface IInviteRepository {
 
     boolean addInvite(Invite invite);
 
-    boolean removeInvite(Invite invite);
+    boolean declineInvite(Invite invite);
 
+    boolean acceptGroupInviteAndAddMember(GroupInvite invite);
 }

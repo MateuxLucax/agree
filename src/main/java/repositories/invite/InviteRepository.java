@@ -143,10 +143,70 @@ public class InviteRepository implements IInviteRepository
     }
 
     @Override
-    public boolean removeInvite(Invite invite) {
+    public boolean declineInvite(Invite invite) {
         return invite instanceof GroupInvite ?
                 removeGroupInvite((GroupInvite) invite) :
                 removeFriendInvite((FriendInvite) invite);
+    }
+
+    @Override
+    public boolean acceptGroupInviteAndAddMember(GroupInvite invite) {
+        // This is another transaction. The two actions of accepting an invite
+        // (removing it from the database) and adding a member to the group
+        // are related, and if they're not both performed successfully,
+        // we can't leave just one of them done (e.g. user accepts invite
+        // but while removing the invite works, adding him to the group doesn't,
+        // so he's gonna be like "But I clicked accept! Why am I not in the group?!" etc.)
+
+        var sql1 = "DELETE FROM GroupInvites WHERE nicknameFrom=? AND nicknameTo=? AND groupId=?";
+        var sql2 = "INSERT INTO GroupMembership (userNickname, groupId) VALUES (?, ?)";
+
+        try (var pstmt1 = con.prepareStatement(sql1);
+             var pstmt2 = con.prepareStatement(sql2))
+        {
+            con.setAutoCommit(false);
+
+            String nickFrom = invite.from().getNickname();
+            String nickTo   = invite.to().getNickname();
+            String groupId  = invite.getGroup().getId();
+
+            pstmt1.setString(1, nickFrom);
+            pstmt1.setString(2, nickTo);
+            pstmt1.setString(3, groupId);
+            int rowCount1 = pstmt1.executeUpdate();
+
+            pstmt2.setString(1, nickTo);
+            pstmt2.setString(2, groupId);
+            int rowCount2 = pstmt2.executeUpdate();
+
+            con.commit();
+
+            return rowCount1 == 1 && rowCount2 == 1;
+        } catch (SQLException e) {
+            System.err.println("GroupRepository.acceptInviteAndAddMember:");
+            System.err.println("\tTransaction failed; performing rollback.");
+            try {
+
+                con.rollback();
+
+            } catch (SQLException ex) {
+                System.err.println("GroupRepository.acceptInviteAndAddMember:");
+                System.err.println("\tRollback failed.");
+                e.printStackTrace();
+            }
+        } finally {
+            try {
+
+                con.setAutoCommit(true);
+
+            } catch (SQLException e) {
+                System.err.println("GroupRepository.acceptInviteAndAddMember:");
+                System.err.println("\tFailed to re-enable auto-commit after transaction.");
+                e.printStackTrace();
+            }
+        }
+
+        return false;
     }
 
 }

@@ -3,7 +3,6 @@ package controllers;
 import gui.InviteBar;
 import gui.InviteListFrame;
 import models.User;
-import models.group.Group;
 import models.invite.FriendInvite;
 import models.invite.GroupInvite;
 import repositories.friendship.FriendshipRepository;
@@ -38,38 +37,21 @@ public class InviteListController
             bar.showAcceptAndDeclineButtons();
             // TODO for each, add a dialog saying invite accepted or something nicer
             if (inv instanceof GroupInvite) {
-                bar.onClickAccept(() -> handleGroupInviteAccepted((GroupInvite) inv, bar));
+                bar.onClickAccept(() -> {
+                    if (inviteRepo.acceptGroupInviteAndAddMember((GroupInvite) inv)) {
+                        view.removeInviteBar(bar);
+                    }
+                });
             } else {
                 bar.onClickAccept(() -> handleFriendInviteAccepted((FriendInvite) inv, bar));
             }
 
             bar.onClickDecline(() -> {
-                if (inviteRepo.removeInvite(inv)) {
+                if (inviteRepo.declineInvite(inv)) {
                     view.removeInviteBar(bar);
                 }
-                // TODO else dialog could not decline
             });
         }
-    }
-
-    public void handleGroupInviteAccepted(GroupInvite inv, InviteBar bar)
-    {
-        // Add member to group
-        if (!groupRepo.addMember(inv.getGroup(), inv.to())) {
-            // TODO dialog could not accept
-            return;
-        }
-        // Remove invite from database
-        if (!inviteRepo.removeInvite(inv)) {
-            // TODO dialog could not accept
-            // Since adding the member was successful but
-            // not the whole operation, remove the added member.
-            groupRepo.removeMember(inv.getGroup(), inv.to());
-            // TODO What if removeMember fails?
-            return;
-        }
-        // At this point, we know the database was updated successfully
-        view.removeInviteBar(bar);
     }
 
     public void handleFriendInviteAccepted(FriendInvite inv, InviteBar bar)
@@ -80,7 +62,7 @@ public class InviteListController
             return;
         }
         // Remove invite from database
-        if (!inviteRepo.removeInvite(inv)) {
+        if (!inviteRepo.declineInvite(inv)) {
             // TODO dialog could not accept
             // Since adding the friend was successful but
             // not the whole operation, remove the added friend.
