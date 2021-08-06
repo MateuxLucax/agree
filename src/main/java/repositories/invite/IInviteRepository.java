@@ -19,5 +19,11 @@ public interface IInviteRepository {
 
     boolean declineInvite(Invite invite);
 
-    boolean acceptGroupInviteAndAddMember(GroupInvite invite);
+    /**
+     * acceptInvite will not only delete the invite from the database,
+     * but also perform related actions -- add a member to the group
+     * if a GroupInvite was accepted, add a friendship relation if a
+     * FriendInvite was accepted.
+     */
+    boolean acceptInvite(Invite invite);
 }

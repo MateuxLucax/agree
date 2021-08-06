@@ -149,8 +149,7 @@ public class InviteRepository implements IInviteRepository
                 removeFriendInvite((FriendInvite) invite);
     }
 
-    @Override
-    public boolean acceptGroupInviteAndAddMember(GroupInvite invite) {
+    private boolean acceptGroupInvite(GroupInvite invite) {
         // This is another transaction. The two actions of accepting an invite
         // (removing it from the database) and adding a member to the group
         // are related, and if they're not both performed successfully,
@@ -183,14 +182,14 @@ public class InviteRepository implements IInviteRepository
 
             return rowCount1 == 1 && rowCount2 == 1;
         } catch (SQLException e) {
-            System.err.println("GroupRepository.acceptInviteAndAddMember:");
+            System.err.println("InviteRepository.acceptGroupInvite:");
             System.err.println("\tTransaction failed; performing rollback.");
             try {
 
                 con.rollback();
 
             } catch (SQLException ex) {
-                System.err.println("GroupRepository.acceptInviteAndAddMember:");
+                System.err.println("InviteRepository.acceptGroupInvite:");
                 System.err.println("\tRollback failed.");
                 e.printStackTrace();
             }
@@ -200,13 +199,74 @@ public class InviteRepository implements IInviteRepository
                 con.setAutoCommit(true);
 
             } catch (SQLException e) {
-                System.err.println("GroupRepository.acceptInviteAndAddMember:");
+                System.err.println("InviteRepository.acceptGroupInvite:");
                 System.err.println("\tFailed to re-enable auto-commit after transaction.");
                 e.printStackTrace();
             }
         }
 
         return false;
+    }
+
+    private boolean acceptFriendInvite(Invite invite) {
+        // Transaction: removes the friend invite and adds the friendship relaton.
+
+        var sql1 = "DELETE FROM FriendInvites WHERE nicknameFrom=? AND nicknameTo=?";
+        var sql2 = "INSERT INTO Friendship (nickname1, nickname2) VALUES (?, ?), (?, ?)";
+
+        try (var pstmt1 = con.prepareStatement(sql1);
+             var pstmt2 = con.prepareStatement(sql2))
+        {
+            con.setAutoCommit(false);
+
+            String nickFrom = invite.from().getNickname();
+            String nickTo   = invite.to().getNickname();
+
+            pstmt1.setString(1, nickFrom);
+            pstmt1.setString(2, nickTo);
+            pstmt1.executeUpdate();
+
+            pstmt2.setString(1, nickFrom);
+            pstmt2.setString(2, nickTo);
+            pstmt2.setString(3, nickTo);
+            pstmt2.setString(4, nickFrom);
+            pstmt2.executeUpdate();
+
+            con.commit();
+
+            return true;
+        } catch(SQLException e) {
+            System.err.println("InviteRepository.acceptFriendInvite:");
+            System.err.println("\tTransaction failed; performing rollback.");
+            try {
+
+                con.rollback();
+
+            } catch(SQLException ex) {
+                System.err.println("InviteRepository.acceptFriendInvite:");
+                System.err.println("\tRollback failed.");
+                ex.printStackTrace();
+            }
+
+            return false;
+        } finally {
+            try {
+
+                con.setAutoCommit(true);
+
+            } catch(SQLException e) {
+                System.err.println("InviteRepository.acceptFriendInvite:");
+                System.err.println("\tFailed to re-enable auto-commit after transaction.");
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public boolean acceptInvite(Invite invite) {
+        return invite instanceof GroupInvite
+             ? acceptGroupInvite((GroupInvite) invite)
+             : acceptFriendInvite(invite);
     }
 
 }
