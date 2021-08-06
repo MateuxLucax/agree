@@ -31,7 +31,7 @@ public class GroupManagementController {
         view.onClickRename(newName -> {
             String oldName = group.getName();
             group.setName(newName);
-            if (groupRepo.updateGroup(group) && this.onRename != null)
+            if (groupRepo.renameGroup(group) && this.onRename != null)
                 this.onRename.accept(newName);
             else  // renaming failed
                 group.setName(oldName);

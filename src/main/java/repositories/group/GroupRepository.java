@@ -49,12 +49,11 @@ public class GroupRepository implements IGroupRepository
     }
 
     @Override
-    public boolean updateGroup(Group group) {
-        var sql = "UPDATE groups SET ownerNickname = ?, name = ? WHERE id = ?";
+    public boolean renameGroup(Group group) {
+        var sql = "UPDATE groups SET name = ? WHERE id = ?";
         try (var pstmt = con.prepareStatement(sql)) {
-            pstmt.setString(1, group.getOwner().getNickname());
-            pstmt.setString(2, group.getName());
-            pstmt.setString(3, group.getId());
+            pstmt.setString(1, group.getName());
+            pstmt.setString(2, group.getId());
             return pstmt.executeUpdate() == 1;
         } catch (SQLException throwables) {
             throwables.printStackTrace();

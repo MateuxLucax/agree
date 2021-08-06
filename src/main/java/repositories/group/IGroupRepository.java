@@ -11,7 +11,7 @@ public interface IGroupRepository {
 
     boolean removeGroup(String id);
 
-    boolean updateGroup(Group group);
+    boolean renameGroup(Group group);
 
     List<Group> getGroups(User user);
 
