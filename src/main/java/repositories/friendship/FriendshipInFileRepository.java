@@ -35,19 +35,6 @@ public class FriendshipInFileRepository implements IFriendshipRepository {
     }
 
     @Override
-    public boolean addFriend(User friend1, User friend2) {
-        var optionalUser = getUser(friend1);
-        if (optionalUser.isPresent()) {
-            var friends = optionalUser.get().getFriends();
-            friends.add(friend2);
-            friendships.get(friendships.indexOf(optionalUser.get())).setFriends(friends);
-            return JsonDatabaseUtil.writeToFile(friendshipFile, friendships);
-        }
-
-        return false;
-    }
-
-    @Override
     public boolean removeFriend(User friend1, User friend2) {
         var optionalUser = getUser(friend1);
         if (optionalUser.isPresent()) {

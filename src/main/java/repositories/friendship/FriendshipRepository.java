@@ -35,24 +35,6 @@ public class FriendshipRepository implements IFriendshipRepository
     }
 
     @Override
-    public boolean addFriend(User friend1, User friend2) {
-        // Friendship is symmetric: if A is friends with B, B is friends with A
-        var nick1 = friend1.getNickname();
-        var nick2 = friend2.getNickname();
-        var sql = "INSERT INTO friendship(nickname1, nickname2) VALUES (?, ?), (?, ?)";
-        try (var pstmt = con.prepareStatement(sql)) {
-            pstmt.setString(1, nick1);
-            pstmt.setString(2, nick2);
-            pstmt.setString(3, nick2);
-            pstmt.setString(4, nick1);
-            return pstmt.executeUpdate() == 2;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    @Override
     public boolean removeFriend(User friend1, User friend2) {
         var nick1 = friend1.getNickname();
         var nick2 = friend2.getNickname();
