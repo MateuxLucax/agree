@@ -36,7 +36,7 @@ public class GroupListController
         GroupBar bar = con.getBar();
         con.onDelete(() -> {
             view.remove(bar);
-            if (!groupRepo.removeGroup(group.getId())) {
+            if (!groupRepo.deleteGroup(group.getId())) {
                 // TODO dialog couldn't delete group
             }
         });

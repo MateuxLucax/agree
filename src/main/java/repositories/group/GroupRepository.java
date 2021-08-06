@@ -37,7 +37,7 @@ public class GroupRepository implements IGroupRepository
     }
 
     @Override
-    public boolean removeGroup(String id) {
+    public boolean deleteGroup(String id) {
         var sql = "DELETE FROM groups g WHERE g.id = ?";
         try (var pstmt = con.prepareStatement(sql)) {
             pstmt.setString(1, id);
@@ -88,23 +88,6 @@ public class GroupRepository implements IGroupRepository
             e.printStackTrace();
         }
         return groups;
-    }
-
-    @Override
-    public Group getGroup(String id) {
-        var sql = "SELECT g,name, g.ownerNickname FROM groups g WHERE g.id = ?";
-        try (var pstmt = con.prepareStatement(sql)) {
-            pstmt.setString(1, id);
-            ResultSet res = pstmt.executeQuery();
-            if (!res.next())
-                return null;
-            var name          = res.getString(1);
-            var ownerNickname = res.getString(2);
-            return new Group(name, new User(ownerNickname));
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-        return null;
     }
 
     @Override

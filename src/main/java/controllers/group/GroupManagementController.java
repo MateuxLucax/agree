@@ -22,7 +22,7 @@ public class GroupManagementController {
         view = new GroupManagementFrame(model.getName());
 
         view.onClickDelete(() -> {
-            groupRepo.removeGroup(group.getId());
+            groupRepo.deleteGroup(group.getId());
             if (this.onDelete != null)
                 this.onDelete.run();
             view.close();

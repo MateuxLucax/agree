@@ -30,7 +30,7 @@ public class GroupInFileRepository implements IGroupRepository {
     }
 
     @Override
-    public boolean removeGroup(String id) {
+    public boolean deleteGroup(String id) {
         for (int i = 0; i < groups.size(); i++) {
             if (id.equals(groups.get(i).getId())) {
                 Group removed = groups.remove(i);
@@ -50,13 +50,6 @@ public class GroupInFileRepository implements IGroupRepository {
 
     @Override
     public List<Group> getGroups(User user) {
-        return null;
-    }
-
-    @Override
-    public Group getGroup(String id) {
-        for (var group : groups)
-            if (group.getId().equals(id)) return group;
         return null;
     }
 
