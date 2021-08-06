@@ -34,7 +34,7 @@ public class UserBar extends JPanel
 
     public void showInviteSentButton()
     {
-        var btInviteSent = new JButton("Invite sent");
+        var btInviteSent = new JButton("Friend invite sent");
         btInviteSent.setEnabled(false);
         buttonsPanel.add(btInviteSent);
     }
