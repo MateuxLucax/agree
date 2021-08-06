@@ -16,18 +16,18 @@ public class UsersInSameGroupsController
         view = new UsersInSameGroupsFrame();
 
         var groupRepo = new GroupRepository();
-        var groups = groupRepo.getGroups(userInSession);
 
         var map = new UserToGroupsMap();
-        for (var group : groups) {
-            if (!group.ownedBy(userInSession))
+        for (var group : groupRepo.getGroups(userInSession)) {
+            if (! group.ownedBy(userInSession))
                 map.add(group.getOwner(), group);
             for (var member : groupRepo.getMembers(group))
-                if (!member.equals(userInSession))
+                if (! member.equals(userInSession))
                     map.add(member, group);
         }
 
         for (var user : map.userSet()) {
+            // TODO replace this JLabel with something better
             view.addUser(new JLabel(user.getNickname() + " belongs to " + map.get(user)));
         }
     }

@@ -32,9 +32,8 @@ public class UserSearchController
                 view.addUserBar(bar);
 
                 UserBarController.setupUserBar(
-                        userInSession, res,
-                        friends, friendInvs,
-                        inviteRepo, bar
+                        bar, res, friends,
+                        friendInvs, inviteRepo, userInSession
                 );
             }
             view.pack();

@@ -10,12 +10,12 @@ import java.util.List;
 public class UserBarController {
 
     public static void setupUserBar(
-            User userInSession,
+            UserBar bar,
             User userInBar,
             List<User> friends,
             List<FriendInvite> pendingFriendInvites,
             IInviteRepository inviteRepo,
-            UserBar bar)
+            User userInSession)
     {
         if (userInBar.equals(userInSession)) {
             return;

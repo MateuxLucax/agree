@@ -31,9 +31,8 @@ public class GroupMemberListController {
         view.addUserBar(ownerBar);
         ownerBar.showOwnerButton();
         UserBarController.setupUserBar(
-                userInSession, owner,
-                friends, pendingFriendInvites,
-                inviteRepo, ownerBar
+                ownerBar, owner, friends,
+                pendingFriendInvites, inviteRepo, userInSession
         );
 
         for (var member : groupRepo.getMembers(group)) {
@@ -53,9 +52,8 @@ public class GroupMemberListController {
                 bar.onClickSetOwner(() -> updateOwnership(group, owner, member));
             }
             UserBarController.setupUserBar(
-                    userInSession, member,
-                    friends, pendingFriendInvites,
-                    inviteRepo, bar
+                    bar, member, friends,
+                    pendingFriendInvites, inviteRepo, userInSession
             );
 
         }
@@ -63,33 +61,33 @@ public class GroupMemberListController {
 
     private void updateOwnership(Group group, User oldOwner, User newOwner)
     {
-        // Early returns instead of deeply nested ifs and elses
+        // What this method does is essentially
+        // group.setOwner(newOwner);
+        // groupRepo.updateGroup(group);
+        // groupRepo.addMember(group, oldOwner);
+        // groupRepo.removeMember(group, newOwner);
+        // but with corrections for each possible failure,
+        // undoing the previous actions -- not leaving the ownership update half-done
 
         group.setOwner(newOwner);
-        if (!groupRepo.updateGroup(group)) {
-            // Restore old owner
+        if (! groupRepo.updateGroup(group)) {
             group.setOwner(oldOwner);
             // TODO dialog "could not set user as owner"
             return;
         }
 
         // Make the old owner a regular member
-        if (!groupRepo.addMember(group, oldOwner)) {
-            // Restore old owner
+        if (! groupRepo.addMember(group, oldOwner)) {
             group.setOwner(oldOwner);
-            // Also in the database, since the updateGroup changing the owner was successful
             groupRepo.updateGroup(group);
             // TODO dialog "could not set user as owner"
             return;
         }
 
         // The new owner is not a member anymore -- it's an owner
-        if (!groupRepo.removeMember(group, newOwner)) {
-            // Restore old owner
+        if (! groupRepo.removeMember(group, newOwner)) {
             group.setOwner(oldOwner);
-            // Also in the database, since the updateGroup changing the owner was successful
             groupRepo.updateGroup(group);
-            // Also remove the old owner as member, since the addMember above was successful
             groupRepo.removeMember(group, oldOwner);
             // TODO dialog "could not set user as owner"
             return;
@@ -100,7 +98,6 @@ public class GroupMemberListController {
         if (onChangeOwner != null)
             onChangeOwner.run();
         view.close();
-
     }
 
     public void onChangeOwner(Runnable action)
