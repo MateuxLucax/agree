@@ -49,7 +49,15 @@ public class GroupMemberListController {
                     // TODO else dialog "could not remove member"
                 });
                 bar.showSetOwnerButton();
-                bar.onClickSetOwner(() -> updateOwnership(group, owner, member));
+                bar.onClickSetOwner(() -> {
+                    if (groupRepo.changeOwner(group, member)) {
+                        group.setOwner(member);
+                        if (onChangeOwner != null)
+                            onChangeOwner.run();
+                        view.close();
+                    }
+                    // TODO else dialog "could not set member as owner"
+                });
             }
             UserBarController.setupUserBar(
                     bar, member, friends,
@@ -57,47 +65,6 @@ public class GroupMemberListController {
             );
 
         }
-    }
-
-    private void updateOwnership(Group group, User oldOwner, User newOwner)
-    {
-        // What this method does is essentially
-        // group.setOwner(newOwner);
-        // groupRepo.updateGroup(group);
-        // groupRepo.addMember(group, oldOwner);
-        // groupRepo.removeMember(group, newOwner);
-        // but with corrections for each possible failure,
-        // undoing the previous actions -- not leaving the ownership update half-done
-
-        group.setOwner(newOwner);
-        if (! groupRepo.updateGroup(group)) {
-            group.setOwner(oldOwner);
-            // TODO dialog "could not set user as owner"
-            return;
-        }
-
-        // Make the old owner a regular member
-        if (! groupRepo.addMember(group, oldOwner)) {
-            group.setOwner(oldOwner);
-            groupRepo.updateGroup(group);
-            // TODO dialog "could not set user as owner"
-            return;
-        }
-
-        // The new owner is not a member anymore -- it's an owner
-        if (! groupRepo.removeMember(group, newOwner)) {
-            group.setOwner(oldOwner);
-            groupRepo.updateGroup(group);
-            groupRepo.removeMember(group, oldOwner);
-            // TODO dialog "could not set user as owner"
-            return;
-        }
-
-        // At this point everything database-related involved in updating
-        // the group ownership was done successfully
-        if (onChangeOwner != null)
-            onChangeOwner.run();
-        view.close();
     }
 
     public void onChangeOwner(Runnable action)

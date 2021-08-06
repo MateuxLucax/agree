@@ -91,6 +91,11 @@ public class GroupInFileRepository implements IGroupRepository {
     }
 
     @Override
+    public boolean changeOwner(Group group, User newOwner) {
+        return false;
+    }
+
+    @Override
     public boolean removeMember(Group group, User member) {
         return false;
     }

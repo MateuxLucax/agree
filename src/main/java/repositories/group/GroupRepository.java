@@ -109,6 +109,7 @@ public class GroupRepository implements IGroupRepository
         return null;
     }
 
+    @Override
     public List<User> getMembers(Group group) {
         var users = new ArrayList<User>();
         var sql = "SELECT m.userNickname FROM groupMembership m WHERE m.groupId = ?";
@@ -124,6 +125,77 @@ public class GroupRepository implements IGroupRepository
         return users;
     }
 
+    /**
+     * Change the owner of group to newOwner in the database.
+     * This involves not only updating the ownerNickname field in the Groups table,
+     * but also making the old owner a member and removing the new owner from the members.
+     * Because the owner is not part of the members.
+     * Note: it doesn't call group.setOwner(newOwner), but depends on group.getOwner()
+     * to know who the old owner is.
+     */
+    @Override
+    public boolean changeOwner(Group group, User newOwner) {
+        // This is a transaction: all actions have to be performed successfully,
+        // otherwise the database will be in an invalid or wrong state
+        // (e.g. new owner is still a member, old owner didn't become a member
+        // and thus can't open the group anymore...)
+        // and that's why we use con.setAutoCommit(false), perform each statement,
+        // then call con.commit().
+        // If something goes wrong, we call con.rollback().
+        // At the end, we set con.autoCommit(true) again.
+
+        var sql1 = "UPDATE Groups SET ownerNickname = ? WHERE id = ?";
+        var sql2 = "UPDATE GroupMembership SET userNickname = ? WHERE userNickname = ? AND groupId = ?";
+        // sql2 replaces (newOwner, id) with (oldOwner, id) in GroupMembership,
+        // simultaneously removing the newOwner from the members and adding the oldOwner.
+
+        try (var pstmt1 = con.prepareStatement(sql1);
+             var pstmt2 = con.prepareStatement(sql2))
+        {
+            con.setAutoCommit(false);
+
+            String groupId = group.getId();
+            String newNick = newOwner.getNickname();
+            String oldNick = group.getOwner().getNickname();
+
+            pstmt1.setString(1, newNick);
+            pstmt1.setString(2, groupId);
+            int rowCount1 = pstmt1.executeUpdate();
+
+            System.out.println(pstmt1);
+            System.out.println(rowCount1 + " rows matched");
+
+            pstmt2.setString(1, oldNick);
+            pstmt2.setString(2, newNick);
+            pstmt2.setString(3, groupId);
+            int rowCount2 = pstmt2.executeUpdate();
+
+            System.out.println(pstmt2);
+            System.out.println(rowCount2 + " rows matched");
+
+            con.commit();
+
+            return rowCount1 == 1 && rowCount2 == 1;
+        } catch (SQLException e) {
+            System.err.println("GroupRepository.changeOwner: Transaction failed; performing rollback.");
+            try {
+                con.rollback();
+            } catch (SQLException ex) {
+                System.err.println("GroupRepository.changeOwner: Rollback after failed transaction failed.");
+                ex.printStackTrace();
+            }
+        } finally {
+            try {
+                con.setAutoCommit(true);
+            } catch (SQLException ex) {
+                System.err.println("GroupRepository.changeOwner: Failed to re-enable auto-commit after transaction.");
+                ex.printStackTrace();
+            }
+        }
+        return false;
+    }
+
+    @Override
     public boolean addMember(Group group, User member) {
         var sql = "INSERT INTO groupMembership (groupId, userNickname) VALUES (?, ?)";
         try (var pstmt = con.prepareStatement(sql)) {

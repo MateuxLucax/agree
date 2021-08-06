@@ -15,12 +15,13 @@ public interface IGroupRepository {
 
     List<Group> getGroups(User user);
 
-    // TODO remove getGroup(id), not used anywhere
     Group getGroup(String id);
 
     List<User> getMembers(Group group);
 
     boolean addMember(Group group, User member);
+
+    boolean changeOwner(Group group, User newOwner);
 
     boolean removeMember(Group group, User member);
 }
