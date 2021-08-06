@@ -172,6 +172,7 @@ public class GroupRepository implements IGroupRepository
 
             System.out.println(pstmt2);
             System.out.println(rowCount2 + " rows matched");
+            pstmt2.executeUpdate();
 
             con.commit();
 

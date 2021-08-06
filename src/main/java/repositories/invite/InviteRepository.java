@@ -172,15 +172,15 @@ public class InviteRepository implements IInviteRepository
             pstmt1.setString(1, nickFrom);
             pstmt1.setString(2, nickTo);
             pstmt1.setString(3, groupId);
-            int rowCount1 = pstmt1.executeUpdate();
+            pstmt1.executeUpdate();
 
             pstmt2.setString(1, nickTo);
             pstmt2.setString(2, groupId);
-            int rowCount2 = pstmt2.executeUpdate();
+            pstmt2.executeUpdate();
 
             con.commit();
 
-            return rowCount1 == 1 && rowCount2 == 1;
+            return true;
         } catch (SQLException e) {
             System.err.println("InviteRepository.acceptGroupInvite:");
             System.err.println("\tTransaction failed; performing rollback.");
