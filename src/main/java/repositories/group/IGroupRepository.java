@@ -19,8 +19,6 @@ public interface IGroupRepository {
 
     List<User> getMembers(Group group);
 
-    boolean addMember(Group group, User member);
-
     boolean changeOwner(Group group, User newOwner);
 
     boolean removeMember(Group group, User member);

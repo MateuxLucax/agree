@@ -9,7 +9,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class GroupInFileRepository implements IGroupRepository {
 
@@ -83,11 +82,6 @@ public class GroupInFileRepository implements IGroupRepository {
     @Override
     public List<User> getMembers(Group group) {
         return null;
-    }
-
-    @Override
-    public boolean addMember(Group group, User member) {
-        return false;
     }
 
     @Override

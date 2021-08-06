@@ -5,7 +5,6 @@ import models.group.Group;
 import repositories.DBConnection;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -160,54 +159,40 @@ public class GroupRepository implements IGroupRepository
 
             pstmt1.setString(1, newNick);
             pstmt1.setString(2, groupId);
-            int rowCount1 = pstmt1.executeUpdate();
-
-            System.out.println(pstmt1);
-            System.out.println(rowCount1 + " rows matched");
+            pstmt1.executeUpdate();
 
             pstmt2.setString(1, oldNick);
             pstmt2.setString(2, newNick);
             pstmt2.setString(3, groupId);
-            int rowCount2 = pstmt2.executeUpdate();
-
-            System.out.println(pstmt2);
-            System.out.println(rowCount2 + " rows matched");
             pstmt2.executeUpdate();
 
             con.commit();
 
-            return rowCount1 == 1 && rowCount2 == 1;
+            return true;
         } catch (SQLException e) {
             System.err.println("GroupRepository.changeOwner: Transaction failed; performing rollback.");
             try {
+
                 con.rollback();
+
             } catch (SQLException ex) {
-                System.err.println("GroupRepository.changeOwner: Rollback after failed transaction failed.");
+                System.err.println("GroupRepository.changeOwner: Rollback failed.");
                 ex.printStackTrace();
             }
+
+            return false;
         } finally {
             try {
+
                 con.setAutoCommit(true);
+
             } catch (SQLException ex) {
                 System.err.println("GroupRepository.changeOwner: Failed to re-enable auto-commit after transaction.");
                 ex.printStackTrace();
             }
         }
-        return false;
     }
 
-    @Override
-    public boolean addMember(Group group, User member) {
-        var sql = "INSERT INTO groupMembership (groupId, userNickname) VALUES (?, ?)";
-        try (var pstmt = con.prepareStatement(sql)) {
-            pstmt.setString(1, group.getId());
-            pstmt.setString(2, member.getNickname());
-            return pstmt.executeUpdate() == 1;
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-        return false;
-    }
 
     @Override
     public boolean removeMember(Group group, User member) {
