@@ -15,7 +15,7 @@ import repositories.invite.InviteRepository;
 public class InviteListController
 {
     private final InviteListFrame view;
-    private final IInviteRepository     inviteRepo;
+    private final IInviteRepository inviteRepo;
 
     public InviteListController(User user)
     {
@@ -26,18 +26,17 @@ public class InviteListController
             var bar = new InviteBar(inv);
             view.addInviteBar(bar);
 
-            if (!inv.to(user))
-                continue;
-
-            bar.showAcceptAndDeclineButtons();
-            bar.onClickAccept(() -> {
-                if (inviteRepo.acceptInvite(inv))
-                    view.removeInviteBar(bar);
-            });
-            bar.onClickDecline(() -> {
-                if (inviteRepo.declineInvite(inv))
-                    view.removeInviteBar(bar);
-            });
+            if (inv.to(user)) {
+                bar.showAcceptAndDeclineButtons();
+                bar.onClickAccept(() -> {
+                    if (inviteRepo.acceptInvite(inv))
+                        view.removeInviteBar(bar);
+                });
+                bar.onClickDecline(() -> {
+                    if (inviteRepo.declineInvite(inv))
+                        view.removeInviteBar(bar);
+                });
+            }
         }
     }
 
