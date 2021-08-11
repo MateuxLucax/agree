@@ -35,7 +35,7 @@ public class UserRepository implements IUserRepository
     {
         if (userExists(user.getNickname()))
             return false;
-        String sql = "INSERT INTO users (nickname, pass, creationDate) VALUES (?, ?, current_timestamp)";
+        String sql = "INSERT INTO users (nickname, password, creationDate) VALUES (?, ?, current_timestamp)";
         try (var pstmt = con.prepareStatement(sql)) {
             pstmt.setString(1, user.getNickname());
             pstmt.setString(2, user.getPassword());
@@ -49,13 +49,14 @@ public class UserRepository implements IUserRepository
     @Override
     public User getUser(String username, String password)
     {
-        var sql = "SELECT u.nickname, u.pass, u.creationDate FROM users u WHERE u.nickname = ? AND u.pass = ?";
+        // The purpose of this method is mainly to check if the username and password are correct
+        var sql = "SELECT u.creationDate FROM users u WHERE u.nickname = ? AND u.password = ?";
         try (var pstmt = con.prepareStatement(sql)) {
             pstmt.setString(1, username);
             pstmt.setString(2, password);
             ResultSet res = pstmt.executeQuery();
             if (res.next()) {
-                var creationDate = Date.from(res.getTimestamp(3).toInstant());
+                var creationDate = Date.from(res.getTimestamp(1).toInstant());
                 return new User(username, password, creationDate);
             }
         } catch (SQLException e) {
