@@ -212,24 +212,41 @@ public class InviteRepository implements IInviteRepository
         // Transaction: removes the friend invite and adds the friendship relaton.
 
         var sql1 = "DELETE FROM FriendInvites WHERE nicknameFrom=? AND nicknameTo=?";
-        var sql2 = "INSERT INTO Friendship (nickname1, nickname2) VALUES (?, ?), (?, ?)";
+        var sql2 = "INSERT INTO Friendship (nickname1, nickname2) VALUES (?, ?)";
+
+        String nickFrom = invite.from().getNickname();
+        String nickTo   = invite.to().getNickname();
+
+        // Friendship relations are uniquely identified by the users involved
+        // (by the (nickname1, nickname2) pair). But for each pair of users A and B,
+        // there two possible ways to store the relation: (A, B) and (B, A).
+        // Which one is actually stored? The answer is that we store (A, B) if A < B
+        // and (B, A) otherwise.
+        // [We could store both (A, B) and (B, A), which is nice in some ways,
+        // but then there will be two records storing the same information, it's redundant.
+        // Also, other tables having to refer to the Friendship table could be a problem too,
+        // since the (nickname1, nickname2) pair is the primary key, but I'm just guessing.]
+        // So that's why we store the users in order:
+        String nick1, nick2;
+        if (nickFrom.compareTo(nickTo) < 0) {
+            nick1 = nickFrom;
+            nick2 = nickTo;
+        } else {
+            nick1 = nickTo;
+            nick2 = nickFrom;
+        }
 
         try (var pstmt1 = con.prepareStatement(sql1);
              var pstmt2 = con.prepareStatement(sql2))
         {
             con.setAutoCommit(false);
 
-            String nickFrom = invite.from().getNickname();
-            String nickTo   = invite.to().getNickname();
-
             pstmt1.setString(1, nickFrom);
             pstmt1.setString(2, nickTo);
             pstmt1.executeUpdate();
 
-            pstmt2.setString(1, nickFrom);
-            pstmt2.setString(2, nickTo);
-            pstmt2.setString(3, nickTo);
-            pstmt2.setString(4, nickFrom);
+            pstmt2.setString(1, nick1);
+            pstmt2.setString(2, nick2);
             pstmt2.executeUpdate();
 
             con.commit();

@@ -25,6 +25,8 @@ public class Application {
         //   (maybe even on the frames this button should be present,
         //   since it's more convenient than closing and opening)
 
+        // TODO add to the frame titles the nickname of the user logged in
+
         var authCon = new AuthController();
         authCon.display();
         authCon.onSuccess(user -> {

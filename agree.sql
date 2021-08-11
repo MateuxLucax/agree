@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS Friendship (
     foreign key (nickname2) references Users(nickname)
         on delete cascade
         on update cascade,
-    check (nickname1 < nickname2)
+    constraint friendship_ordered check (nickname1 < nickname2)
 );
 
 CREATE TABLE IF NOT EXISTS Groups (
