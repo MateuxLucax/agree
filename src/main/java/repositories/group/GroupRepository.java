@@ -7,6 +7,7 @@ import repositories.DBConnection;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -22,25 +23,30 @@ public class GroupRepository implements IGroupRepository
 
     @Override
     public boolean createGroup(Group group) {
-        var sql = "INSERT INTO groups (id, ownerNickname, name) VALUES (?, ?, ?)";
-        var uuid = UUID.randomUUID().toString();
-        group.setId(uuid);
-        try (var pstmt = con.prepareStatement(sql)) {
-            pstmt.setString(1, uuid);
-            pstmt.setString(2, group.getOwner().getNickname());
-            pstmt.setString(3, group.getName());
-            return pstmt.executeUpdate() == 1;
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        var sql = "INSERT INTO groups (ownerNickname, name) VALUES (?, ?)";
+        try (var pstmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            pstmt.setString(1, group.getOwner().getNickname());
+            pstmt.setString(2, group.getName());
+            pstmt.executeUpdate();
+
+            ResultSet generatedKeys = pstmt.getGeneratedKeys();
+            boolean hasKeys = generatedKeys.next();
+            if (hasKeys) {
+                group.setId(generatedKeys.getInt(1));
+            }
+            // No generated keys means the insert didn't work
+            return hasKeys;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
-        return false;
     }
 
     @Override
-    public boolean deleteGroup(String id) {
+    public boolean deleteGroup(int id) {
         var sql = "DELETE FROM groups g WHERE g.id = ?";
         try (var pstmt = con.prepareStatement(sql)) {
-            pstmt.setString(1, id);
+            pstmt.setInt(1, id);
             return pstmt.executeUpdate() == 1;
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -53,7 +59,7 @@ public class GroupRepository implements IGroupRepository
         var sql = "UPDATE groups SET name = ? WHERE id = ?";
         try (var pstmt = con.prepareStatement(sql)) {
             pstmt.setString(1, group.getName());
-            pstmt.setString(2, group.getId());
+            pstmt.setInt(2, group.getId());
             return pstmt.executeUpdate() == 1;
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -77,7 +83,7 @@ public class GroupRepository implements IGroupRepository
             pstmt.setString(2, user.getNickname());
             ResultSet res = pstmt.executeQuery();
             while (res.next()) {
-                var id            = res.getString(1);
+                var id            = res.getInt(1);
                 var name          = res.getString(2);
                 var ownerNickname = res.getString(3);
                 var group = new Group(name, new User(ownerNickname));
@@ -95,7 +101,7 @@ public class GroupRepository implements IGroupRepository
         var users = new ArrayList<User>();
         var sql = "SELECT m.userNickname FROM groupMembership m WHERE m.groupId = ?";
         try (var pstmt = con.prepareStatement(sql)) {
-            pstmt.setString(1, group.getId());
+            pstmt.setInt(1, group.getId());
             ResultSet res = pstmt.executeQuery();
             while (res.next()) {
                 users.add(new User(res.getString(1)));
@@ -135,17 +141,17 @@ public class GroupRepository implements IGroupRepository
         {
             con.setAutoCommit(false);
 
-            String groupId = group.getId();
+            int    groupId = group.getId();
             String newNick = newOwner.getNickname();
             String oldNick = group.getOwner().getNickname();
 
             pstmt1.setString(1, newNick);
-            pstmt1.setString(2, groupId);
+            pstmt1.setInt   (2, groupId);
             pstmt1.executeUpdate();
 
             pstmt2.setString(1, oldNick);
             pstmt2.setString(2, newNick);
-            pstmt2.setString(3, groupId);
+            pstmt2.setInt   (3, groupId);
             pstmt2.executeUpdate();
 
             con.commit();
@@ -180,7 +186,7 @@ public class GroupRepository implements IGroupRepository
     public boolean removeMember(Group group, User member) {
         var sql = "DELETE FROM groupMembership WHERE groupId = ? AND userNickname = ?";
         try (var pstmt = con.prepareStatement(sql)) {
-            pstmt.setString(1, group.getId());
+            pstmt.setInt   (1, group.getId());
             pstmt.setString(2, member.getNickname());
             return pstmt.executeUpdate() == 1;
         } catch (SQLException throwables) {

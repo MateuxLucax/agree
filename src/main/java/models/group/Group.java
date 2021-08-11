@@ -30,7 +30,7 @@ public class Group {
 
     private static final int MAX_MESSAGES_LOADED_AT_ONCE = 100;
 
-    private       String id;
+    private       int    id;
     private       String name;
     private       User   owner;
     private final LinkedList<Message> messages;
@@ -43,11 +43,11 @@ public class Group {
         this.messages = new LinkedList<>();
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 

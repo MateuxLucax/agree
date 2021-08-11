@@ -55,11 +55,12 @@ public class InviteRepository implements IInviteRepository
             pstmt.setString(2, user.getNickname());
             ResultSet res = pstmt.executeQuery();
             while (res.next()) {
-                var from = new User(res.getString(1));
-                var to = new User(res.getString(2));
-                var groupId = res.getString(3);
+                var from      = new User(res.getString(1));
+                var to        = new User(res.getString(2));
+                var groupId   = res.getInt(3);
                 var groupName = res.getString(4);
-                var owner = new User(res.getString(5));
+                var owner     = new User(res.getString(5));
+
                 var group = new Group(groupName, owner);
                 group.setId(groupId);
                 invs.add(new GroupInvite(from, to, group));
@@ -102,7 +103,7 @@ public class InviteRepository implements IInviteRepository
         try (var pstmt = con.prepareStatement(sql)) {
             pstmt.setString(1, inv.from().getNickname());
             pstmt.setString(2, inv.to().getNickname());
-            pstmt.setString(3, inv.getGroup().getId());
+            pstmt.setInt   (3, inv.getGroup().getId());
             return pstmt.executeUpdate() == 1;
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -134,7 +135,7 @@ public class InviteRepository implements IInviteRepository
         try (var pstmt = con.prepareStatement(sql)) {
             pstmt.setString(1, invite.from().getNickname());
             pstmt.setString(2, invite.to().getNickname());
-            pstmt.setString(3, invite.getGroup().getId());
+            pstmt.setInt   (3, invite.getGroup().getId());
             return pstmt.executeUpdate() == 1;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -167,15 +168,15 @@ public class InviteRepository implements IInviteRepository
 
             String nickFrom = invite.from().getNickname();
             String nickTo   = invite.to().getNickname();
-            String groupId  = invite.getGroup().getId();
+            int   groupId  = invite.getGroup().getId();
 
             pstmt1.setString(1, nickFrom);
             pstmt1.setString(2, nickTo);
-            pstmt1.setString(3, groupId);
+            pstmt1.setInt   (3, groupId);
             pstmt1.executeUpdate();
 
             pstmt2.setString(1, nickTo);
-            pstmt2.setString(2, groupId);
+            pstmt2.setInt   (2, groupId);
             pstmt2.executeUpdate();
 
             con.commit();

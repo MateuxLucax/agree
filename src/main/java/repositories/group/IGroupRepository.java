@@ -9,7 +9,7 @@ public interface IGroupRepository {
 
     boolean createGroup(Group group);
 
-    boolean deleteGroup(String id);
+    boolean deleteGroup(int id);
 
     boolean renameGroup(Group group);
 
