@@ -1,26 +1,56 @@
 package gui.group;
 
 import javax.swing.*;
+import java.awt.*;
 
-public class GroupListPanel extends JPanel
-{
+public class GroupListPanel extends JPanel {
+
     private final JButton btNewGroup;
+    private final JButton btRefresh;
 
-    public GroupListPanel()
-    {
-        setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+    private final JPanel main;
+
+    // TODO somehow call pack() on the frame after a group is added/deleted
+    //   probably via a callback
+
+    public GroupListPanel() {
+        setLayout(new BorderLayout());
 
         btNewGroup = new JButton("+ New group");
-        add(btNewGroup);
+        btRefresh = new JButton("Refresh");
+
+        var header = new JPanel();
+        header.add(btNewGroup);
+        header.add(btRefresh);
+
+        main = new JPanel();
+        main.setLayout(new BoxLayout(main, BoxLayout.PAGE_AXIS));
+
+        add(header, BorderLayout.PAGE_START);
+        add(main, BorderLayout.CENTER);
     }
 
-    public void newGroupButtonSetEnabled(boolean b)
-    {
+    public void addGroupBar(GroupBar bar) {
+        main.add(bar);
+    }
+
+    public void removeGroupBar(GroupBar bar) {
+        main.remove(bar);
+    }
+
+    public void clear() {
+        main.removeAll();
+    }
+
+    public void newGroupButtonSetEnabled(boolean b) {
         btNewGroup.setEnabled(b);
     }
 
-    public void onClickNewGroup(Runnable action)
-    {
+    public void onClickNewGroup(Runnable action) {
         btNewGroup.addActionListener(e -> action.run());
+    }
+
+    public void onClickRefresh(Runnable action) {
+        btRefresh.addActionListener(e -> action.run());
     }
 }
