@@ -26,8 +26,12 @@ public class GroupListPanel extends JPanel {
         main = new JPanel();
         main.setLayout(new BoxLayout(main, BoxLayout.PAGE_AXIS));
 
+        var scrollPane = new JScrollPane();
+        scrollPane.setViewportView(main);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(20);
+
         add(header, BorderLayout.PAGE_START);
-        add(main, BorderLayout.CENTER);
+        add(scrollPane, BorderLayout.CENTER);
     }
 
     public void addGroupBar(GroupBar bar) {
