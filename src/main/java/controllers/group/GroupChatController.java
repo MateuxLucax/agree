@@ -7,9 +7,7 @@ import models.message.Message;
 import repositories.message.MessageRepository;
 
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedList;
 
 public class GroupChatController
 {
@@ -23,8 +21,6 @@ public class GroupChatController
     private Date lastMessageQuery;
 
     // TODO!! deal with the edge case of the group that was just created and has no messages yet
-    //   specially in regards to the "load older messages" button,
-    //   treat the cases of: when it has no messages
     //                  and: after the users adds one or more messages
 
     public GroupChatController(User user, Group group)
@@ -33,11 +29,11 @@ public class GroupChatController
         this.view    = new ChatFrame(group.getName() + " (group): chat");
         this.msgRepo = new MessageRepository();
 
+
         var newestMessages = msgRepo.getNewestGroupMessages(group, NUMBER_OF_MESSAGES_TO_LOAD);
-        lastMessageQuery = Date.from(Instant.now());
-        // Don't && the following two conditions together -- null means the database failed to load them,
         // in which case we show a dialog. size == 0 means the database loaded them as usual, but that
-        // there just weren't any messages -- no dialog needed, no error happened.
+        lastMessageQuery  = Date.from(Instant.now());
+        oldestMessageDate = Date.from(Instant.now());  // Default value for when there are no messages
         if (newestMessages != null) {
             if (newestMessages.size() > 0) {
                 view.addMessagesBelow(newestMessages);
@@ -60,12 +56,13 @@ public class GroupChatController
 
         view.onSendMessage(text -> {
             if (text.isEmpty())
-                return; // TODO dialog "can't send empty message"
+            if (text.isEmpty()) {
+                // TODO dialog "can't send empty message"
+                return;
+            }
             var msg = new Message(user, text, new Date());
             if (msgRepo.addGroupMessage(group, msg)) {
-                // Other messages might've been sent by other users in the meantime,
-                // so we can't only load this new message
-                loadNewMessages();
+                loadNewMessages();  // Other messages might've been sent in the meantime
                 view.clearMessageTextarea();
             } // TODO else dialog "couldn't send message"
         });
