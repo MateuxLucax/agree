@@ -28,19 +28,15 @@ import java.util.*;
 
 public class Group {
 
-    private static final int MAX_MESSAGES_LOADED_AT_ONCE = 100;
-
-    private       int    id;
-    private       String name;
-    private       User   owner;
-    private final LinkedList<Message> messages;
+    private int    id;
+    private String name;
+    private User   owner;
 
     public Group(String name, User owner) {
         if (owner == null)
             throw new NullPointerException("Groups need an owner");
         this.name = name;
         this.owner = owner;
-        this.messages = new LinkedList<>();
     }
 
     public int getId() {
@@ -71,30 +67,6 @@ public class Group {
 
     public boolean ownedBy(User user) {
         return owner.equals(user);
-    }
-
-    public LinkedList<Message> getMessages() {
-        return messages;
-    }
-
-    public void loadMessageAbove(Message msg) {
-        if (messages.size() + 1 > MAX_MESSAGES_LOADED_AT_ONCE)
-            messages.removeLast();
-        messages.addFirst(msg);
-    }
-
-    public void loadMessageBelow(Message msg) {
-        if (messages.size() + 1 > MAX_MESSAGES_LOADED_AT_ONCE)
-            messages.removeFirst();
-        messages.addLast(msg);
-    }
-
-    public Date oldestMessageDate() {
-        return messages.isEmpty() ? new Date() : messages.getFirst().sentAt();
-    }
-
-    public Date newestMessageDate() {
-        return messages.isEmpty() ? new Date() : messages.getLast().sentAt();
     }
 
     @Override
