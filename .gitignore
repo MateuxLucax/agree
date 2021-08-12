@@ -86,3 +86,4 @@ agree.iml
 
 database
 *.json
+postgres-data
