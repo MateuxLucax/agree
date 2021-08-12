@@ -10,24 +10,37 @@ import javax.swing.*;
 public class FriendListController
 {
     private final FriendListPanel view;
+    private final User user;
+    private final FriendshipRepository friendRepo;
 
     public FriendListController(User user)
     {
-        view = new FriendListPanel();
+        this.user       = user;
+        this.view       = new FriendListPanel();
+        this.friendRepo = new FriendshipRepository();
 
-        var friendRepo = new FriendshipRepository();
-        var friends = friendRepo.getFriends(user);
+        loadFriendBars();
 
-        for (var friend : friends) {
+        view.onClickRefresh(() -> {
+            view.clear();
+            loadFriendBars();
+            view.repaint();
+            view.revalidate();
+        });
+    }
+
+    public void loadFriendBars() {
+        for (var friend : friendRepo.getFriends(user)) {
             var bar = new FriendBar(friend.getNickname());
             view.addFriendBar(bar);
 
             bar.onClickUnfriend(() -> {
                 // TODO dialog: do you really want to unfriend <friendname>?
-                if (friendRepo.removeFriend(user, friend))
+                if (friendRepo.removeFriend(user, friend)) {
                     view.removeFriendBar(bar);
-                else
+                } else {
                     System.out.println("Couldn't remove friend (TODO dialog)"); // TODO
+                }
             });
 
             bar.onClickChat(() -> {
@@ -36,7 +49,6 @@ public class FriendListController
                 chatCon.onClose(() -> bar.chatButtonSetEnabled(true));
                 chatCon.display();
             });
-
         }
     }
 
