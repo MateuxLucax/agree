@@ -14,16 +14,13 @@ public class GroupListPanel extends JPanel
         add(btNewGroup);
     }
 
-    public JButton getNewGroupButton()
+    public void newGroupButtonSetEnabled(boolean b)
     {
-        return btNewGroup;
+        btNewGroup.setEnabled(b);
     }
 
     public void onClickNewGroup(Runnable action)
     {
-        btNewGroup.addActionListener(e -> {
-            btNewGroup.setEnabled(false);
-            action.run();
-        });
+        btNewGroup.addActionListener(e -> action.run());
     }
 }
