@@ -33,7 +33,7 @@ public class GroupInviteFriendsController {
 
         for (var friend : friends) {
             // Don't show friends who are already in the group
-            if (group.getOwner().equals(friend) || members.contains(friend))
+            if (group.ownedBy(friend) || members.contains(friend))
                 continue;
 
             var bar = new InviteableFriendBar(friend.getNickname());
