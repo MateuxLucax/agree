@@ -25,13 +25,15 @@ public class Message implements Comparable<Message> {
         this.sentAt = sentAt;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getId()      { return id; }
     public User getUser()   { return user; }
     public String getText() { return text; }
     public Date sentAt()    { return sentAt; }
 
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public int compareTo(Message other) {
         return sentAt.compareTo(other.sentAt);
