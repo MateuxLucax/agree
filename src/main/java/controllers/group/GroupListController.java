@@ -46,7 +46,6 @@ public class GroupListController {
 
         con.afterDelete(() -> view.removeGroupBar(bar));
         con.afterQuit(() -> view.removeGroupBar(bar));
-
     }
 
     public GroupListPanel getPanel() {

@@ -34,6 +34,8 @@ public class FriendListPanel extends JPanel
 
     public void removeFriendBar(FriendBar bar) {
         friendsPanel.remove(bar);
+        repaint();
+        revalidate();
     }
 
     public void clear() {
