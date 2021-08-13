@@ -20,10 +20,10 @@ public class GroupListController {
         this.view      = new GroupListPanel();
 
         view.onClickNewGroup(() -> {
-            view.newGroupButtonSetEnabled(false);
             var con = new GroupCreationController(user);
+            con.afterCreation(this::addGroup);
+            view.newGroupButtonSetEnabled(false);
             con.onClose(() -> view.newGroupButtonSetEnabled(true));
-            con.onCreation(this::addGroup);
             con.display();
         });
 
@@ -44,8 +44,8 @@ public class GroupListController {
         GroupBar bar = con.getBar();
         view.addGroupBar(bar);
 
-        con.onDelete(() -> view.removeGroupBar(bar));
-        con.onQuit(() -> view.removeGroupBar(bar));
+        con.afterDelete(() -> view.removeGroupBar(bar));
+        con.afterQuit(() -> view.removeGroupBar(bar));
 
     }
 

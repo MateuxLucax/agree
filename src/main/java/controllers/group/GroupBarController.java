@@ -14,8 +14,8 @@ public class GroupBarController
     private final Group group;
     private final IGroupRepository groupRepo;
 
-    private Runnable onDelete;
-    private Runnable onQuit;
+    private Runnable afterDelete;
+    private Runnable afterQuit;
 
     public GroupBarController(User user, Group group)
     {
@@ -25,26 +25,26 @@ public class GroupBarController
         this.groupRepo = new GroupRepository();
 
         view.onClickChat(() -> {
-            view.getChatButton().setEnabled(false);
             var con = new GroupChatController(user, group);
+            view.getChatButton().setEnabled(false);
             con.onClose(() -> view.getChatButton().setEnabled(true));
             con.display();
         });
 
         view.onClickMembers(() -> {
-            view.getMembersButton().setEnabled(false);
             var con = new GroupMemberListController(user, group);
-            con.onChangeOwner(() -> {
+            con.afterChangeOwner(() -> {
                 view.replaceManageWithQuitButton();
                 view.onClickQuit(this::quit);
             });
+            view.getMembersButton().setEnabled(false);
             con.onClose(() -> view.getMembersButton().setEnabled(true));
             con.display();
         });
 
         view.onClickInvite(() -> {
-            view.getInviteButton().setEnabled(false);
             var con = new GroupInviteFriendsController(user, group);
+            view.getInviteButton().setEnabled(false);
             con.onClose(() -> view.getInviteButton().setEnabled(true));
             con.display();
         });
@@ -52,16 +52,11 @@ public class GroupBarController
         if (group.ownedBy(user)) {
             view.showManageButton();
             view.onClickManage(() -> {
-                view.getManageButton().setEnabled(false);
                 var con = new GroupManagementController(group);
+                con.afterDelete(this.afterDelete);
+                con.afterRename(view::rename);
+                view.getManageButton().setEnabled(false);
                 con.onClose(() -> view.getManageButton().setEnabled(true));
-                // GroupManagementButton does the actual renaming
-                con.onRename(newName -> {
-                    view.rename(newName);
-                    view.repaint();
-                    view.revalidate();
-                });
-                con.onDelete(this.onDelete);
                 con.display();
             });
         }
@@ -69,21 +64,22 @@ public class GroupBarController
             view.showQuitButton();
             view.onClickQuit(this::quit);
         }
-
     }
 
     public void quit() {
-        if (groupRepo.removeMember(group, user) && onQuit != null) {
-            onQuit.run();
+        if (! groupRepo.removeMember(group, user)) {
+            // TODO dialog "couldn't remove member"
+            return;
         }
+        if (afterQuit != null) afterQuit.run();
     }
 
-    public void onDelete(Runnable action) {
-        this.onDelete = action;
+    public void afterDelete(Runnable action) {
+        this.afterDelete = action;
     }
 
-    public void onQuit(Runnable action) {
-        this.onQuit = action;
+    public void afterQuit(Runnable action) {
+        this.afterQuit = action;
     }
 
     public GroupBar getBar() {

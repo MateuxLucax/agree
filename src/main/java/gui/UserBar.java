@@ -25,14 +25,14 @@ public class UserBar extends JPanel
         buttonsPanel.add(btAskToBeFriends);
     }
 
-    public void showAlreadyFriendsButton()
+    public void showAlreadyFriends()
     {
         var btAlreadyFriends = new JButton("Already friends");
         btAlreadyFriends.setEnabled(false);
         buttonsPanel.add(btAlreadyFriends);
     }
 
-    public void showInviteSentButton()
+    public void showInviteSent()
     {
         var btInviteSent = new JButton("Friend invite sent");
         btInviteSent.setEnabled(false);
@@ -42,7 +42,7 @@ public class UserBar extends JPanel
     public void replaceWithInviteSentButton()
     {
         buttonsPanel.remove(btAskToBeFriends);
-        showInviteSentButton();
+        showInviteSent();
         repaint();
         revalidate();
     }

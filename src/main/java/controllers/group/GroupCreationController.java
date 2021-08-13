@@ -10,31 +10,31 @@ import java.util.function.Consumer;
 public class GroupCreationController
 {
     private GroupCreationFrame view;
-    private Consumer<Group> onCreation;
+    private Consumer<Group> afterCreation;
 
-    public GroupCreationController(User user)
-    {
+    public GroupCreationController(User user) {
         var groupRepo = new GroupRepository();
         this.view = new GroupCreationFrame();
-        view.onCreation(groupName -> {
+        view.onClickCreate(groupName -> {
             var group = new Group(groupName, user);
-            if (groupRepo.createGroup(group) && this.onCreation != null)
-                this.onCreation.accept(group);
+            if (! groupRepo.createGroup(group)) {
+                // TODO dialog "couldn't create group"
+                return;
+            }
+            view.close();
+            if (afterCreation != null) afterCreation.accept(group);
         });
     }
 
-    public void onClose(Runnable action)
-    {
+    public void onClose(Runnable action) {
         this.view.onClose(action);
     }
 
-    public void onCreation(Consumer<Group> action)
-    {
-        this.onCreation = action;
+    public void afterCreation(Consumer<Group> action) {
+        this.afterCreation = action;
     }
 
-    public void display()
-    {
+    public void display() {
         view.pack();
         view.setVisible(true);
     }

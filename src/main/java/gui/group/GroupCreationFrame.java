@@ -17,8 +17,7 @@ public class GroupCreationFrame extends JFrame
     public GroupCreationPanel panel;
     public Runnable onClose;
 
-    public GroupCreationFrame()
-    {
+    public GroupCreationFrame() {
         setTitle("Create a group");
 
         panel = new GroupCreationPanel();
@@ -31,22 +30,15 @@ public class GroupCreationFrame extends JFrame
         });
     }
 
-    public void onCreation(Consumer<String> onCreation)
-    {
-        panel.onCreation(groupName -> {
-            onCreation.accept(groupName);
-            close();
-        });
+    public void onClickCreate(Consumer<String> action) {
+        panel.onClickCreate(action);
     }
 
-    public void onClose(Runnable action)
-    {
+    public void onClose(Runnable action) {
         onClose = action;
     }
 
-
-    public void close()
-    {
+    public void close() {
         if (onClose != null)
             onClose.run();
         dispose();

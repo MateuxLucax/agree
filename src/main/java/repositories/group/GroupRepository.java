@@ -10,7 +10,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public class GroupRepository implements IGroupRepository
 {
@@ -67,7 +66,6 @@ public class GroupRepository implements IGroupRepository
         return false;
     }
 
-    /* The groups will not yet have members and messages loaded in them */
     @Override
     public List<Group> getGroups(User user) {
         var groups = new ArrayList<Group>();

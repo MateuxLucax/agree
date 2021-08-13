@@ -12,8 +12,9 @@ public class GroupManagementController {
     private final Group group;
     private final GroupManagementFrame view;
     private final IGroupRepository groupRepo;
-    private Consumer<String> onRename;
-    private Runnable onDelete;
+
+    private Runnable afterDelete;
+    private Consumer<String> afterRename;
 
     public GroupManagementController(Group model)
     {
@@ -22,40 +23,40 @@ public class GroupManagementController {
         view = new GroupManagementFrame(model.getName());
 
         view.onClickDelete(() -> {
-            groupRepo.deleteGroup(group.getId());
-            if (this.onDelete != null)
-                this.onDelete.run();
+            if (! groupRepo.deleteGroup(group.getId())) {
+                // TODO dialog "couldn't delete group"
+                return;
+            }
+            if (afterDelete != null) afterDelete.run();
             view.close();
         });
 
         view.onClickRename(newName -> {
             String oldName = group.getName();
             group.setName(newName);
-            if (groupRepo.renameGroup(group) && this.onRename != null)
-                this.onRename.accept(newName);
-            else  // renaming failed
-                group.setName(oldName);
+            if (! groupRepo.renameGroup(group)) {
+                group.setName(oldName);  // restore previous name
+                // TODO dialog "couldn't rename group"
+                return;
+            }
+            if (afterRename != null) afterRename.accept(newName);
             view.close();
         });
     }
 
-    public void onClose(Runnable action)
-    {
-        this.view.onClose(action);
+    public void afterDelete(Runnable action) {
+        this.afterDelete = action;
     }
 
-    public void onRename(Consumer<String> action)
-    {
-        this.onRename = action;
+    public void afterRename(Consumer<String> action) {
+        this.afterRename = action;
     }
 
-    public void onDelete(Runnable action)
-    {
-        this.onDelete = action;
+    public void onClose(Runnable action) {
+        view.onClose(action);
     }
 
-    public void display()
-    {
+    public void display() {
         view.pack();
         view.setVisible(true);
     }

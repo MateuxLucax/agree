@@ -14,7 +14,7 @@ public class GroupMemberListController {
 
     private final UserListFrame view;
     private final IGroupRepository groupRepo;
-    private Runnable onChangeOwner;
+    private Runnable afterChangeOwner;
 
     public GroupMemberListController(User userInSession, Group group)
     {
@@ -52,8 +52,8 @@ public class GroupMemberListController {
                 bar.onClickSetOwner(() -> {
                     if (groupRepo.changeOwner(group, member)) {
                         group.setOwner(member);
-                        if (onChangeOwner != null)
-                            onChangeOwner.run();
+                        if (afterChangeOwner != null)
+                            afterChangeOwner.run();
                         view.close();
                     }
                     // TODO else dialog "could not set member as owner"
@@ -67,9 +67,9 @@ public class GroupMemberListController {
         }
     }
 
-    public void onChangeOwner(Runnable action)
+    public void afterChangeOwner(Runnable action)
     {
-        this.onChangeOwner = action;
+        this.afterChangeOwner = action;
     }
 
     public void onClose(Runnable action)

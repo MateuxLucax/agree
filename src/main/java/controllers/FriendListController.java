@@ -39,13 +39,13 @@ public class FriendListController
                 if (friendRepo.removeFriend(user, friend)) {
                     view.removeFriendBar(bar);
                 } else {
-                    System.out.println("Couldn't remove friend (TODO dialog)"); // TODO
+                    System.out.println("Couldn't remove friend (TODO dialog)"); // TODO dialog
                 }
             });
 
             bar.onClickChat(() -> {
-                bar.chatButtonSetEnabled(false);
                 var chatCon = new FriendChatController(user, friend);
+                bar.chatButtonSetEnabled(false);
                 chatCon.onClose(() -> bar.chatButtonSetEnabled(true));
                 chatCon.display();
             });

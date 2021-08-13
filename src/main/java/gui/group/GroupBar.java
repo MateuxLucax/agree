@@ -39,6 +39,8 @@ public class GroupBar extends JPanel
 
     public void rename(String newName) {
         lbName.setText(newName);
+        repaint();
+        revalidate();
     }
 
     public void onClickChat(Runnable action) {
