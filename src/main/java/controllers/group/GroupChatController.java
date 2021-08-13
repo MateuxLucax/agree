@@ -18,7 +18,7 @@ public class GroupChatController extends AbstractChatController {
     private final IMessageRepository msgRepo;
 
     public GroupChatController(User user, Group group) {
-        super(group.getName() + "");
+        super(group.getName() + " (group): chat");
         this.user    = user;
         this.group   = group;
         this.msgRepo = new MessageRepository();
