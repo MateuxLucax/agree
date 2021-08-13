@@ -1,22 +1,27 @@
 package repositories.message;
 
+import models.User;
 import models.group.Group;
 import models.message.Message;
 
 import java.util.Date;
+import java.util.List;
 
 public interface IMessageRepository {
 
     boolean addMessage(Group group, Message message);
 
-    boolean getMessagesBefore(Group group, Date date);
+    List<Message> getNewestMessages(Group group, int numberOfMessages);
 
-    boolean getMessagesAfter(Group group, Date date);
+    List<Message> getMessagesAfter(Group group, Date date);
 
-    boolean searchMessages(Group group, String search);
+    List<Message> getMessagesBefore(Group group, Date date, int numberOfMessages);
 
-    boolean getMostRecentMessages(Group group);
+    boolean addMessages(User friend1, User friend2, Message message);
 
-    boolean removeMessage(Group group, Message message);
+    List<Message> getNewestMessages(User friend1, User friend2, int numberOfMessages);
 
+    List<Message> getMessagesAfter(User friend1, User friend2, Date date);
+
+    List<Message> getMessagesBefore(User friend1, User friend2, Date date, int numberOfMessages);
 }

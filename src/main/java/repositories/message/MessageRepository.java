@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Date;
 
-public class MessageRepository {
+public class MessageRepository implements IMessageRepository {
 
     private final Connection con;
 
@@ -34,7 +34,7 @@ public class MessageRepository {
         return messages;
     }
 
-    public boolean addGroupMessage(Group group, Message message) {
+    public boolean addMessage(Group group, Message message) {
         var sql = "INSERT INTO GroupMessages (groupId, message, sentAt, sentBy) VALUES (?, ?, ?, ?)";
         try (var pstmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setInt      (1, group.getId());
@@ -55,7 +55,7 @@ public class MessageRepository {
         }
     }
 
-    public List<Message> getNewestGroupMessages(Group group, int numberOfMessages) {
+    public List<Message> getNewestMessages(Group group, int numberOfMessages) {
         // LIMIT will get the top N rows instead of the bottom N rows.
         // This means that we need to do query for messages in *decreasing* order
         // to get the N newest ones. But since we want them in ascending order
@@ -78,7 +78,7 @@ public class MessageRepository {
         }
     }
 
-    public List<Message> getGroupMessagesAfter(Group group, Date date) {
+    public List<Message> getMessagesAfter(Group group, Date date) {
         var sql = "SELECT id, message, sentAt, sentBy " +
                   "FROM GroupMessages " +
                   "WHERE groupId = ? " +
@@ -95,7 +95,7 @@ public class MessageRepository {
         }
     }
 
-    public List<Message> getGroupMessagesBefore(Group group, Date date, int numberOfMessages) {
+    public List<Message> getMessagesBefore(Group group, Date date, int numberOfMessages) {
         // See getNewestGroupMessages for why the query is like this.
         var sql = "SELECT m.id, m.message, m.sentAt, m.sentBy " +
                   "FROM (SELECT id, message, sentAt, sentBy " +
@@ -117,9 +117,9 @@ public class MessageRepository {
         }
     }
 
-    public boolean addFriendMessage(User user1, User user2, Message message) {
-        String nick1 = user1.getNickname();
-        String nick2 = user2.getNickname();
+    public boolean addMessages(User friend1, User friend2, Message message) {
+        String nick1 = friend1.getNickname();
+        String nick2 = friend2.getNickname();
         if (nick1.compareTo(nick2) > 0) { String t = nick1; nick1 = nick2; nick2 = t; }
 
         var sql = "INSERT INTO FriendMessages (nickname1, nickname2, message, sentAt, sentBy) VALUES (?, ?, ?, ?, ?)";
@@ -144,9 +144,9 @@ public class MessageRepository {
 
     }
 
-    public List<Message> getNewestFriendMessages(User user1, User user2, int numberOfMessages) {
-        String nick1 = user1.getNickname();
-        String nick2 = user2.getNickname();
+    public List<Message> getNewestMessages(User friend1, User friend2, int numberOfMessages) {
+        String nick1 = friend1.getNickname();
+        String nick2 = friend2.getNickname();
         if (nick1.compareTo(nick2) > 0) { String t = nick1; nick1 = nick2; nick2 = t; }
 
         var sql = "SELECT m.id, m.message, m.sentAt, m.sentBy " +
@@ -167,9 +167,9 @@ public class MessageRepository {
         }
     }
 
-    public List<Message> getFriendMessagesAfter(User user1, User user2, Date date) {
-        String nick1 = user1.getNickname();
-        String nick2 = user2.getNickname();
+    public List<Message> getMessagesAfter(User friend1, User friend2, Date date) {
+        String nick1 = friend1.getNickname();
+        String nick2 = friend2.getNickname();
         if (nick1.compareTo(nick2) > 0) { String t = nick1; nick1 = nick2; nick2 = t; }
 
         var sql = "SELECT id, message, sentAt, sentBy " +
@@ -188,9 +188,9 @@ public class MessageRepository {
         }
     }
 
-    public List<Message> getFriendMessagesBefore(User user1, User user2, Date date, int numberOfMessages) {
-        String nick1 = user1.getNickname();
-        String nick2 = user2.getNickname();
+    public List<Message> getMessagesBefore(User friend1, User friend2, Date date, int numberOfMessages) {
+        String nick1 = friend1.getNickname();
+        String nick2 = friend2.getNickname();
         if (nick1.compareTo(nick2) > 0) { String t = nick1; nick1 = nick2; nick2 = t; }
 
         var sql = "SELECT m.id, m.message, m.sentAt, m.sentBy " +

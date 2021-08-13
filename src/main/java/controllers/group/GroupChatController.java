@@ -4,6 +4,7 @@ import controllers.AbstractChatController;
 import models.User;
 import models.group.Group;
 import models.message.Message;
+import repositories.message.IMessageRepository;
 import repositories.message.MessageRepository;
 
 import java.util.Date;
@@ -14,7 +15,7 @@ public class GroupChatController extends AbstractChatController {
 
     private final User user;
     private final Group group;
-    private final MessageRepository msgRepo;
+    private final IMessageRepository msgRepo;
 
     public GroupChatController(User user, Group group) {
         super(group.getName() + "");
@@ -32,22 +33,22 @@ public class GroupChatController extends AbstractChatController {
 
     @Override
     protected List<Message> getNewestMessages(int numberOfMessages) {
-        return msgRepo.getNewestGroupMessages(group, numberOfMessages);
+        return msgRepo.getNewestMessages(group, numberOfMessages);
     }
 
     @Override
     protected List<Message> getMessagesBefore(Date date, int numberOfMessages) {
-        return msgRepo.getGroupMessagesBefore(group, date, numberOfMessages);
+        return msgRepo.getMessagesBefore(group, date, numberOfMessages);
     }
 
     @Override
     protected List<Message> getMessagesAfter(Date date) {
-        return msgRepo.getGroupMessagesAfter(group, date);
+        return msgRepo.getMessagesAfter(group, date);
     }
 
     @Override
     protected boolean addMessage(String text) {
         var msg = new Message(user, text, new Date());
-        return msgRepo.addGroupMessage(group, msg);
+        return msgRepo.addMessage(group, msg);
     }
 }
