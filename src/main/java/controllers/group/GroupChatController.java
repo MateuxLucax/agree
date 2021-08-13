@@ -1,80 +1,53 @@
 package controllers.group;
 
-import gui.ChatFrame;
+import controllers.AbstractChatController;
 import models.User;
 import models.group.Group;
 import models.message.Message;
 import repositories.message.MessageRepository;
 
-import java.time.Instant;
 import java.util.Date;
+import java.util.List;
 
-public class GroupChatController
-{
-    private final static int NUMBER_OF_MESSAGES_TO_LOAD = 3;  // TODO change to 50
 
+public class GroupChatController extends AbstractChatController {
+
+    private final User user;
     private final Group group;
-    private final ChatFrame view;
     private final MessageRepository msgRepo;
 
-    private Date oldestMessageDate;
-    private Date lastMessageQuery;
-
-    public GroupChatController(User user, Group group)
-    {
+    public GroupChatController(User user, Group group) {
+        super(group.getName() + "");
+        this.user    = user;
         this.group   = group;
-        this.view    = new ChatFrame(group.getName() + " (group): chat");
         this.msgRepo = new MessageRepository();
-
-
-        var newestMessages = msgRepo.getNewestGroupMessages(group, NUMBER_OF_MESSAGES_TO_LOAD);
-        lastMessageQuery  = Date.from(Instant.now());
-        oldestMessageDate = Date.from(Instant.now());  // Default value for when there are no messages
-        if (newestMessages != null) {
-            if (newestMessages.size() > 0) {
-                view.addMessagesBelow(newestMessages);
-                oldestMessageDate = newestMessages.get(0).sentAt();
-            }
-        } // TODO else dialog "couldn't load the most recent messages"
-
-        view.onLoadOlder(() -> {
-            var olderMessages = msgRepo.getGroupMessagesBefore(group, oldestMessageDate, NUMBER_OF_MESSAGES_TO_LOAD);
-            if (olderMessages != null) {
-                if (olderMessages.size() > 0) {
-                    view.addMessagesAbove(olderMessages);
-                    oldestMessageDate = olderMessages.get(0).sentAt();
-                }
-             } // TODO else dialog "could not load older messages"
-        });
-
-        view.onLoadNewer(this::loadNewMessages);
-
-        view.onSendMessage(text -> {
-            if (text.isEmpty()) {
-                // TODO dialog "can't send empty message"
-                return;
-            }
-            var msg = new Message(user, text, new Date());
-            if (msgRepo.addGroupMessage(group, msg)) {
-                loadNewMessages();  // Other messages might've been sent in the meantime
-                view.clearMessageTextarea();
-            } // TODO else dialog "couldn't send message"
-        });
+        initialise();
+        // Why a separate initialise() method? Isn't the constructor supposed to initialise the object?
+        // The problem is that initialise calls getMostRecentMessages, which requires the msgRepo
+        // to be initialised (otherwise a NullPointerException will be thrown),
+        // which can't be done if we do this in the super constructor,
+        // since it has to be the first statement in this constructor,
+        // which means this.msgRepo has to be initialised later.
     }
 
-    public void loadNewMessages() {
-        var newerMessages = msgRepo.getGroupMessagesAfter(group, lastMessageQuery);
-        if (newerMessages != null) {
-            view.addMessagesBelow(newerMessages);
-            lastMessageQuery = Date.from(Instant.now());
-        } // TODO else dialog "couldn't load newer messages"
+    @Override
+    protected List<Message> getNewestMessages(int numberOfMessages) {
+        return msgRepo.getNewestGroupMessages(group, numberOfMessages);
     }
 
-    public void onClose(Runnable action) {
-        view.onClose(action);
+    @Override
+    protected List<Message> getMessagesBefore(Date date, int numberOfMessages) {
+        return msgRepo.getGroupMessagesBefore(group, date, numberOfMessages);
     }
 
-    public void display() {
-        view.display();
+    @Override
+    protected List<Message> getMessagesAfter(Date date) {
+        return msgRepo.getGroupMessagesAfter(group, date);
+    }
+
+    @Override
+    protected boolean addMessage(String text) {
+        var msg = new Message(user, text, new Date());
+        return msgRepo.addGroupMessage(group, msg);
     }
 }
