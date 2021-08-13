@@ -20,9 +20,6 @@ public class GroupChatController
     private Date oldestMessageDate;
     private Date lastMessageQuery;
 
-    // TODO!! deal with the edge case of the group that was just created and has no messages yet
-    //                  and: after the users adds one or more messages
-
     public GroupChatController(User user, Group group)
     {
         this.group   = group;
@@ -31,7 +28,6 @@ public class GroupChatController
 
 
         var newestMessages = msgRepo.getNewestGroupMessages(group, NUMBER_OF_MESSAGES_TO_LOAD);
-        // in which case we show a dialog. size == 0 means the database loaded them as usual, but that
         lastMessageQuery  = Date.from(Instant.now());
         oldestMessageDate = Date.from(Instant.now());  // Default value for when there are no messages
         if (newestMessages != null) {
@@ -43,7 +39,6 @@ public class GroupChatController
 
         view.onLoadOlder(() -> {
             var olderMessages = msgRepo.getGroupMessagesBefore(group, oldestMessageDate, NUMBER_OF_MESSAGES_TO_LOAD);
-            // Don't && the following two conditions together; explanation above.
             if (olderMessages != null) {
                 if (olderMessages.size() > 0) {
                     view.addMessagesAbove(olderMessages);
@@ -55,7 +50,6 @@ public class GroupChatController
         view.onLoadNewer(this::loadNewMessages);
 
         view.onSendMessage(text -> {
-            if (text.isEmpty())
             if (text.isEmpty()) {
                 // TODO dialog "can't send empty message"
                 return;

@@ -50,8 +50,8 @@ public class GroupRepository implements IGroupRepository
             return pstmt.executeUpdate() == 1;
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+            return false;
         }
-        return false;
     }
 
     @Override

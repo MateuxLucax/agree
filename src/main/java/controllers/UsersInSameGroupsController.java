@@ -19,10 +19,10 @@ public class UsersInSameGroupsController
 
         var map = new UserToGroupsMap();
         for (var group : groupRepo.getGroups(userInSession)) {
-            if (! group.ownedBy(userInSession))
+            if (! group.ownedBy(userInSession))      // Don't show the user himself
                 map.add(group.getOwner(), group);
             for (var member : groupRepo.getMembers(group))
-                if (! member.equals(userInSession))
+                if (! member.equals(userInSession))  // Don't show the user himself
                     map.add(member, group);
         }
 
