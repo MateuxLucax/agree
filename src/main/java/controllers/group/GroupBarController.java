@@ -3,15 +3,26 @@ package controllers.group;
 import gui.group.GroupBar;
 import models.User;
 import models.group.Group;
+import repositories.group.GroupRepository;
+import repositories.group.IGroupRepository;
 
 public class GroupBarController
 {
     private final GroupBar view;
+
+    private final User  user;
+    private final Group group;
+    private final IGroupRepository groupRepo;
+
     private Runnable onDelete;
+    private Runnable onQuit;
 
     public GroupBarController(User user, Group group)
     {
-        this.view = new GroupBar(group.getName());
+        this.view  = new GroupBar(group.getName());
+        this.user  = user;
+        this.group = group;
+        this.groupRepo = new GroupRepository();
 
         view.onClickChat(() -> {
             view.getChatButton().setEnabled(false);
@@ -23,7 +34,10 @@ public class GroupBarController
         view.onClickMembers(() -> {
             view.getMembersButton().setEnabled(false);
             var con = new GroupMemberListController(user, group);
-            con.onChangeOwner(view::removeManageButton);
+            con.onChangeOwner(() -> {
+                view.replaceManageWithQuitButton();
+                view.onClickQuit(this::quit);
+            });
             con.onClose(() -> view.getMembersButton().setEnabled(true));
             con.display();
         });
@@ -41,6 +55,7 @@ public class GroupBarController
                 view.getManageButton().setEnabled(false);
                 var con = new GroupManagementController(group);
                 con.onClose(() -> view.getManageButton().setEnabled(true));
+                // GroupManagementButton does the actual renaming
                 con.onRename(newName -> {
                     view.rename(newName);
                     view.repaint();
@@ -50,15 +65,28 @@ public class GroupBarController
                 con.display();
             });
         }
+        else {
+            view.showQuitButton();
+            view.onClickQuit(this::quit);
+        }
+
     }
 
-    public void onDelete(Runnable action)
-    {
+    public void quit() {
+        if (groupRepo.removeMember(group, user) && onQuit != null) {
+            onQuit.run();
+        }
+    }
+
+    public void onDelete(Runnable action) {
         this.onDelete = action;
     }
 
-    public GroupBar getBar()
-    {
+    public void onQuit(Runnable action) {
+        this.onQuit = action;
+    }
+
+    public GroupBar getBar() {
         return view;
     }
 }

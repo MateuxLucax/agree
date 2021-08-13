@@ -36,14 +36,20 @@ public class GroupListPanel extends JPanel {
 
     public void addGroupBar(GroupBar bar) {
         main.add(bar);
+        main.repaint();
+        main.revalidate();
     }
 
     public void removeGroupBar(GroupBar bar) {
         main.remove(bar);
+        main.repaint();
+        main.revalidate();
     }
 
     public void clear() {
         main.removeAll();
+        main.repaint();
+        main.revalidate();
     }
 
     public void newGroupButtonSetEnabled(boolean b) {

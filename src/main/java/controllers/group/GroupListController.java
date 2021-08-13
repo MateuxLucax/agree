@@ -30,8 +30,6 @@ public class GroupListController {
         view.onClickRefresh(() -> {
             view.clear();
             loadGroupBars();
-            view.repaint();
-            view.revalidate();
         });
 
         loadGroupBars();
@@ -44,15 +42,12 @@ public class GroupListController {
     private void addGroup(Group group) {
         var con = new GroupBarController(user, group);
         GroupBar bar = con.getBar();
-        con.onDelete(() -> {
-            view.removeGroupBar(bar);
-            if (!groupRepo.deleteGroup(group.getId())) {
-                // TODO dialog couldn't delete group
-            }
-        });
         view.addGroupBar(bar);
-    }
 
+        con.onDelete(() -> view.removeGroupBar(bar));
+        con.onQuit(() -> view.removeGroupBar(bar));
+
+    }
 
     public GroupListPanel getPanel() {
         return view;
