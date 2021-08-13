@@ -55,6 +55,17 @@ public class MessageRepository implements IMessageRepository {
         }
     }
 
+    public boolean removeGroupMessage(Message msg) {
+        var sql = "DELETE FROM GroupMessages WHERE id = ?";
+        try (var pstmt = con.prepareStatement(sql)) {
+            pstmt.setInt(1, msg.getId());
+            return pstmt.executeUpdate() == 1;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public List<Message> getNewestMessages(Group group, int numberOfMessages) {
         // LIMIT will get the top N rows instead of the bottom N rows.
         // This means that we need to do query for messages in *decreasing* order
@@ -142,6 +153,17 @@ public class MessageRepository implements IMessageRepository {
             return false;
         }
 
+    }
+
+    public boolean removeFriendMessage(Message msg) {
+        var sql = "DELETE FROM FriendMessages WHERE id = ?";
+        try (var pstmt = con.prepareStatement(sql)) {
+            pstmt.setInt(1, msg.getId());
+            return pstmt.executeUpdate() == 1;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public List<Message> getNewestMessages(User friend1, User friend2, int numberOfMessages) {
