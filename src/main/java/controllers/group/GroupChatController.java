@@ -51,4 +51,14 @@ public class GroupChatController extends AbstractChatController {
         var msg = new Message(user, text, new Date());
         return msgRepo.addMessage(group, msg);
     }
+
+    @Override
+    protected boolean removeMessage(Message msg) {
+        return msgRepo.removeGroupMessage(msg);
+    }
+
+    @Override
+    protected boolean isMessageDeleteable(Message msg) {
+        return group.ownedBy(user) || msg.getUser().equals(user);
+    }
 }

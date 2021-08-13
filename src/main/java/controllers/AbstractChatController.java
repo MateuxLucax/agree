@@ -1,11 +1,13 @@
 package controllers;
 
 import gui.ChatFrame;
+import gui.MessagePanel;
 import models.message.Message;
 
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
+
 
 public abstract class AbstractChatController {
 
@@ -14,21 +16,39 @@ public abstract class AbstractChatController {
     private Date oldestMessageDate;
     private Date lastMessageQuery;
 
+    public AbstractChatController(String title) {
+        view = new ChatFrame(title);
+    }
+
     protected abstract List<Message> getNewestMessages(int numberOfMessages);
     protected abstract List<Message> getMessagesBefore(Date date, int numberOfMessages);
     protected abstract List<Message> getMessagesAfter(Date date);
     protected abstract boolean addMessage(String text);
+    protected abstract boolean removeMessage(Message msg);
+    protected abstract boolean isMessageDeleteable(Message msg);  // not sure if I like this
+
+    private MessagePanel makePanel(Message msg) {
+        var panel = new MessagePanel(msg);
+        if (isMessageDeleteable(msg)) {
+            panel.showDeleteButton();
+            panel.onClickDelete(() -> {
+                if (!removeMessage(msg)) {
+                    // TODO dialog "couldn't delete message"
+                    return;
+                }
+                view.removeMessage(panel);
+            });
+        }
+        return panel;
+    }
 
     private void loadNewMessages() {
         var newerMessages = getMessagesAfter(lastMessageQuery);
         if (newerMessages != null) {
-            view.addMessagesBelow(newerMessages);
+            for (var msg : newerMessages)
+                view.addMessageBelow(makePanel(msg));
             lastMessageQuery = Date.from(Instant.now());
         } // TODO else dialog "couldn't load newer messages"
-    }
-
-    public AbstractChatController(String title) {
-        view = new ChatFrame(title);
     }
 
     public void initialise() {
@@ -40,28 +60,30 @@ public abstract class AbstractChatController {
         oldestMessageDate = Date.from(Instant.now());  // Default value for when there are no messages
 
         if (mostRecentMessages != null) {
-            if (mostRecentMessages.size() > 0) {
-                view.addMessagesBelow(mostRecentMessages);
+            for (var msg : mostRecentMessages)
+                view.addMessageBelow(makePanel(msg));
+            if (mostRecentMessages.size() > 0)
                 oldestMessageDate = mostRecentMessages.get(0).sentAt();
-            }
         } // TODO else dialog "couldn't load the most recent messages"
 
 
-        view.onLoadOlder(() -> {
+        view.onClickLoadOlder(() -> {
             var olderMessages = getMessagesBefore(oldestMessageDate, NUMBER_OF_MESSAGES_TO_LOAD);
             if (olderMessages != null) {
-                if (olderMessages.size() > 0) {
-                    view.addMessagesAbove(olderMessages);
+                int n = olderMessages.size();
+                // Push in reverse to show them in the right order
+                for (int i = n-1; i >= 0; i--)
+                    view.addMessageAbove(makePanel(olderMessages.get(i)));
+                if (n > 0)
                     oldestMessageDate = olderMessages.get(0).sentAt();
-                }
             } // TODO else dialog "could not load older messages"
         });
 
 
-        view.onLoadNewer(this::loadNewMessages);
+        view.onClickLoadNewer(this::loadNewMessages);
 
 
-        view.onSendMessage(text -> {
+        view.onClickSend(text -> {
             if (text.isEmpty()) {
                 // TODO dialog "can't send empty message"
                 return;

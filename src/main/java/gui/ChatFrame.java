@@ -1,13 +1,11 @@
 package gui;
 
-import models.message.Message;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.List;
 import java.util.function.Consumer;
 
 public class ChatFrame extends JFrame
@@ -69,35 +67,33 @@ public class ChatFrame extends JFrame
         onClose = action;
     }
 
-    public void addMessagesBelow(List<Message> messages) {
-        for (var msg : messages)
-            msgListPanel.add(new MessagePanel(msg).getJPanel());
+    public void addMessageBelow(MessagePanel message) {
+        msgListPanel.add(message);
         msgListPanel.revalidate();
         msgListPanel.repaint();
     }
 
-    public void addMessagesAbove(List<Message> messages) {
-        // For the messages to be shown in the order they came,
-        // we need to push to the top in reverse order
-        // [1, 2, 3]           how they'll be shown:
-        //  ^  ^  ^-- push(3)  [3]
-        //  |  '----- push(2)  [2, 3]
-        //  '-------- push(1)  [1, 2, 3]
-        for (int i = messages.size()-1; i >= 0; i--)
-            msgListPanel.add(new MessagePanel(messages.get(i)).getJPanel(), 0);
+    public void addMessageAbove(MessagePanel message) {
+        msgListPanel.add(message, 0);
         msgListPanel.revalidate();
         msgListPanel.repaint();
     }
 
-    public void onLoadOlder(Runnable onLoadOlder) {
+    public void removeMessage(MessagePanel message) {
+        msgListPanel.remove(message);
+        msgListPanel.revalidate();
+        msgListPanel.repaint();
+    }
+
+    public void onClickLoadOlder(Runnable onLoadOlder) {
         btLoadOlder.addActionListener(evt -> onLoadOlder.run());
     }
 
-    public void onLoadNewer(Runnable onLoadNewer) {
+    public void onClickLoadNewer(Runnable onLoadNewer) {
         btLoadNewer.addActionListener(evt -> onLoadNewer.run());
     }
 
-    public void onSendMessage(Consumer<String> onSend) {
+    public void onClickSend(Consumer<String> onSend) {
         btSend.addActionListener(evt -> onSend.accept(taNewMsg.getText()));
     }
 

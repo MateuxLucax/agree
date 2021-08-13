@@ -42,4 +42,14 @@ public class FriendChatController extends AbstractChatController
         var msg = new Message(user, text, new Date());
         return msgRepo.addMessages(user, friend, msg);
     }
+
+    @Override
+    protected boolean removeMessage(Message msg) {
+        return msgRepo.removeFriendMessage(msg);
+    }
+
+    @Override
+    protected boolean isMessageDeleteable(Message msg) {
+        return msg.getUser().equals(user);
+    }
 }
