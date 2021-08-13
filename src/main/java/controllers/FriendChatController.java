@@ -1,39 +1,44 @@
 package controllers;
 
-import gui.ChatFrame;
 import models.User;
+import models.message.Message;
+import repositories.message.MessageRepository;
 
-public class FriendChatController
+import java.util.Date;
+import java.util.List;
+
+public class FriendChatController extends AbstractChatController
 {
-    private final ChatFrame view;
+    private final User user;
+    private final User friend;
+    private final MessageRepository msgRepo;
 
-    public FriendChatController(User user, User friend)
-    {
-        view = new ChatFrame(friend.getNickname() + " (friend): chat");
-
-        // TODO (requires IMessageRepository supporting
-        //   messagens between friends)
-        /*
-        view.loadMessages();
-
-        view.onLoadOlder(() -> {
-        });
-
-        view.onLoadNewer(() -> {
-        });
-
-        view.onSendMessage(text -> {
-        });
-         */
+    public FriendChatController(User user, User friend) {
+        super(friend.getNickname()+" (friend): chat");
+        this.user    = user;
+        this.friend  = friend;
+        this.msgRepo = new MessageRepository();
+        initialise();
     }
 
-    public void onClose(Runnable action)
-    {
-        view.onClose(action);
+    @Override
+    protected List<Message> getNewestMessages(int numberOfMessages) {
+        return msgRepo.getNewestFriendMessages(user, friend, numberOfMessages);
     }
 
-    public void display()
-    {
-        view.display();
+    @Override
+    protected List<Message> getMessagesBefore(Date date, int numberOfMessages) {
+        return msgRepo.getFriendMessagesBefore(user, friend, date, numberOfMessages);
+    }
+
+    @Override
+    protected List<Message> getMessagesAfter(Date date) {
+        return msgRepo.getFriendMessagesAfter(user, friend, date);
+    }
+
+    @Override
+    protected boolean addMessage(String text) {
+        var msg = new Message(user, text, new Date());
+        return msgRepo.addFriendMessage(user, friend, msg);
     }
 }
