@@ -86,13 +86,13 @@ CREATE TABLE IF NOT EXISTS GroupMessages  (
         on delete cascade
 );
 
-
 CREATE TABLE IF NOT EXISTS FriendMessages (
-    id        integer,
+    id        serial,
     nickname1 varchar(32),
     nickname2 varchar(32),
-    sentBy    varchar(32),
+    message   varchar(255),
     sentAt    timestamp,
+    sentBy    varchar(32),
     primary key(id),
     foreign key (nickname1, nickname2) references Friendship(nickname1, nickname2)
         on update cascade
