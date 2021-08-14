@@ -1,7 +1,5 @@
 package gui.group;
 
-import gui.UserBar;
-
 import javax.swing.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;

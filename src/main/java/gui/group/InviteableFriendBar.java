@@ -22,25 +22,23 @@ public class InviteableFriendBar extends JPanel
         add(buttonsPanel, BorderLayout.CENTER);
     }
 
-    public void showInviteToGroupButton() {
+    public void addInviteButton(Runnable action) {
         btInviteToGroup = new JButton("Invite to group");
         buttonsPanel.add(btInviteToGroup);
+        btInviteToGroup.addActionListener(e -> action.run());
     }
 
-    public void onClickInviteToGroup(Runnable action) {
-        if (btInviteToGroup != null)
-            btInviteToGroup.addActionListener(e -> action.run());
-    }
-
-    public void showGroupInviteSentButton() {
+    public void showInviteSent() {
         var btInviteSent = new JButton("Group invite sent");
         btInviteSent.setEnabled(false);
         buttonsPanel.add(btInviteSent);
     }
 
-    public void replaceWithGroupInviteSentButton() {
+    public void updateInviteSituation() {
+        if (btInviteToGroup == null)
+            return;
         buttonsPanel.remove(btInviteToGroup);
-        showGroupInviteSentButton();
+        showInviteSent();
         repaint();
         revalidate();
     }

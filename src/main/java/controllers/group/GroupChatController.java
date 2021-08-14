@@ -58,7 +58,7 @@ public class GroupChatController extends AbstractChatController {
     }
 
     @Override
-    protected boolean isMessageRemoveable(Message msg) {
+    protected boolean canUserDeleteThisMessage(Message msg) {
         return group.ownedBy(user) || msg.getUser().equals(user);
     }
 }

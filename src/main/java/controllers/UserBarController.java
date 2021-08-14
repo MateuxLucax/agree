@@ -26,12 +26,11 @@ public class UserBarController {
         } else if (pendingFriendInvites.stream().anyMatch(i -> i.involves(userInBar))) {
             bar.showInviteSent();
         } else {
-            bar.showAskToBeFriendsButton();
-            bar.onClickAskToBeFriends(() -> {
+            bar.addAskToBeFriendsButton(() -> {
                 var inv = new FriendInvite(userInSession, userInBar);
                 if (inviteRepo.addInvite(inv)) {
                     pendingFriendInvites.add(inv); // TODO Is this step necessary?
-                    bar.replaceWithInviteSentButton();
+                    bar.updateInviteSituation();
                 }
                 // TODO else dialog "couldn't send invite" (also, some other places need dialogs like this too)
             });

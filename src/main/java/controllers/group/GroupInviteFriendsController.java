@@ -39,14 +39,13 @@ public class GroupInviteFriendsController {
             var bar = new InviteableFriendBar(friend.getNickname());
             view.addFriendBar(bar);
             if (groupInvs.stream().anyMatch(inv -> inv.to(friend))) {
-                bar.showGroupInviteSentButton();
+                bar.showInviteSent();
             } else {
-                bar.showInviteToGroupButton();
-                bar.onClickInviteToGroup(() -> {
+                bar.addInviteButton(() -> {
                     var inv = new GroupInvite(user, friend, group);
                     if (inviteRepo.addInvite(inv)) {
                         // TODO dialog "invite sent successfully"
-                        bar.replaceWithGroupInviteSentButton();
+                        bar.updateInviteSituation();
                     } // TODO else dialog "couldn't send the invite"
                 });
             }

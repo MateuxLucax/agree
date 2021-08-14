@@ -55,25 +55,20 @@ public class GroupBar extends JPanel
         btMembers.addActionListener(e -> action.run());
     }
 
-    public void showManageButton() {
+    public void addManageButton(Runnable action) {
         add(btManage);
-    }
-
-    public void showQuitButton() {
-        add(btQuit);
-    }
-
-    public void onClickManage(Runnable action) {
         btManage.addActionListener(e -> action.run());
     }
 
-    public void onClickQuit(Runnable action) {
+    public void addQuitButton(Runnable action) {
+        add(btQuit);
         btQuit.addActionListener(e -> action.run());
     }
 
-    public void replaceManageWithQuitButton() {
+    public void replaceManageWithQuitButton(Runnable quitAction) {
         remove(btManage);
         add(btQuit);
+        btQuit.addActionListener(e -> quitAction.run());
         repaint();
         revalidate();
     }

@@ -34,8 +34,7 @@ public class GroupBarController
         view.onClickMembers(() -> {
             var con = new GroupMemberListController(user, group);
             con.afterChangeOwner(() -> {
-                view.replaceManageWithQuitButton();
-                view.onClickQuit(this::quit);
+                view.replaceManageWithQuitButton(this::quit);
             });
             view.getMembersButton().setEnabled(false);
             con.onClose(() -> view.getMembersButton().setEnabled(true));
@@ -50,8 +49,7 @@ public class GroupBarController
         });
 
         if (group.ownedBy(user)) {
-            view.showManageButton();
-            view.onClickManage(() -> {
+            view.addManageButton(() -> {
                 var con = new GroupManagementController(group);
                 con.afterDelete(this.afterDelete);
                 con.afterRename(view::rename);
@@ -61,8 +59,7 @@ public class GroupBarController
             });
         }
         else {
-            view.showQuitButton();
-            view.onClickQuit(this::quit);
+            view.addQuitButton(this::quit);
         }
     }
 

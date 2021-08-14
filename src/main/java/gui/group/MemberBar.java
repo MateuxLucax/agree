@@ -13,29 +13,21 @@ public class MemberBar extends UserBar {
         super(memberName);
     }
 
-    public void showOwnerButton() {
+    public void showThatIsOwner() {
         JButton btOwner = new JButton("Owner");
         buttonsPanel.add(btOwner);
         btOwner.setEnabled(false);
     }
 
-    public void showRemoveButton() {
+    public void addRemoveButton(Runnable action) {
         btRemove = new JButton("Remove");
         buttonsPanel.add(btRemove);
+        btRemove.addActionListener(e -> action.run());
     }
 
-    public void showSetOwnerButton() {
+    public void addSetOwnerButton(Runnable action) {
         btSetOwner = new JButton("Set owner");
         buttonsPanel.add(btSetOwner);
-    }
-
-    public void onClickRemove(Runnable action) {
-        if (btRemove != null)
-            btRemove.addActionListener(e -> action.run());
-    }
-
-    public void onClickSetOwner(Runnable action) {
-        if (btSetOwner != null)
-            btSetOwner.addActionListener(e -> action.run());
+        btSetOwner.addActionListener(e -> action.run());
     }
 }

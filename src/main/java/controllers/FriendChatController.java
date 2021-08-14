@@ -49,7 +49,7 @@ public class FriendChatController extends AbstractChatController
     }
 
     @Override
-    protected boolean isMessageRemoveable(Message msg) {
+    protected boolean canUserDeleteThisMessage(Message msg) {
         return msg.getUser().equals(user);
     }
 }

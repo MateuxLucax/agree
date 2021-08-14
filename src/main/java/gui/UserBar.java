@@ -19,12 +19,6 @@ public class UserBar extends JPanel
         add(buttonsPanel, BorderLayout.CENTER);
     }
 
-    public void showAskToBeFriendsButton()
-    {
-        btAskToBeFriends = new JButton("Ask to be friends");
-        buttonsPanel.add(btAskToBeFriends);
-    }
-
     public void showAlreadyFriends()
     {
         var btAlreadyFriends = new JButton("Already friends");
@@ -39,17 +33,20 @@ public class UserBar extends JPanel
         buttonsPanel.add(btInviteSent);
     }
 
-    public void replaceWithInviteSentButton()
+    public void updateInviteSituation()
     {
+        if (btAskToBeFriends == null)
+            return;
         buttonsPanel.remove(btAskToBeFriends);
         showInviteSent();
         repaint();
         revalidate();
     }
 
-    public void onClickAskToBeFriends(Runnable action)
+    public void addAskToBeFriendsButton(Runnable action)
     {
-        if (btAskToBeFriends != null)
-            btAskToBeFriends.addActionListener(e -> action.run());
+        btAskToBeFriends = new JButton("Ask to be friends");
+        buttonsPanel.add(btAskToBeFriends);
+        btAskToBeFriends.addActionListener(e -> action.run());
     }
 }

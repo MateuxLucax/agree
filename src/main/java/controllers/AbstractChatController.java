@@ -25,11 +25,11 @@ public abstract class AbstractChatController {
     protected abstract List<Message> getMessagesAfter(Date date);
     protected abstract boolean addMessage(String text);
     protected abstract boolean removeMessage(Message msg);
-    protected abstract boolean isMessageRemoveable(Message msg);
+    protected abstract boolean canUserDeleteThisMessage(Message msg);
 
     private MessagePanel makePanel(Message msg) {
         var panel = new MessagePanel(msg);
-        if (isMessageRemoveable(msg)) {
+        if (canUserDeleteThisMessage(msg)) {
             panel.showDeleteButton();
             panel.onClickDelete(() -> {
                 if (!removeMessage(msg)) {

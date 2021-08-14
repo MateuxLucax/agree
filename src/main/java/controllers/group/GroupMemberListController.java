@@ -29,7 +29,7 @@ public class GroupMemberListController {
         var owner = group.getOwner();
         var ownerBar = new MemberBar(owner.getNickname());
         view.addUserBar(ownerBar);
-        ownerBar.showOwnerButton();
+        ownerBar.showThatIsOwner();
         UserBarController.setupUserBar(
                 ownerBar, owner, friends,
                 pendingFriendInvites, inviteRepo, userInSession
@@ -39,8 +39,7 @@ public class GroupMemberListController {
             var bar = new MemberBar(member.getNickname());
             view.addUserBar(bar);
             if (group.ownedBy(userInSession)) {
-                bar.showRemoveButton();
-                bar.onClickRemove(() -> {
+                bar.addRemoveButton(() -> {
                     if (groupRepo.removeMember(group, member)) {
                         view.removeUserBar(bar);
                         view.repaint();
@@ -48,8 +47,7 @@ public class GroupMemberListController {
                     }
                     // TODO else dialog "could not remove member"
                 });
-                bar.showSetOwnerButton();
-                bar.onClickSetOwner(() -> {
+                bar.addSetOwnerButton(() -> {
                     if (groupRepo.changeOwner(group, member)) {
                         group.setOwner(member);
                         if (afterChangeOwner != null)
