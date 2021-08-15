@@ -11,8 +11,8 @@ public class MemberBar extends UserBar {
     private final String memberName;
 
     public MemberBar(String memberName) {
-        this.memberName = memberName;
         super(memberName);
+        this.memberName = memberName;
     }
 
     public void showThatIsOwner()
