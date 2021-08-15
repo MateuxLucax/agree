@@ -38,25 +38,34 @@ public class GroupMemberListController {
         for (var member : groupRepo.getMembers(group)) {
             var bar = new MemberBar(member.getNickname());
             view.addUserBar(bar);
+
             if (group.ownedBy(userInSession)) {
                 bar.addRemoveButton(() -> {
-                    if (groupRepo.removeMember(group, member)) {
-                        view.removeUserBar(bar);
-                        view.repaint();
-                        view.revalidate();
+                    String memberNickname = member.getNickname();
+                    if (! bar.confirmRemove(memberNickname)) return;
+                    if (! groupRepo.removeMember(group, member)) {
+                        bar.warnCouldNotRemove(memberNickname);
+                        return;
                     }
-                    // TODO else dialog "could not remove member"
+                    view.removeUserBar(bar);
+                    view.repaint();
+                    view.revalidate();
                 });
+
                 bar.addSetOwnerButton(() -> {
-                    if (groupRepo.changeOwner(group, member)) {
-                        group.setOwner(member);
-                        if (afterChangeOwner != null)
-                            afterChangeOwner.run();
-                        view.close();
+                    String memberNickname = member.getNickname();
+                    if (! bar.confirmSetOwner(memberNickname)) return;
+                    if (! groupRepo.changeOwner(group, member)) {
+                        bar.warnCouldNotSetOwner(memberNickname);
+                        return;
                     }
-                    // TODO else dialog "could not set member as owner"
+                    group.setOwner(member);
+                    view.close();
+                    if (afterChangeOwner != null)
+                        afterChangeOwner.run();
                 });
             }
+
             UserBarController.setupUserBar(
                     bar, member, friends,
                     pendingFriendInvites, inviteRepo, userInSession
