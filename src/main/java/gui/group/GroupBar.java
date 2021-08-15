@@ -10,9 +10,12 @@ public class GroupBar extends JPanel
     private final JButton btInviteFriends;
     private final JButton btManage;
     private final JButton btQuit;
+    private final String groupName;
 
     public GroupBar(String groupName)
     {
+        this.groupName = groupName;
+
         lbName = new JLabel(groupName);
         add(lbName);
 
@@ -71,5 +74,23 @@ public class GroupBar extends JPanel
         btQuit.addActionListener(e -> quitAction.run());
         repaint();
         revalidate();
+    }
+
+    public boolean confirmQuit() {
+        return JOptionPane.showConfirmDialog(
+                this,
+                "Do you really want to quit the group " + groupName,
+                "Quit",
+                JOptionPane.YES_NO_OPTION
+        ) == 0;
+    }
+
+    public void warnCouldNotQuit() {
+        JOptionPane.showMessageDialog(
+                this,
+                "Could not quit the group " + groupName,
+                "Quit",
+                JOptionPane.ERROR_MESSAGE
+        );
     }
 }

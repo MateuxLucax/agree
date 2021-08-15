@@ -64,8 +64,9 @@ public class GroupBarController
     }
 
     public void quit() {
+        if (! view.confirmQuit()) return;
         if (! groupRepo.removeMember(group, user)) {
-            // TODO dialog "couldn't remove member"
+            view.warnCouldNotQuit();
             return;
         }
         if (afterQuit != null) afterQuit.run();
