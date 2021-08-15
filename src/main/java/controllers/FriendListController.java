@@ -35,12 +35,12 @@ public class FriendListController
             view.addFriendBar(bar);
 
             bar.onClickUnfriend(() -> {
-                // TODO dialog: do you really want to unfriend <friendname>?
-                if (friendRepo.removeFriend(user, friend)) {
-                    view.removeFriendBar(bar);
-                } else {
-                    System.out.println("Couldn't remove friend (TODO dialog)"); // TODO dialog
+                if (! bar.confirmUnfriend()) return;
+                if (! friendRepo.removeFriend(user, friend)) {
+                    bar.warnCouldNotUnfriend();
+                    return;
                 }
+                view.removeFriendBar(bar);
             });
 
             bar.onClickChat(() -> {
