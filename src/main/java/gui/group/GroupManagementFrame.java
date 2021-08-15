@@ -14,11 +14,15 @@ import java.util.function.Consumer;
 
 public class GroupManagementFrame extends JFrame {
 
+    private final String groupName;
+
     private final GroupManagementPanel panel;
     private Runnable onClose;
 
     public GroupManagementFrame(String groupName)
     {
+        this.groupName = groupName;
+
         setTitle(groupName + ": manage");
 
         panel = new GroupManagementPanel(groupName);
@@ -39,6 +43,36 @@ public class GroupManagementFrame extends JFrame {
     public void onClickDelete(Runnable action)
     {
         panel.onClickDelete(action);
+    }
+
+    public boolean confirmDelete()
+    {
+        return JOptionPane.showConfirmDialog(
+                this,
+                "Do you really want to delete the group " + groupName + "?",
+                "Delete group",
+                JOptionPane.YES_NO_OPTION
+        ) == 0;
+    }
+
+    public void warnCouldNotDelete()
+    {
+        JOptionPane.showMessageDialog(
+                this,
+                "Couldn't delete the group " + groupName,
+                "Delete group",
+                JOptionPane.ERROR_MESSAGE
+        );
+    }
+
+    public void warnCouldNotRename(String newName)
+    {
+        JOptionPane.showMessageDialog(
+                this,
+                "Couldn't rename the group " + groupName + " to \"" + newName + "\"",
+                "Delete group",
+                JOptionPane.ERROR_MESSAGE
+        );
     }
 
     public void onClose(Runnable action)

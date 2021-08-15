@@ -23,8 +23,9 @@ public class GroupManagementController {
         view = new GroupManagementFrame(model.getName());
 
         view.onClickDelete(() -> {
+            if (! view.confirmDelete()) return;
             if (! groupRepo.deleteGroup(group.getId())) {
-                // TODO dialog "couldn't delete group"
+                view.warnCouldNotDelete();
                 return;
             }
             if (afterDelete != null) afterDelete.run();
@@ -32,11 +33,15 @@ public class GroupManagementController {
         });
 
         view.onClickRename(newName -> {
+            if (newName.isEmpty()) {
+                view.warnCouldNotRename(newName);
+                return;
+            }
             String oldName = group.getName();
             group.setName(newName);
             if (! groupRepo.renameGroup(group)) {
                 group.setName(oldName);  // restore previous name
-                // TODO dialog "couldn't rename group"
+                view.warnCouldNotRename(newName);
                 return;
             }
             if (afterRename != null) afterRename.accept(newName);
