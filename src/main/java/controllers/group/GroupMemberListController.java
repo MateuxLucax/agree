@@ -44,7 +44,7 @@ public class GroupMemberListController {
                     String memberNickname = member.getNickname();
                     if (! bar.confirmRemove(memberNickname)) return;
                     if (! groupRepo.removeMember(group, member)) {
-                        bar.warnCouldNotRemove(memberNickname);
+                        bar.warnCouldNotRemove();
                         return;
                     }
                     view.removeUserBar(bar);
@@ -56,7 +56,7 @@ public class GroupMemberListController {
                     String memberNickname = member.getNickname();
                     if (! bar.confirmSetOwner(memberNickname)) return;
                     if (! groupRepo.changeOwner(group, member)) {
-                        bar.warnCouldNotSetOwner(memberNickname);
+                        bar.warnCouldNotSetOwner();
                         return;
                     }
                     group.setOwner(member);

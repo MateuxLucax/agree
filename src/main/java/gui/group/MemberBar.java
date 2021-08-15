@@ -8,8 +8,10 @@ public class MemberBar extends UserBar {
 
     private JButton btRemove;
     private JButton btSetOwner;
+    private final String memberName;
 
     public MemberBar(String memberName) {
+        this.memberName = memberName;
         super(memberName);
     }
 
@@ -34,41 +36,41 @@ public class MemberBar extends UserBar {
         btSetOwner.addActionListener(e -> action.run());
     }
 
-    public boolean confirmRemove(String memberNickname)
+    public boolean confirmRemove(String memberName)
     {
         return JOptionPane.showConfirmDialog(
                 this,
-                "Do you really want to remove " + memberNickname + " from the group?",
+                "Do you really want to remove " + memberName + " from the group?",
                 "Remove member",
                 JOptionPane.YES_NO_OPTION
         ) == 0;
     }
 
-    public boolean confirmSetOwner(String memberNickname)
+    public boolean confirmSetOwner(String memberName)
     {
         return JOptionPane.showConfirmDialog(
                 this,
-                "Do you really want to set " + memberNickname + " as the new owner?",
+                "Do you really want to set " + memberName + " as the new owner?",
                 "Set owner",
                 JOptionPane.YES_NO_OPTION
         ) == 0;
     }
 
-    public void warnCouldNotRemove(String memberNickname)
+    public void warnCouldNotRemove()
     {
         JOptionPane.showMessageDialog(
                 this,
-                "Could not remove " + memberNickname + " from the group",
+                "Could not remove " + memberName + " from the group",
                 "Remove member",
                 JOptionPane.ERROR_MESSAGE
         );
     }
 
-    public void warnCouldNotSetOwner(String memberNickname)
+    public void warnCouldNotSetOwner()
     {
         JOptionPane.showMessageDialog(
                 this,
-                "Could not set " + memberNickname + " as the group owner",
+                "Could not set " + memberName + " as the group owner",
                 "Remove member",
                 JOptionPane.ERROR_MESSAGE
         );
