@@ -40,6 +40,26 @@ public class InviteBar extends JPanel
         btDecline.addActionListener(e -> onClickDecline.run());
     }
 
+    public boolean confirmAccept(Invite inv)
+    {
+        return JOptionPane.showConfirmDialog(
+                this,
+                "Do you really want to ACCEPT the " + inv.kind() + "invite from " + inv.from().getNickname() + "?",
+                "Cancel",
+                JOptionPane.YES_NO_OPTION
+        ) == 0;
+    }
+
+    public boolean confirmDecline(Invite inv)
+    {
+        return JOptionPane.showConfirmDialog(
+                this,
+                "Do you really want to DECLINE the " + inv.kind() + "invite from " + inv.from().getNickname() + "?",
+                "Cancel",
+                JOptionPane.YES_NO_OPTION
+        ) == 0;
+    }
+
     public void warnCouldNotAcceptInvite()
     {
         JOptionPane.showMessageDialog(
@@ -71,7 +91,7 @@ public class InviteBar extends JPanel
     {
         return JOptionPane.showConfirmDialog(
                 this,
-                "Do you really want to cancel the " + inv.kind() + "invite to " + inv.to().getNickname() + "?",
+                "Do you really want to CANCEL the " + inv.kind() + "invite to " + inv.to().getNickname() + "?",
                 "Cancel",
                 JOptionPane.YES_NO_OPTION
         ) == 0;

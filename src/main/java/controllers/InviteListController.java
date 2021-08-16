@@ -22,6 +22,7 @@ public class InviteListController
 
             if (inv.to(user)) {
                 Runnable onClickAccept = () -> {
+                    if (! bar.confirmAccept(inv)) return;
                     if (! inviteRepo.acceptInvite(inv)) {
                         bar.warnCouldNotAcceptInvite();
                         return;
@@ -29,6 +30,7 @@ public class InviteListController
                     view.removeInviteBar(bar);
                 };
                 Runnable onClickDecline = () -> {
+                    if (! bar.confirmDecline(inv)) return;
                     if (! inviteRepo.removeInvite(inv)) {
                         bar.warnCouldNotDeclineInvite();
                         return;
