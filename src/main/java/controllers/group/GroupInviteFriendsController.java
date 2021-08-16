@@ -38,7 +38,7 @@ public class GroupInviteFriendsController {
 
             var bar = new InviteableFriendBar(friend.getNickname());
             view.addFriendBar(bar);
-            if (groupInvs.stream().anyMatch(inv -> inv.to(friend))) {
+            if (groupInvs.stream().anyMatch(inv -> inv.to(friend) && inv.getGroup().equals(group))) {
                 bar.showInviteSent();
             } else {
                 bar.addInviteButton(() -> {
