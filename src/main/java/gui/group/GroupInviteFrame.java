@@ -39,4 +39,14 @@ public class GroupInviteFrame extends JFrame
     {
         friendsPanel.add(bar);
     }
+
+    public void warnCouldNotSentInvite()
+    {
+        JOptionPane.showMessageDialog(
+                this,
+                "Could not sent the group invite",
+                "Invite to group",
+                JOptionPane.ERROR_MESSAGE
+        );
+    }
 }

@@ -43,10 +43,12 @@ public class GroupInviteFriendsController {
             } else {
                 bar.addInviteButton(() -> {
                     var inv = new GroupInvite(user, friend, group);
-                    if (inviteRepo.addInvite(inv)) {
-                        // TODO dialog "invite sent successfully"
-                        bar.updateInviteSituation();
-                    } // TODO else dialog "couldn't send the invite"
+                    if (! inviteRepo.addInvite(inv)) {
+                        view.warnCouldNotSentInvite();
+                        return;
+                    }
+                    bar.updateInviteSituation();
+                    // TODO? dialog "invite sent successfully"
                 });
             }
         }

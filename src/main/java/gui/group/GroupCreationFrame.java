@@ -34,6 +34,15 @@ public class GroupCreationFrame extends JFrame
         panel.onClickCreate(action);
     }
 
+    public void warnCouldNotCreate() {
+        JOptionPane.showMessageDialog(
+                this,
+                "Could not create the group",
+                "Create",
+                JOptionPane.ERROR_MESSAGE
+        );
+    }
+
     public void onClose(Runnable action) {
         onClose = action;
     }

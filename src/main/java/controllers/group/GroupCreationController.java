@@ -9,7 +9,7 @@ import java.util.function.Consumer;
 
 public class GroupCreationController
 {
-    private GroupCreationFrame view;
+    private final GroupCreationFrame view;
     private Consumer<Group> afterCreation;
 
     public GroupCreationController(User user) {
@@ -18,7 +18,7 @@ public class GroupCreationController
         view.onClickCreate(groupName -> {
             var group = new Group(groupName, user);
             if (! groupRepo.createGroup(group)) {
-                // TODO dialog "couldn't create group"
+                view.warnCouldNotCreate();
                 return;
             }
             view.close();

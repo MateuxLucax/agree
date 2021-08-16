@@ -29,12 +29,18 @@ public class InviteListController
             if (inv.to(user)) {
                 bar.showAcceptAndDeclineButtons();
                 bar.onClickAccept(() -> {
-                    if (inviteRepo.acceptInvite(inv))
-                        view.removeInviteBar(bar);
+                    if (! inviteRepo.acceptInvite(inv)) {
+                        view.warnCouldNotAcceptInvite();
+                        return;
+                    }
+                    view.removeInviteBar(bar);
                 });
                 bar.onClickDecline(() -> {
-                    if (inviteRepo.declineInvite(inv))
-                        view.removeInviteBar(bar);
+                    if (! inviteRepo.declineInvite(inv)) {
+                        view.warnCouldNotDeclineInvite();
+                        return;
+                    }
+                    view.removeInviteBar(bar);
                 });
             }
         }
