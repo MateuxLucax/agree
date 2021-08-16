@@ -33,9 +33,7 @@ public class GroupBarController
 
         view.onClickMembers(() -> {
             var con = new GroupMemberListController(user, group);
-            con.afterChangeOwner(() -> {
-                view.replaceManageWithQuitButton(this::quit);
-            });
+            con.afterChangeOwner(() -> view.replaceManageWithQuitButton(this::quit));
             view.getMembersButton().setEnabled(false);
             con.onClose(() -> view.getMembersButton().setEnabled(true));
             con.display();

@@ -28,11 +28,12 @@ public class UserBarController {
         } else {
             bar.addAskToBeFriendsButton(() -> {
                 var inv = new FriendInvite(userInSession, userInBar);
-                if (inviteRepo.addInvite(inv)) {
-                    pendingFriendInvites.add(inv); // TODO Is this step necessary?
-                    bar.updateInviteSituation();
+                if (! inviteRepo.addInvite(inv)) {
+                    bar.warnCouldNotSendInvite();
+                    return;
                 }
-                // TODO else dialog "couldn't send invite" (also, some other places need dialogs like this too)
+                pendingFriendInvites.add(inv); // TODO Is this step necessary?
+                bar.updateInviteSituation();
             });
         }
     }

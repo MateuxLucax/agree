@@ -49,4 +49,14 @@ public class UserBar extends JPanel
         buttonsPanel.add(btAskToBeFriends);
         btAskToBeFriends.addActionListener(e -> action.run());
     }
+
+    public void warnCouldNotSendInvite()
+    {
+        JOptionPane.showMessageDialog(
+                this,
+                "Could not send the friend invite",
+                "Ask to be friends",
+                JOptionPane.ERROR_MESSAGE
+        );
+    }
 }
