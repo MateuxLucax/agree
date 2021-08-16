@@ -23,7 +23,7 @@ public class UserBarController {
 
         if (friends.contains(userInBar)) {
             bar.showAlreadyFriends();
-        } else if (pendingFriendInvites.stream().anyMatch(i -> i.involves(userInBar))) {
+        } else if (pendingFriendInvites.stream().anyMatch(i -> i.from(userInBar) || i.to(userInBar))) {
             bar.showInviteSent();
         } else {
             bar.addAskToBeFriendsButton(() -> {

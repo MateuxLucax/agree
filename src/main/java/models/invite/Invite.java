@@ -27,10 +27,6 @@ public abstract class Invite {
         return this.to.equals(u);
     }
 
-    public boolean involves(User user) {
-        return from(user) || to(user);
-    }
-
     public String toString() {
         return String.format("Invite from %s to %s", from, to);
     }
