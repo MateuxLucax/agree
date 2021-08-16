@@ -28,6 +28,8 @@ public class GroupInvite extends Invite {
         return String.format("%s invites %s to join %s", from.getNickname(), to.getNickname(), group.getName());
     }
 
+    public String kind() { return "Group"; }
+
     public String getIcon() {
         // TODO
         return "";

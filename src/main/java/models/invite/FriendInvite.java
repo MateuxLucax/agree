@@ -21,6 +21,8 @@ public class FriendInvite extends Invite
             && from.equals(that.from);
     }
 
+    public String kind() { return "Friend"; }
+
     public String getIcon() {
         // TODO
         return "";

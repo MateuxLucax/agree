@@ -42,26 +42,6 @@ public class InviteListFrame extends JFrame
         invitesPanel.revalidate();
     }
 
-    public void warnCouldNotAcceptInvite()
-    {
-        JOptionPane.showMessageDialog(
-                this,
-                "Could not accept the invite",
-                "Accept",
-                JOptionPane.ERROR_MESSAGE
-        );
-    }
-
-    public void warnCouldNotDeclineInvite()
-    {
-         JOptionPane.showMessageDialog(
-                 this,
-                 "Could not decline the invite",
-                 "Accept",
-                JOptionPane.ERROR_MESSAGE
-        );
-    }
-
     public void onClose(Runnable action)
     {
         onClose = action;

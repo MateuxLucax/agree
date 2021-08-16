@@ -144,7 +144,7 @@ public class InviteRepository implements IInviteRepository
     }
 
     @Override
-    public boolean declineInvite(Invite invite) {
+    public boolean removeInvite(Invite invite) {
         return invite instanceof GroupInvite ?
                 removeGroupInvite((GroupInvite) invite) :
                 removeFriendInvite((FriendInvite) invite);

@@ -35,6 +35,9 @@ public abstract class Invite {
         return String.format("Invite from %s to %s", from, to);
     }
 
+    // "Group" or "Friend"; to prefix in "... invite"
+    public abstract String kind();
+
     public abstract String getIcon();
     // Shows the requester's icon in FriendshipRequest,
     // Shows the group's icon in GroupInvite

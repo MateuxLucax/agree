@@ -10,6 +10,7 @@ public class InviteBar extends JPanel
     private final JPanel buttonsPanel;
     private JButton btAccept;
     private JButton btDecline;
+    private JButton btCancel;
 
     public InviteBar(Invite invite)
     {
@@ -28,24 +29,61 @@ public class InviteBar extends JPanel
         add(buttonsPanel, BorderLayout.PAGE_END);
     }
 
-    public void showAcceptAndDeclineButtons()
+    public void addAcceptAndDeclineButtons(Runnable onClickAccept, Runnable onClickDecline)
     {
         btAccept = new JButton("Accept");
-        btDecline = new JButton("Decline");
         buttonsPanel.add(btAccept);
+        btAccept.addActionListener(e -> onClickAccept.run());
+
+        btDecline = new JButton("Decline");
         buttonsPanel.add(btDecline);
-
+        btDecline.addActionListener(e -> onClickDecline.run());
     }
 
-    public void onClickAccept(Runnable action)
+    public void warnCouldNotAcceptInvite()
     {
-        if (btAccept != null)
-            btAccept.addActionListener(e -> action.run());
+        JOptionPane.showMessageDialog(
+                this,
+                "Could not accept the invite",
+                "Accept",
+                JOptionPane.ERROR_MESSAGE
+        );
     }
 
-    public void onClickDecline(Runnable action)
+    public void warnCouldNotDeclineInvite()
     {
-        if (btDecline != null)
-            btDecline.addActionListener(e -> action.run());
+        JOptionPane.showMessageDialog(
+                this,
+                "Could not decline the invite",
+                "Accept",
+                JOptionPane.ERROR_MESSAGE
+        );
+    }
+
+    public void addCancelButton(Runnable action)
+    {
+        btCancel = new JButton("Cancel");
+        buttonsPanel.add(btCancel);
+        btCancel.addActionListener(e -> action.run());
+    }
+
+    public boolean confirmCancel(Invite inv)
+    {
+        return JOptionPane.showConfirmDialog(
+                this,
+                "Do you really want to cancel the " + inv.kind() + "invite to " + inv.to().getNickname() + "?",
+                "Cancel",
+                JOptionPane.YES_NO_OPTION
+        ) == 0;
+    }
+
+    public void warnCouldNotCancelInvite()
+    {
+        JOptionPane.showMessageDialog(
+                this,
+                "Could not cancel the invite",
+                "Cancel",
+                JOptionPane.ERROR_MESSAGE
+        );
     }
 }

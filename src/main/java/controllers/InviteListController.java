@@ -3,12 +3,6 @@ package controllers;
 import gui.InviteBar;
 import gui.InviteListFrame;
 import models.User;
-import models.invite.FriendInvite;
-import models.invite.GroupInvite;
-import repositories.friendship.FriendshipRepository;
-import repositories.friendship.IFriendshipRepository;
-import repositories.group.GroupRepository;
-import repositories.group.IGroupRepository;
 import repositories.invite.IInviteRepository;
 import repositories.invite.InviteRepository;
 
@@ -27,17 +21,27 @@ public class InviteListController
             view.addInviteBar(bar);
 
             if (inv.to(user)) {
-                bar.showAcceptAndDeclineButtons();
-                bar.onClickAccept(() -> {
+                Runnable onClickAccept = () -> {
                     if (! inviteRepo.acceptInvite(inv)) {
-                        view.warnCouldNotAcceptInvite();
+                        bar.warnCouldNotAcceptInvite();
                         return;
                     }
                     view.removeInviteBar(bar);
-                });
-                bar.onClickDecline(() -> {
-                    if (! inviteRepo.declineInvite(inv)) {
-                        view.warnCouldNotDeclineInvite();
+                };
+                Runnable onClickDecline = () -> {
+                    if (! inviteRepo.removeInvite(inv)) {
+                        bar.warnCouldNotDeclineInvite();
+                        return;
+                    }
+                    view.removeInviteBar(bar);
+                };
+                bar.addAcceptAndDeclineButtons(onClickAccept, onClickDecline);
+            }
+            else {  // inv.from(user)
+                bar.addCancelButton(() -> {
+                    if (! bar.confirmCancel(inv)) return;
+                    if (! inviteRepo.removeInvite(inv)) {
+                        bar.warnCouldNotCancelInvite();
                         return;
                     }
                     view.removeInviteBar(bar);
