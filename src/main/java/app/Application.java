@@ -1,15 +1,30 @@
 package app;
 
+import app.config.Config;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.github.weisj.darklaf.LafManager;
 import com.github.weisj.darklaf.theme.DarculaTheme;
 import com.github.weisj.darklaf.theme.laf.DarculaThemeDarklafLookAndFeel;
-import controllers.*;
+import controllers.AuthController;
+import controllers.MainController;
+import exceptions.InvalidConfigFileException;
+import exceptions.ParserErrorConfigurationFileException;
+import repositories.DBConnection;
 
 import javax.swing.*;
+import java.io.File;
+import java.io.IOException;
 
 public class Application {
 
-    public static void main(String[] args) {
+    public static Config config;
+
+    private Application() {
+        this.setUp();
+    }
+
+    private void setUp() {
         // Initialize the theme
         LafManager.install();
         LafManager.setTheme(new DarculaTheme());
@@ -34,5 +49,28 @@ public class Application {
             mainCon.display();
             authCon.close();
         });
+    }
+
+    private static void setUpConfigAttributes() {
+        DBConnection.setUp(Application.config.getDatabase());
+    }
+
+    private static void initConfig(String configFile) throws ParserErrorConfigurationFileException {
+        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+        try {
+            Application.config = mapper.readValue(new File(configFile), Config.class);
+        } catch (IOException e) {
+            throw new ParserErrorConfigurationFileException("Can't parse configuration file because: " + e.getMessage());
+        }
+    }
+
+    public static void main(String[] args) throws InvalidConfigFileException, ParserErrorConfigurationFileException {
+        if (args.length == 0) {
+            throw new InvalidConfigFileException("Configuration file not specified.");
+        }
+        Application.initConfig(args[0]);
+        Application.setUpConfigAttributes();
+
+        new Application();
     }
 }

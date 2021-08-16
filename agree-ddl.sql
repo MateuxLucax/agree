@@ -197,7 +197,7 @@ CREATE TABLE IF NOT EXISTS Themes(
 );
 
 INSERT INTO Themes (id, createdBy, textColor, primaryColor, secondaryColor, font)
-VALUES (1, null, '#FFFFFF','#de0bd3', '#ddff00', 'comic.tff')
+            VALUES (1, null, '#FFFFFF', '#de0bd3', '#ddff00', 'comic.tff')
 ON CONFLICT DO NOTHING;
 
 CREATE TABLE IF NOT EXISTS UsesTheme (

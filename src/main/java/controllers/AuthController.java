@@ -8,6 +8,7 @@ import models.User;
 import repositories.DBConnection;
 import services.login.ILoginService;
 import services.login.LoginService;
+import utils.AssetsUtil;
 
 import javax.swing.*;
 import java.awt.event.WindowAdapter;
@@ -28,6 +29,8 @@ public class AuthController {
         frame = new JFrame();
         frame.setTitle("Agree: authentication");
         frame.setContentPane(view.getJPanel());
+        frame.setIconImage(AssetsUtil.getImage(AssetsUtil.ICON));
+
 
         // If the user clicks on the X button on the window
         frame.addWindowListener(new WindowAdapter() {

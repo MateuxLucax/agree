@@ -1,0 +1,5 @@
+database:
+  driverClass: org.postgresql.Driver
+  user: root
+  password: root
+  url: jdbc:postgresql://172.19.240.1:5432/agree_dev
