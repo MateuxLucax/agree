@@ -67,19 +67,19 @@ public class ChatFrame extends JFrame
         onClose = action;
     }
 
-    public void addMessageBelow(MessagePanel message) {
+    public void addMessagePanelBelow(MessagePanel message) {
         msgListPanel.add(message);
         msgListPanel.revalidate();
         msgListPanel.repaint();
     }
 
-    public void addMessageAbove(MessagePanel message) {
+    public void addMessagePanelAbove(MessagePanel message) {
         msgListPanel.add(message, 0);
         msgListPanel.revalidate();
         msgListPanel.repaint();
     }
 
-    public void removeMessage(MessagePanel message) {
+    public void removeMessagePanel(MessagePanel message) {
         msgListPanel.remove(message);
         msgListPanel.revalidate();
         msgListPanel.repaint();
@@ -106,5 +106,8 @@ public class ChatFrame extends JFrame
         setVisible(true);
     }
 
+    public void showErrorDialog(String message) {
+        JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
+    }
 
 }

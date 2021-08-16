@@ -32,11 +32,11 @@ public abstract class AbstractChatController {
         if (canUserDeleteThisMessage(msg)) {
             panel.showDeleteButton();
             panel.onClickDelete(() -> {
-                if (!removeMessage(msg)) {
-                    // TODO dialog "couldn't delete message"
+                if (! removeMessage(msg)) {
+                    view.showErrorDialog("Could not delete the message");
                     return;
                 }
-                view.removeMessage(panel);
+                view.removeMessagePanel(panel);
             });
         }
         return panel;
@@ -44,11 +44,13 @@ public abstract class AbstractChatController {
 
     private void loadNewMessages() {
         var newerMessages = getMessagesAfter(lastMessageQuery);
-        if (newerMessages != null) {
-            for (var msg : newerMessages)
-                view.addMessageBelow(makePanel(msg));
-            lastMessageQuery = Date.from(Instant.now());
-        } // TODO else dialog "couldn't load newer messages"
+        lastMessageQuery = Date.from(Instant.now());
+        if (newerMessages == null) {
+            view.showErrorDialog("Could not load newer messages");
+            return;
+        }
+        for (var msg : newerMessages)
+            view.addMessagePanelBelow(makePanel(msg));
     }
 
     public void initialise() {
@@ -59,24 +61,27 @@ public abstract class AbstractChatController {
         lastMessageQuery  = Date.from(Instant.now());
         oldestMessageDate = Date.from(Instant.now());  // Default value for when there are no messages
 
-        if (mostRecentMessages != null) {
+        if (mostRecentMessages == null) {
+            view.showErrorDialog("Could not load the most recent messages");
+        } else {
             for (var msg : mostRecentMessages)
-                view.addMessageBelow(makePanel(msg));
+                view.addMessagePanelBelow(makePanel(msg));
             if (mostRecentMessages.size() > 0)
                 oldestMessageDate = mostRecentMessages.get(0).sentAt();
-        } // TODO else dialog "couldn't load the most recent messages"
-
+        }
 
         view.onClickLoadOlder(() -> {
             var olderMessages = getMessagesBefore(oldestMessageDate, NUMBER_OF_MESSAGES_TO_LOAD);
-            if (olderMessages != null) {
-                int n = olderMessages.size();
-                // Push in reverse to show them in the right order
-                for (int i = n-1; i >= 0; i--)
-                    view.addMessageAbove(makePanel(olderMessages.get(i)));
-                if (n > 0)
-                    oldestMessageDate = olderMessages.get(0).sentAt();
-            } // TODO else dialog "could not load older messages"
+            if (olderMessages == null) {
+                view.showErrorDialog("Could not load older messages");
+                return;
+            }
+            int n = olderMessages.size();
+            // Push in reverse to show them in the right order
+            for (int i = n-1; i >= 0; i--)
+                view.addMessagePanelAbove(makePanel(olderMessages.get(i)));
+            if (n > 0)
+                oldestMessageDate = olderMessages.get(0).sentAt();
         });
 
 
@@ -85,13 +90,15 @@ public abstract class AbstractChatController {
 
         view.onClickSend(text -> {
             if (text.isEmpty()) {
-                // TODO dialog "can't send empty message"
+                view.showErrorDialog("Can't send empty message");
                 return;
             }
-            if (addMessage(text)) {
-                loadNewMessages();
-                view.clearMessageTextarea();
-            } // TODO else dialog "couldn't send message"
+            if (! addMessage(text)) {
+                view.showErrorDialog("Could not send the message");
+                return;
+            }
+            loadNewMessages();
+            view.clearMessageTextarea();
         });
     }
 
