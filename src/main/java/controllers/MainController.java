@@ -4,6 +4,7 @@ import controllers.group.GroupListController;
 import gui.MainFrame;
 import models.User;
 import repositories.DBConnection;
+import utils.AssetsUtil;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -19,6 +20,7 @@ public class MainController
         var moreCon    = new MoreController(user);
         view = new MainFrame(groupsCon.getPanel(), friendsCon.getPanel(), moreCon.getPanel());
         view.display();
+        view.setIconImage(AssetsUtil.getImage(AssetsUtil.ICON));
 
         // If the user clicks on the X button on the window
         view.addWindowListener(new WindowAdapter() {

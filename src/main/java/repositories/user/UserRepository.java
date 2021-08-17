@@ -50,14 +50,16 @@ public class UserRepository implements IUserRepository
     public User getUser(String username, String password)
     {
         // The purpose of this method is mainly to check if the username and password are correct
-        var sql = "SELECT u.creationDate FROM users u WHERE u.nickname = ? AND u.password = ?";
+        var sql = "SELECT u.creationDate, u.profileimage FROM users u WHERE u.nickname = ? AND u.password = ?";
         try (var pstmt = con.prepareStatement(sql)) {
             pstmt.setString(1, username);
             pstmt.setString(2, password);
             ResultSet res = pstmt.executeQuery();
             if (res.next()) {
-                var creationDate = Date.from(res.getTimestamp(1).toInstant());
-                return new User(username, password, creationDate);
+                var creationDate = Date.from(res.getTimestamp("creationDate").toInstant());
+                var user = new User(username, password, creationDate);
+                user.setPicture(res.getString("profileimage"));
+                return user;
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -68,14 +70,16 @@ public class UserRepository implements IUserRepository
     @Override
     public List<User> searchUsers(String search) {
         List<User> users = new ArrayList<>();
-        var sql = "SELECT u.nickname, u.creationDate FROM users u WHERE u.nickname LIKE ?";
+        var sql = "SELECT u.nickname, u.creationDate, u.profileimage FROM users u WHERE u.nickname LIKE ?";
         try (var pstmt = con.prepareStatement(sql)) {
             pstmt.setString(1, '%'+search+'%');
             ResultSet res = pstmt.executeQuery();
             while (res.next()) {
-                var nickname = res.getString(1);
-                var creationDate = Date.from(res.getTimestamp(2).toInstant());
-                users.add(new User(nickname, creationDate));
+                var nickname = res.getString("nickname");
+                var creationDate = Date.from(res.getTimestamp("creationDate").toInstant());
+                var user = new User(nickname, creationDate);
+                user.setPicture(res.getString("profileImage"));
+                users.add(user);
             }
         } catch (SQLException e) {
             e.printStackTrace();

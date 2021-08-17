@@ -11,7 +11,7 @@ public class User {
 
     private String password;
 
-    // private String picture;
+     private String picture;
 
     public User(String nickname, String password, Date createdAt)
     {
@@ -39,6 +39,14 @@ public class User {
     public String getNickname() { return nickname; }
 
     public Date getCreationDate() { return createdAt; }
+
+    public String getPicture() {
+        return picture;
+    }
+
+    public void setPicture(String picture) {
+        this.picture = picture;
+    }
 
     public String getPassword() {
         return password;

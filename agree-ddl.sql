@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS Users (
     nickname     varchar(32),
     password     varchar(256),
     creationDate timestamp,
-    profileImage varchar(256),
+    profileImage varchar(256) default 'https://via.placeholder.com/150',
     primary key (nickname)
 );
 
