@@ -1,7 +1,5 @@
 package app.config;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class Database {
 
     private String driverClass;

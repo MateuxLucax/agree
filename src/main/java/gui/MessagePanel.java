@@ -36,4 +36,22 @@ public class MessagePanel extends JPanel {
         assert btDelete != null : "onClickDelete has been called but showDeleteButton hasn't";
         btDelete.addActionListener(e -> action.run());
     }
+
+    public boolean confirmDelete() {
+        return JOptionPane.showConfirmDialog(
+                this,
+                "Do you really want to delete this message?",
+                "Delete",
+                JOptionPane.YES_NO_OPTION
+        ) == 0;
+    }
+
+    public void warnCouldNotDelete() {
+        JOptionPane.showMessageDialog(
+                this,
+                "Could not delete the message",
+                "Delete",
+                JOptionPane.ERROR_MESSAGE
+        );
+    }
 }

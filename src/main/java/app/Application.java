@@ -34,12 +34,6 @@ public class Application {
             e.printStackTrace();
         }
 
-        // TODO add refresh button to Group and Friends tabs in the main frame,
-        //   because since they're not frames the user won't be able to just
-        //   close them and open them again to get the updated information
-        //   (maybe even on the frames this button should be present,
-        //   since it's more convenient than closing and opening)
-
         // TODO add to the frame titles the nickname of the user logged in
 
         var authCon = new AuthController();
