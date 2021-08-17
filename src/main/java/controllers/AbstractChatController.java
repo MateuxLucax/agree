@@ -28,18 +28,19 @@ public abstract class AbstractChatController {
     protected abstract boolean canUserDeleteThisMessage(Message msg);
 
     private MessagePanel makePanel(Message msg) {
-        var panel = new MessagePanel(msg);
+        var msgPanel = new MessagePanel(msg);
         if (canUserDeleteThisMessage(msg)) {
-            panel.showDeleteButton();
-            panel.onClickDelete(() -> {
+            msgPanel.showDeleteButton();
+            msgPanel.onClickDelete(() -> {
+                if (! msgPanel.confirmDelete()) return;
                 if (! removeMessage(msg)) {
-                    view.showErrorDialog("Could not delete the message");
+                    msgPanel.warnCouldNotDelete();
                     return;
                 }
-                view.removeMessagePanel(panel);
+                view.removeMessagePanel(msgPanel);
             });
         }
-        return panel;
+        return msgPanel;
     }
 
     private void loadNewMessages() {
