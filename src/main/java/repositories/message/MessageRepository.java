@@ -27,7 +27,8 @@ public class MessageRepository implements IMessageRepository {
             int    id     = results.getInt(1);
             String text   = results.getString(2);
             Date   sentAt = Date.from(results.getTimestamp(3).toInstant());
-            User   sentBy = new User(results.getString(4));
+            var sentBy = new User(results.getString(4));
+            sentBy.setPicture(results.getString(5));
 
             messages.add(new Message(id, sentBy, text, sentAt));
         }
@@ -72,13 +73,14 @@ public class MessageRepository implements IMessageRepository {
         // to get the N newest ones. But since we want them in ascending order
         // in the array, we'll need to wrap that query in another query that'll sort
         // in the order we want.
-        var sql = "SELECT m.id, m.message, m.sentAt, m.sentBy " +
-                  "FROM (SELECT id, message, sentAt, sentBy "+
-                  "      FROM GroupMessages " +
-                  "      WHERE groupId = ? "+
-                  "      ORDER BY sentAt DESC "+
+        var sql = "SELECT m.id, m.message, m.sentAt, m.sentBy, m.profileimage " +
+                  "FROM (SELECT gm.id, gm.message, gm.sentAt, gm.sentBy, u.profileimage "+
+                  "      FROM GroupMessages gm" +
+                  "      JOIN users u on u.nickname = gm.sentby " +
+                  "      WHERE gm.groupId = ? "+
+                  "      ORDER BY gm.sentAt DESC "+
                   "      LIMIT ?) AS m " +
-                  "ORDER BY m.sentAt ASC";
+                  "ORDER BY m.sentAt";
         try (var pstmt = con.prepareStatement(sql)) {
             pstmt.setInt(1, group.getId());
             pstmt.setInt(2, numberOfMessages);
@@ -90,11 +92,12 @@ public class MessageRepository implements IMessageRepository {
     }
 
     public List<Message> getMessagesAfter(Group group, Date date) {
-        var sql = "SELECT id, message, sentAt, sentBy " +
-                  "FROM GroupMessages " +
-                  "WHERE groupId = ? " +
-                  "AND   sentAt  > ?" +
-                  "ORDER BY sentAt";
+        var sql = "SELECT gm.id, gm.message, gm.sentAt, gm.sentBy, u.profileimage " +
+                  "FROM GroupMessages gm " +
+                  "JOIN users u on u.nickname = gm.sentBy " +
+                  "WHERE gm.groupId = ? " +
+                  "AND   gm.sentAt  > ?" +
+                  "ORDER BY gm.sentAt";
 
         try (var pstmt = con.prepareStatement(sql)) {
             pstmt.setInt      (1, group.getId());
@@ -108,14 +111,15 @@ public class MessageRepository implements IMessageRepository {
 
     public List<Message> getMessagesBefore(Group group, Date date, int numberOfMessages) {
         // See getNewestGroupMessages for why the query is like this.
-        var sql = "SELECT m.id, m.message, m.sentAt, m.sentBy " +
-                  "FROM (SELECT id, message, sentAt, sentBy " +
-                  "      FROM GroupMessages " +
-                  "      WHERE groupId = ? " +
-                  "      AND   sentAt  < ?" +
-                  "      ORDER BY sentAt DESC " +
+        var sql = "SELECT m.id, m.message, m.sentAt, m.sentBy, m.profileimage " +
+                  "FROM (SELECT gm.id, gm.message, gm.sentAt, gm.sentBy, u.profileimage " +
+                  "      FROM GroupMessages gm " +
+                  "      JOIN users u on u.nickname = gm.sentby " +
+                  "      WHERE gm.groupId = ? " +
+                  "      AND   gm.sentAt  < ?" +
+                  "      ORDER BY gm.sentAt DESC " +
                   "      LIMIT ?) AS m " +
-                  "ORDER BY sentAt";
+                  "ORDER BY m.sentAt";
 
         try (var pstmt = con.prepareStatement(sql)) {
             pstmt.setInt      (1, group.getId());
@@ -177,7 +181,7 @@ public class MessageRepository implements IMessageRepository {
                   "      WHERE nickname1 = ? AND nickname2 = ?" +
                   "      ORDER BY sentAt DESC" +
                   "      LIMIT ?) AS m " +
-                  "ORDER BY m.sentAt ASC";
+                  "ORDER BY m.sentAt";
         try (var pstmt = con.prepareStatement(sql)) {
             pstmt.setString(1, nick1);
             pstmt.setString(2, nick2);

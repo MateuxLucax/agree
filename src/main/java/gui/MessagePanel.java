@@ -1,11 +1,10 @@
 package gui;
 
 import models.message.Message;
+import utils.ImageUtil;
 
 import javax.swing.*;
 import java.awt.*;
-
-// TODO show profile picture of author
 
 public class MessagePanel extends JPanel {
 
@@ -16,13 +15,15 @@ public class MessagePanel extends JPanel {
         setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
         var lbUser   = new JLabel(msg.getUser().getNickname());
+        var lbPicture = new JLabel(ImageUtil.getImageIcon(msg.getUser().getPicture()));
         lbUser.setBorder(BorderFactory.createEmptyBorder(2, 5, 2, 7));
         var lbText   = new JLabel(msg.getText());
         var lbSentAt = new JLabel(msg.sentAt().toString());  // TODO nicer looking date
 
-        add(lbUser,   BorderLayout.LINE_START);
-        add(lbText,   BorderLayout.CENTER);
-        add(lbSentAt, BorderLayout.PAGE_START);
+        add(lbPicture, BorderLayout.BEFORE_FIRST_LINE);
+        add(lbUser,    BorderLayout.LINE_START);
+        add(lbText,    BorderLayout.CENTER);
+        add(lbSentAt,  BorderLayout.PAGE_START);
     }
 
     public void showDeleteButton() {
