@@ -24,11 +24,11 @@ public class GroupChatController extends AbstractChatController {
         this.msgRepo = new MessageRepository();
         initialise();
         // Why a separate initialise() method? Isn't the constructor supposed to initialise the object?
-        // The problem is that initialise calls getMostRecentMessages, which requires the msgRepo
-        // to be initialised (otherwise a NullPointerException will be thrown),
-        // which can't be done if we do this in the super constructor,
-        // since it has to be the first statement in this constructor,
-        // which means this.msgRepo has to be initialised later.
+        // It's because initialise() includes a call to getNewestMessages,
+        // which relies on the msgRepo variable being initialised.
+        // This means that we have to initialise that variable before calling initialise().
+        // We can't do what initialise does in the constructor because the super() call
+        // must be the first one -- this.msgRepo = new MessageRepository() can't come above it.
     }
 
     @Override
