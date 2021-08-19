@@ -69,7 +69,7 @@ public class GroupRepository implements IGroupRepository
     @Override
     public List<Group> getGroups(User user) {
         var groups = new ArrayList<Group>();
-        var sql = "SELECT g.id, g.name, g.ownerNickname     " +
+        var sql = "SELECT g.id, g.name, g.ownerNickname " +
                   "FROM groups g WHERE g.ownerNickname = ? " +
                   "UNION " +
                   "SELECT g2.id, g2.name, g2.ownerNickname " +

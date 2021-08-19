@@ -1,31 +1,21 @@
 package models;
 
-import java.util.Date;
 import java.util.Objects;
 
 public class User {
 
     private final String nickname;
-
-    private final Date createdAt;
-
     private String password;
+    private String picture;
 
-     private String picture;
-
-    public User(String nickname, String password, Date createdAt)
-    {
+    public User(String nickname, String password, String picture) {
         this.nickname = nickname;
         this.password = password;
-        this.createdAt = createdAt;
+        this.picture  = picture;
     }
 
-    public User(String nickname, Date createdAt) {
-        this(nickname, null, createdAt);
-    }
-
-    public User(String nickname, String password) {
-        this(nickname, password, null);
+    public User(String nickname, String picture) {
+        this(nickname, null, picture);
     }
 
     public User(String nickname) {
@@ -37,8 +27,6 @@ public class User {
     }
 
     public String getNickname() { return nickname; }
-
-    public Date getCreationDate() { return createdAt; }
 
     public String getPicture() {
         return picture;

@@ -19,16 +19,18 @@ public class MessageRepository implements IMessageRepository {
     }
 
     /**
-     * Expects the ResultSet of a "SELECT id, message, sentAt, sentBy FROM GroupMessages/FriendMessages"
+     * Expects the ResultSet to have columns
+     * (id:integer, text:string, sentAt:timestamp, sentBy:string, picture:string)
      */
     private List<Message> toMessageList(ResultSet results) throws SQLException {
+        assert results.getMetaData().getColumnCount() == 5;
+
         var messages = new ArrayList<Message>();
         while (results.next()) {
             int    id     = results.getInt(1);
             String text   = results.getString(2);
             Date   sentAt = Date.from(results.getTimestamp(3).toInstant());
-            var sentBy = new User(results.getString(4));
-            sentBy.setPicture(results.getString(5));
+            User   sentBy = new User(results.getString(4), results.getString(5));
 
             messages.add(new Message(id, sentBy, text, sentAt));
         }
@@ -111,15 +113,15 @@ public class MessageRepository implements IMessageRepository {
 
     public List<Message> getMessagesBefore(Group group, Date date, int numberOfMessages) {
         // See getNewestGroupMessages for why the query is like this.
-        var sql = "SELECT m.id, m.message, m.sentAt, m.sentBy, m.profileimage " +
-                  "FROM (SELECT gm.id, gm.message, gm.sentAt, gm.sentBy, u.profileimage " +
+        var sql = "SELECT m.id, m.message, m.sentat, m.sentby, m.profileimage " +
+                  "FROM (SELECT gm.id, gm.message, gm.sentat, gm.sentby, u.profileimage " +
                   "      FROM GroupMessages gm " +
-                  "      JOIN users u on u.nickname = gm.sentby " +
-                  "      WHERE gm.groupId = ? " +
-                  "      AND   gm.sentAt  < ?" +
-                  "      ORDER BY gm.sentAt DESC " +
-                  "      LIMIT ?) AS m " +
-                  "ORDER BY m.sentAt";
+                  "      JOIN Users u ON u.nickname = gm.sentby " +
+                  "      WHERE gm.groupid = ? " +
+                  "      AND   gm.sentat  < ?" +
+                  "      ORDER BY gm.sentat DESC " +
+                  "      LIMIT ?) as m " +
+                  "ORDER BY m.sentat ASC";
 
         try (var pstmt = con.prepareStatement(sql)) {
             pstmt.setInt      (1, group.getId());
@@ -175,13 +177,14 @@ public class MessageRepository implements IMessageRepository {
         String nick2 = friend2.getNickname();
         if (nick1.compareTo(nick2) > 0) { String t = nick1; nick1 = nick2; nick2 = t; }
 
-        var sql = "SELECT m.id, m.message, m.sentAt, m.sentBy " +
-                  "FROM (SELECT id, message, sentAt, sentBy " +
-                  "      FROM FriendMessages" +
-                  "      WHERE nickname1 = ? AND nickname2 = ?" +
-                  "      ORDER BY sentAt DESC" +
+        var sql = "SELECT m.id, m.message, m.sentAt, m.sentBy, m.profileImage " +
+                  "FROM (SELECT fm.id, fm.message, fm.sentAt, fm.sentBy, u.profileImage " +
+                  "      FROM FriendMessages fm " +
+                  "      JOIN Users u on u.nickname = fm.sentBy" +
+                  "      WHERE fm.nickname1 = ? AND fm.nickname2 = ?" +
+                  "      ORDER BY fm.sentAt DESC" +
                   "      LIMIT ?) AS m " +
-                  "ORDER BY m.sentAt";
+                  "ORDER BY m.sentAt ASC";
         try (var pstmt = con.prepareStatement(sql)) {
             pstmt.setString(1, nick1);
             pstmt.setString(2, nick2);
@@ -198,11 +201,12 @@ public class MessageRepository implements IMessageRepository {
         String nick2 = friend2.getNickname();
         if (nick1.compareTo(nick2) > 0) { String t = nick1; nick1 = nick2; nick2 = t; }
 
-        var sql = "SELECT id, message, sentAt, sentBy " +
-                  "FROM FriendMessages " +
-                  "WHERE nickname1 = ? AND nickname2 = ?" +
-                  "AND sentAt > ?" +
-                  "ORDER BY sentAt";
+        var sql = "SELECT fm.id, fm.message, fm.sentAt, fm.sentBy, u.profileImage " +
+                  "FROM FriendMessages fm " +
+                  "JOIN Users u on fm.sentBy = u.nickname " +
+                  "WHERE fm.nickname1 = ? AND fm.nickname2 = ?" +
+                  "AND fm.sentAt > ?" +
+                  "ORDER BY fm.sentAt ASC";
         try (var pstmt = con.prepareStatement(sql)) {
             pstmt.setString   (1, nick1);
             pstmt.setString   (2, nick2);
@@ -219,14 +223,15 @@ public class MessageRepository implements IMessageRepository {
         String nick2 = friend2.getNickname();
         if (nick1.compareTo(nick2) > 0) { String t = nick1; nick1 = nick2; nick2 = t; }
 
-        var sql = "SELECT m.id, m.message, m.sentAt, m.sentBy " +
-                  "FROM (SELECT id, message, sentAt, sentBy " +
-                  "      FROM FriendMessages" +
-                  "      WHERE nickname1 = ? AND nickname2 = ? " +
-                  "      AND sentAt < ? " +
-                  "      ORDER BY sentAt DESC " +
+        var sql = "SELECT m.id, m.message, m.sentAt, m.sentBy, m.profileImage " +
+                  "FROM (SELECT fm.id, fm.message, fm.sentAt, fm.sentBy, u.profileImage " +
+                  "      FROM FriendMessages fm " +
+                  "      JOIN Users u on fm.sentBy = u.nickname " +
+                  "      WHERE fm.nickname1 = ? AND fm.nickname2 = ? " +
+                  "      AND fm.sentAt < ? " +
+                  "      ORDER BY fm.sentAt DESC " +
                   "      LIMIT ?) AS m " +
-                  "ORDER BY sentAt";
+                  "ORDER BY m.sentAt ASC";
         try (var pstmt = con.prepareStatement(sql)) {
             pstmt.setString   (1, nick1);
             pstmt.setString   (2, nick2);
