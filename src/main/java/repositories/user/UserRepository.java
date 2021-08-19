@@ -26,8 +26,22 @@ public class UserRepository implements IUserRepository
             return res.next();
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
         }
-        return false;
+    }
+
+    @Override
+    public boolean updateUser(User user) {
+        var sql = "UPDATE Users SET profileImage = ? WHERE nickname = ?";
+        try (var pstmt = con.prepareStatement(sql)) {
+            pstmt.setString(1, user.getPicture());
+            pstmt.setString(2, user.getNickname());
+            pstmt.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     @Override

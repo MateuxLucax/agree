@@ -13,4 +13,6 @@ public interface IUserRepository {
     List<User> searchUsers(String search);
 
     boolean userExists(String username);
+
+    boolean updateUser(User user);
 }
