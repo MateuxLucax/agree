@@ -20,6 +20,7 @@ public class MorePanel extends JPanel
 
         btUsg = new JButton("Users in the same groups as you");
         add(btUsg);
+
     }
 
     public void onClickSearchButton(Runnable action)
