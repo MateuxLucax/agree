@@ -19,7 +19,7 @@ public class User {
     }
 
     public User(String nickname) {
-        this(nickname, null, null);
+        this(nickname, null, "");
     }
 
     public String toString() {
