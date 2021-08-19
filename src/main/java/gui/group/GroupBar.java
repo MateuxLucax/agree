@@ -79,7 +79,7 @@ public class GroupBar extends JPanel
     public boolean confirmQuit() {
         return JOptionPane.showConfirmDialog(
                 this,
-                "Do you really want to quit the group " + groupName,
+                "Do you really want to quit the group " + groupName + "?",
                 "Quit",
                 JOptionPane.YES_NO_OPTION
         ) == 0;
