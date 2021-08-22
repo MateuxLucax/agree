@@ -11,7 +11,7 @@ import java.util.List;
 
 public abstract class AbstractChatController {
 
-    private final static int NUMBER_OF_MESSAGES_TO_LOAD = 3; // TODO change to 50
+    private final static int NUMBER_OF_MESSAGES_TO_LOAD = 3;  // TODO 3 is easier to test/show, change to a higher number
     private final ChatFrame view;
     private Date oldestMessageDate;
     private Date lastMessageQuery;

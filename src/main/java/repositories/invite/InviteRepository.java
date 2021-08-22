@@ -61,8 +61,7 @@ public class InviteRepository implements IInviteRepository
                 var groupName = res.getString(4);
                 var owner     = new User(res.getString(5));
 
-                var group = new Group(groupName, owner);
-                group.setId(groupId);
+                var group = new Group(groupId, groupName, owner);
                 invs.add(new GroupInvite(from, to, group));
             }
         } catch (SQLException throwables) {
