@@ -31,7 +31,6 @@ public class GroupInvite extends Invite {
     public String kind() { return "Group"; }
 
     public String getIcon() {
-        // TODO
-        return "";
+        return group.getPicture();
     }
 }

@@ -31,6 +31,7 @@ public class Group {
     private int    id;
     private String name;
     private User   owner;
+    private String picture;
 
     public Group(String name, User owner) {
         if (owner == null)
@@ -67,6 +68,14 @@ public class Group {
 
     public boolean ownedBy(User user) {
         return owner.equals(user);
+    }
+
+    public void setPicture(String picture) {
+        this.picture = picture;
+    }
+
+    public String getPicture() {
+        return picture;
     }
 
     @Override

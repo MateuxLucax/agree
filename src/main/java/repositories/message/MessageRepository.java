@@ -27,12 +27,16 @@ public class MessageRepository implements IMessageRepository {
 
         var messages = new ArrayList<Message>();
         while (results.next()) {
-            int    id     = results.getInt(1);
-            String text   = results.getString(2);
-            Date   sentAt = Date.from(results.getTimestamp(3).toInstant());
-            User   sentBy = new User(results.getString(4), results.getString(5));
+            var id     = results.getInt(1);
+            var text   = results.getString(2);
+            var sentAt = Date.from(results.getTimestamp(3).toInstant());
+            var sentBy = results.getString(4);
+            var picture = results.getString(5);
 
-            messages.add(new Message(id, sentBy, text, sentAt));
+            var user = new User(sentBy);
+            user.setPicture(picture);
+
+            messages.add(new Message(id, user, text, sentAt));
         }
         return messages;
     }

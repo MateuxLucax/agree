@@ -19,7 +19,7 @@ public class GroupBarController
 
     public GroupBarController(User user, Group group)
     {
-        this.view  = new GroupBar(group.getName());
+        this.view  = new GroupBar(group);
         this.user  = user;
         this.group = group;
         this.groupRepo = new GroupRepository();

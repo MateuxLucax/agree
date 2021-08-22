@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS Groups (
     name          varchar(128),
     description   varchar(128),
     ownerNickname varchar(32),
+    picture       varchar(256) default 'https://via.placeholder.com/150',
     createdAt     timestamp,
     primary key (id),
     foreign key (ownerNickname) references Users(nickname)

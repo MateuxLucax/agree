@@ -43,6 +43,7 @@ public class LoginService implements ILoginService {
             throw new NameAlreadyInUseException();
         }
 
+        // TODO: Set safe password analyser
         // boolean passwordIsSafe = password.matches("(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\\\S+$).{8,}");
         boolean passwordIsSafe = user.getPassword().length() > 2;
         if (!passwordIsSafe) {

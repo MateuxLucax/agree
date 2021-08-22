@@ -1,6 +1,7 @@
 package gui;
 
 import models.invite.Invite;
+import utils.ImageUtil;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,9 +18,10 @@ public class InviteBar extends JPanel
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
-        // TODO show invite icon here
-        // icon = (...) invite.getIcon() (...);
-        // add(icon, BorderLayout.LINE_START);
+        var lbIcon = new JLabel(ImageUtil.getImageIcon(invite.getIcon()));
+        lbIcon.setMinimumSize(new Dimension(16, 16));
+        lbIcon.setMaximumSize(new Dimension(16, 16));
+        add(lbIcon, BorderLayout.LINE_START);
 
         var text = new JLabel(invite.getText());
         add(text, BorderLayout.CENTER);

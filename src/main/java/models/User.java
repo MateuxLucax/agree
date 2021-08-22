@@ -14,12 +14,13 @@ public class User {
         this.picture  = picture;
     }
 
-    public User(String nickname, String picture) {
-        this(nickname, null, picture);
+    public User(String nickname, String password) {
+        this.nickname = nickname;
+        this.password = password;
     }
 
     public User(String nickname) {
-        this(nickname, null, "");
+        this(nickname, "", "");
     }
 
     public String toString() {

@@ -47,10 +47,6 @@ public class UserRepository implements IUserRepository
     @Override
     public boolean storeUser(User user)
     {
-        // TODO is this necessary? the db will already disallow that
-        if (userExists(user.getNickname()))
-            return false;
-
         String sql = "INSERT INTO users (nickname, password) VALUES (?, ?)";
         try (var pstmt = con.prepareStatement(sql)) {
             pstmt.setString(1, user.getNickname());
@@ -90,7 +86,9 @@ public class UserRepository implements IUserRepository
             while (res.next()) {
                 var nickname = res.getString("nickname");
                 var picture  = res.getString("profileImage");
-                users.add(new User(nickname, picture));
+                var user = new User(nickname);
+                user.setPicture(picture);
+                users.add(user);
             }
         } catch (SQLException e) {
             e.printStackTrace();

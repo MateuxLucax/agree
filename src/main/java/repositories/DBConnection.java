@@ -23,12 +23,13 @@ public class DBConnection
                 var props = new Properties();
                 props.setProperty("user", database.getUser());
                 props.setProperty("password", database.getPassword());
-                props.setProperty("connectTimeout", "300");
-                props.setProperty("socketTimeout", "300");
+                props.setProperty("connectTimeout", "15");
+                props.setProperty("socketTimeout", "30");
                 props.setProperty("testOnBorrow", "true");
                 props.setProperty("validationQuery", "select 1");
 
                 connection = DriverManager.getConnection(database.getUrl(), props);
+                System.out.println("Connected to DB!");
                 return connection;
             } catch (SQLException e) {
                 e.printStackTrace();

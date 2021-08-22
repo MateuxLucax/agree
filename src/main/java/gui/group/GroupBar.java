@@ -1,6 +1,10 @@
 package gui.group;
 
+import models.group.Group;
+import utils.ImageUtil;
+
 import javax.swing.*;
+import java.awt.*;
 
 public class GroupBar extends JPanel
 {
@@ -12,9 +16,14 @@ public class GroupBar extends JPanel
     private final JButton btQuit;
     private final String groupName;
 
-    public GroupBar(String groupName)
+    public GroupBar(Group group)
     {
-        this.groupName = groupName;
+        this.groupName = group.getName();
+
+        var lbPicture = new JLabel(ImageUtil.getImageIcon(group.getPicture()));
+        lbPicture.setMinimumSize(new Dimension(16, 16));
+        lbPicture.setMaximumSize(new Dimension(16, 16));
+        add(lbPicture);
 
         lbName = new JLabel(groupName);
         add(lbName);

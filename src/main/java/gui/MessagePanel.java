@@ -1,6 +1,7 @@
 package gui;
 
 import models.message.Message;
+import utils.DateUtil;
 import utils.ImageUtil;
 
 import javax.swing.*;
@@ -9,28 +10,46 @@ import java.awt.*;
 public class MessagePanel extends JPanel {
 
     private JButton btDelete;
+    private final GridBagConstraints gridBagConstraints = new GridBagConstraints();
 
     public MessagePanel(Message msg) {
-        setLayout(new BorderLayout());
+        setLayout(new GridBagLayout());
         setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
-        var lbUser   = new JLabel(msg.getUser().getNickname());
-        var lbPicture = new JLabel(ImageUtil.getImageIcon(msg.getUser().getPicture()));
-        lbUser.setBorder(BorderFactory.createEmptyBorder(2, 5, 2, 7));
-        var lbText   = new JLabel(msg.getText());
-        var lbSentAt = new JLabel(msg.sentAt().toString());  // TODO nicer looking date
+        gridBagConstraints.insets = new Insets(8, 8, 8, 8);
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
 
-        add(lbPicture, BorderLayout.BEFORE_FIRST_LINE);
-        add(lbUser,    BorderLayout.LINE_START);
-        add(lbText,    BorderLayout.CENTER);
-        add(lbSentAt,  BorderLayout.PAGE_START);
+        var lbPicture = new JLabel(ImageUtil.getImageIcon(msg.getUser().getPicture()));
+        lbPicture.setMinimumSize(new Dimension(16, 16));
+        lbPicture.setMaximumSize(new Dimension(16, 16));
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        add(lbPicture, gridBagConstraints);
+
+        var lbUser   = new JLabel(msg.getUser().getNickname());
+        lbUser.setBorder(BorderFactory.createEmptyBorder(2, 5, 2, 7));
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        add(lbUser,    gridBagConstraints);
+
+        var lbText   = new JLabel(msg.getText());
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        add(lbText,    gridBagConstraints);
+
+        var lbSentAt = new JLabel(DateUtil.dateToString(msg.sentAt()));
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        add(lbSentAt,  gridBagConstraints);
     }
 
     public void showDeleteButton() {
         btDelete = new JButton("Delete");
         var container = new JPanel();  // Just so the button doesn't fill the whole segment
         container.add(btDelete);
-        add(container, BorderLayout.LINE_END);
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        add(container, gridBagConstraints);
     }
 
     public void onClickDelete(Runnable action) {

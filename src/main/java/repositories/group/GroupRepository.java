@@ -69,10 +69,10 @@ public class GroupRepository implements IGroupRepository
     @Override
     public List<Group> getGroups(User user) {
         var groups = new ArrayList<Group>();
-        var sql = "SELECT g.id, g.name, g.ownerNickname " +
+        var sql = "SELECT g.id, g.name, g.ownerNickname, g.picture " +
                   "FROM groups g WHERE g.ownerNickname = ? " +
                   "UNION " +
-                  "SELECT g2.id, g2.name, g2.ownerNickname " +
+                  "SELECT g2.id, g2.name, g2.ownerNickname, g2.picture " +
                   "FROM groups g2, groupMembership m " +
                   "WHERE g2.id = m.groupId " +
                   "AND m.userNickname = ?";
@@ -81,10 +81,11 @@ public class GroupRepository implements IGroupRepository
             pstmt.setString(2, user.getNickname());
             ResultSet res = pstmt.executeQuery();
             while (res.next()) {
-                var id            = res.getInt(1);
-                var name          = res.getString(2);
-                var ownerNickname = res.getString(3);
+                var id            = res.getInt( "id");
+                var name          = res.getString("name");
+                var ownerNickname = res.getString("ownerNickname");
                 var group = new Group(name, new User(ownerNickname));
+                group.setPicture(res.getString("picture"));
                 group.setId(id);
                 groups.add(group);
             }

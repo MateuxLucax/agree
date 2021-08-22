@@ -24,7 +24,6 @@ public class FriendInvite extends Invite
     public String kind() { return "Friend"; }
 
     public String getIcon() {
-        // TODO
-        return "";
+        return from.getPicture();
     }
 }
