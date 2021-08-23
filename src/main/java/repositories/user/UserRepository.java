@@ -10,10 +10,31 @@ import java.util.List;
 public class UserRepository implements IUserRepository
 {
     private final Connection con;
+    private String defaultPicture;
 
     public UserRepository()
     {
         con = DBConnection.get();
+        loadDefaultPicture();
+    }
+
+    private void loadDefaultPicture() {
+        var sql = "SELECT column_default " +
+                  "FROM information_schema.columns " +
+                  "WHERE (table_schema, table_name, column_name) = ('public', 'users', 'profileimage')";
+        try (var pstmt = con.prepareStatement(sql)) {
+            var res = pstmt.executeQuery();
+            if (res.next()) {
+                // What you get is not "url", but "'url'::character varying"
+                var columnDefault = res.getString(1);
+                defaultPicture = columnDefault.substring(1, columnDefault.indexOf("'", 1));
+            } else {
+                System.err.println("UserRepository::loadDefaultPicture: Could not initialize the default picture");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Override
@@ -45,12 +66,15 @@ public class UserRepository implements IUserRepository
     }
 
     @Override
-    public boolean storeUser(User user)
+    public boolean createUser(User user)
     {
         String sql = "INSERT INTO users (nickname, password) VALUES (?, ?)";
         try (var pstmt = con.prepareStatement(sql)) {
             pstmt.setString(1, user.getNickname());
             pstmt.setString(2, user.getPassword());
+
+            user.setPicture(defaultPicture);
+
             return pstmt.executeUpdate() == 1;
         } catch (SQLException e) {
             e.printStackTrace();

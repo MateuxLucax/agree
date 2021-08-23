@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface IUserRepository {
 
-    boolean storeUser(User user);
+    boolean createUser(User user);
 
     User getUser(String username, String password);
 

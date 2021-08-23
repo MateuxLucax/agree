@@ -51,12 +51,12 @@ public class LoginService implements ILoginService {
         }
 
         user.setPassword(generateSecurePassword(user.getPassword()));
-        return this.repository.storeUser(user);
+        return this.repository.createUser(user);
     }
 
     @Override
     public boolean storeUser(User user) {
-        return this.repository.storeUser(user);
+        return this.repository.createUser(user);
     }
 
     public static byte[] hash(char[] password) {
