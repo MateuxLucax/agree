@@ -1,24 +1,32 @@
 package gui.group;
 
+import models.group.Group;
+
 import javax.swing.*;
-import java.util.function.Consumer;
 
 public class GroupManagementPanel {
-    private JPanel mainPanel;
-    private JButton btDelete;
-    private JTextField tfNewName;
-    private JButton btRename;
 
-    public GroupManagementPanel(String groupName) {
-        tfNewName.setText(groupName);
+    private JTextField tfName;
+    private JPanel mainPanel;
+    private JTextField tfPicture;
+    private JButton btSave;
+    private JButton btDelete;
+
+    public GroupManagementPanel(Group group) {
+        tfName.setText(group.getName());
+        tfPicture.setText(group.getPicture());
     }
 
-    public void onClickRename(Consumer<String> onRename) {
-        btRename.addActionListener(evt -> {
-            // TODO deal with empty names, maybe involving a isNameFieldEmpty() public method?
-            String text = tfNewName.getText();
-            onRename.accept(text);
-        });
+    public String getName() {
+        return tfName.getText();
+    }
+
+    public String getPicture() {
+        return tfPicture.getText();
+    }
+
+    public void onClickSave(Runnable onSave) {
+        btSave.addActionListener(evt -> onSave.run());
     }
 
     public void onClickDelete(Runnable onDelete) {

@@ -9,6 +9,13 @@ import java.awt.*;
 public class GroupBar extends JPanel
 {
     private final JLabel lbName;
+    private final JLabel lbPicture;
+
+    private String currentPicture;
+
+    private static final int ICON_HEIGHT = 64;
+    private static final int ICON_WIDTH  = 64;
+
     private final JButton btChat;
     private final JButton btMembers;
     private final JButton btInviteFriends;
@@ -20,10 +27,9 @@ public class GroupBar extends JPanel
     {
         this.groupName = group.getName();
 
-        var lbPicture = new JLabel(ImageUtil.getImageIcon(group.getPicture()));
-        lbPicture.setMinimumSize(new Dimension(16, 16));
-        lbPicture.setMaximumSize(new Dimension(16, 16));
+        lbPicture = new JLabel(ImageUtil.getImageIcon(group.getPicture(), ICON_WIDTH, ICON_HEIGHT));
         add(lbPicture);
+        currentPicture = group.getPicture();
 
         lbName = new JLabel(groupName);
         add(lbName);
@@ -49,8 +55,13 @@ public class GroupBar extends JPanel
     public JButton getInviteButton()  { return btInviteFriends; }
     public JButton getManageButton()  { return btManage; }
 
-    public void rename(String newName) {
-        lbName.setText(newName);
+    public void updateGroup(Group group) {
+        lbName.setText(group.getName());
+        // Let's not reload the images unnecessarily, it can be quite slow if the image is big
+        if (! group.getPicture().equals(currentPicture)) {
+            lbPicture.setIcon(ImageUtil.getImageIcon(group.getPicture(), ICON_WIDTH, ICON_HEIGHT));
+            currentPicture = group.getPicture();
+        }
         repaint();
         revalidate();
     }

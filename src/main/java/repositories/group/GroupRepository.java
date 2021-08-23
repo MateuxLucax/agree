@@ -14,10 +14,31 @@ import java.util.List;
 public class GroupRepository implements IGroupRepository
 {
     private final Connection con;
+    private String defaultPicture;
 
     public GroupRepository()
     {
         con = DBConnection.get();
+        loadDefaultPicture();
+    }
+
+    private void loadDefaultPicture() {
+        var sql = "SELECT column_default " +
+                  "FROM information_schema.columns " +
+                  "WHERE (table_schema, table_name, column_name) = ('public', 'groups', 'picture')";
+        try (var pstmt = con.prepareStatement(sql)) {
+            var res = pstmt.executeQuery();
+            if (res.next()) {
+                // What you get is not "url", but "'url'::character varying"
+                var columnDefault = res.getString(1);
+                defaultPicture = columnDefault.substring(1, columnDefault.indexOf("'", 1));
+            } else {
+                System.err.println("GroupRepository::loadDefaultPicture: Could not initialize the default picture");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Override
@@ -32,6 +53,7 @@ public class GroupRepository implements IGroupRepository
             boolean hasKeys = generatedKeys.next();
             if (hasKeys) {
                 group.setId(generatedKeys.getInt(1));
+                group.setPicture(defaultPicture);
             }
             // No generated keys means the insert didn't work
             return hasKeys;
@@ -54,11 +76,12 @@ public class GroupRepository implements IGroupRepository
     }
 
     @Override
-    public boolean renameGroup(Group group) {
-        var sql = "UPDATE groups SET name = ? WHERE id = ?";
+    public boolean updateGroup(Group group) {
+        var sql = "UPDATE groups SET name = ?, picture = ? WHERE id = ?";
         try (var pstmt = con.prepareStatement(sql)) {
             pstmt.setString(1, group.getName());
-            pstmt.setInt(2, group.getId());
+            pstmt.setString(2, group.getPicture());
+            pstmt.setInt   (3, group.getId());
             return pstmt.executeUpdate() == 1;
         } catch (SQLException throwables) {
             throwables.printStackTrace();

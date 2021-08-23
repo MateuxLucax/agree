@@ -50,7 +50,7 @@ public class GroupBarController
             view.addManageButton(() -> {
                 var con = new GroupManagementController(group);
                 con.afterDelete(this.afterDelete);
-                con.afterRename(view::rename);
+                con.afterUpdate(view::updateGroup);
                 view.getManageButton().setEnabled(false);
                 con.onClose(() -> view.getManageButton().setEnabled(true));
                 con.display();

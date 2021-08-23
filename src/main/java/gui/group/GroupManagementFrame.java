@@ -1,5 +1,7 @@
 package gui.group;
 
+import models.group.Group;
+
 import javax.swing.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -14,18 +16,18 @@ import java.util.function.Consumer;
 
 public class GroupManagementFrame extends JFrame {
 
-    private final String groupName;
+    private final Group group;
 
     private final GroupManagementPanel panel;
     private Runnable onClose;
 
-    public GroupManagementFrame(String groupName)
+    public GroupManagementFrame(Group group)
     {
-        this.groupName = groupName;
+        this.group = group;
 
-        setTitle(groupName + ": manage");
+        setTitle(group.getName() + ": manage");
 
-        panel = new GroupManagementPanel(groupName);
+        panel = new GroupManagementPanel(group);
         setContentPane(panel.getJPanel());
 
         addWindowListener(new WindowAdapter() {
@@ -35,13 +37,19 @@ public class GroupManagementFrame extends JFrame {
         });
     }
 
-    public void onClickRename(Consumer<String> action)
-    {
-        panel.onClickRename(action);
+    public String getName() {
+        return panel.getName();
     }
 
-    public void onClickDelete(Runnable action)
-    {
+    public String getPicture() {
+        return panel.getPicture();
+    }
+
+    public void onClickSave(Runnable action) {
+        panel.onClickSave(action);
+    }
+
+    public void onClickDelete(Runnable action) {
         panel.onClickDelete(action);
     }
 
@@ -49,7 +57,7 @@ public class GroupManagementFrame extends JFrame {
     {
         return JOptionPane.showConfirmDialog(
                 this,
-                "Do you really want to delete the group " + groupName + "?",
+                "Do you really want to delete the group " + group.getName() + "?",
                 "Delete group",
                 JOptionPane.YES_NO_OPTION
         ) == 0;
@@ -59,17 +67,17 @@ public class GroupManagementFrame extends JFrame {
     {
         JOptionPane.showMessageDialog(
                 this,
-                "Couldn't delete the group " + groupName,
+                "Couldn't delete the group " + group.getName(),
                 "Delete group",
                 JOptionPane.ERROR_MESSAGE
         );
     }
 
-    public void warnCouldNotRename(String newName)
+    public void warnInvalidInput()
     {
         JOptionPane.showMessageDialog(
                 this,
-                "Couldn't rename the group " + groupName + " to \"" + newName + "\"",
+                "Some of the input is invalid",
                 "Delete group",
                 JOptionPane.ERROR_MESSAGE
         );
@@ -85,5 +93,14 @@ public class GroupManagementFrame extends JFrame {
         if (onClose != null)
             onClose.run();
         dispose();
+    }
+
+    public void warnCouldNotSave() {
+        JOptionPane.showMessageDialog(
+                this,
+                "Could not update the group",
+                "Delete group",
+                JOptionPane.ERROR_MESSAGE
+        );
     }
 }

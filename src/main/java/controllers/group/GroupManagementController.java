@@ -9,18 +9,16 @@ import java.util.function.Consumer;
 
 public class GroupManagementController {
 
-    private final Group group;
     private final GroupManagementFrame view;
     private final IGroupRepository groupRepo;
 
     private Runnable afterDelete;
-    private Consumer<String> afterRename;
+    private Consumer<Group> afterUpdate;
 
-    public GroupManagementController(Group model)
+    public GroupManagementController(Group group)
     {
         this.groupRepo = new GroupRepository();
-        this.group = model;
-        view = new GroupManagementFrame(model.getName());
+        view = new GroupManagementFrame(group);
 
         view.onClickDelete(() -> {
             if (! view.confirmDelete()) return;
@@ -32,19 +30,32 @@ public class GroupManagementController {
             view.close();
         });
 
-        view.onClickRename(newName -> {
+        view.onClickSave(() -> {
+            String newName    = view.getName();
+            String newPicture = view.getPicture();
+
             if (newName.isEmpty()) {
-                view.warnCouldNotRename(newName);
+                view.warnInvalidInput();
                 return;
             }
-            String oldName = group.getName();
+
+            String oldName    = group.getName();
+            String oldPicture = group.getPicture();
+
             group.setName(newName);
-            if (! groupRepo.renameGroup(group)) {
-                group.setName(oldName);  // restore previous name
-                view.warnCouldNotRename(newName);
+            group.setPicture(newPicture);
+
+            if (! groupRepo.updateGroup(group)) {
+                // restore previous field values
+                group.setName(oldName);
+                group.setPicture(oldPicture);
+                view.warnCouldNotSave();
                 return;
             }
-            if (afterRename != null) afterRename.accept(newName);
+
+            if (afterUpdate != null)
+                afterUpdate.accept(group);
+
             view.close();
         });
     }
@@ -53,8 +64,8 @@ public class GroupManagementController {
         this.afterDelete = action;
     }
 
-    public void afterRename(Consumer<String> action) {
-        this.afterRename = action;
+    public void afterUpdate(Consumer<Group> action) {
+        this.afterUpdate = action;
     }
 
     public void onClose(Runnable action) {
