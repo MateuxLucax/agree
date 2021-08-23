@@ -11,15 +11,16 @@ import java.util.Map;
 
 public class ImageUtil {
 
-    private static final Map<String, BufferedImage> cache = new HashMap<>();
+    private static final Map<String, Image> cache   = new HashMap<>();
+    private static final Map<String, Image> cache64 = new HashMap<>();
 
-    public static BufferedImage getImage(String url) {
+    public static Image getImage(String url) {
         if (cache.containsKey(url)) {
             return cache.get(url);
         }
 
         try {
-            BufferedImage img = ImageIO.read(new File(url));
+            var img = ImageIO.read(new File(url));
             cache.put(url, img);
             return img;
         } catch (Exception e) {
@@ -35,7 +36,7 @@ public class ImageUtil {
         }
 
         try {
-            BufferedImage img = ImageIO.read(new URL(url));
+            var img = ImageIO.read(new URL(url));
             cache.put(url, img);
             return new ImageIcon(img);
         } catch (Exception e) {
@@ -45,15 +46,16 @@ public class ImageUtil {
         return null;
     }
 
-    public static ImageIcon getImageIcon(String url, int width, int height) {
-        if (cache.containsKey(url)) {
-            return new ImageIcon(cache.get(url).getScaledInstance(width, height, Image.SCALE_SMOOTH));
+    public static ImageIcon getImageIcon64(String url) {
+        if (cache64.containsKey(url)) {
+            return new ImageIcon(cache64.get(url));
         }
 
         try {
-            BufferedImage img = ImageIO.read(new URL(url));
-            cache.put(url, img);
-            return new ImageIcon(img.getScaledInstance(width, height, Image.SCALE_SMOOTH));
+            var img   = ImageIO.read(new URL(url));
+            var img64 = img.getScaledInstance(64, 64, Image.SCALE_SMOOTH);
+            cache64.put(url, img64);
+            return new ImageIcon(img64);
         } catch (Exception e) {
             System.out.println("Something went wrong while loading image." + e.getMessage());
         }

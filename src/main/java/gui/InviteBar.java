@@ -18,7 +18,7 @@ public class InviteBar extends JPanel
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
-        var lbIcon = new JLabel(ImageUtil.getImageIcon(invite.getIcon()));
+        var lbIcon = new JLabel(ImageUtil.getImageIcon64(invite.getIcon()));
         lbIcon.setMinimumSize(new Dimension(16, 16));
         lbIcon.setMaximumSize(new Dimension(16, 16));
         add(lbIcon, BorderLayout.LINE_START);

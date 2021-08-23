@@ -19,7 +19,7 @@ public class MessagePanel extends JPanel {
         gridBagConstraints.insets = new Insets(8, 8, 8, 8);
         gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
 
-        var lbPicture = new JLabel(ImageUtil.getImageIcon(msg.getUser().getPicture(), 64, 64));
+        var lbPicture = new JLabel(ImageUtil.getImageIcon64(msg.getUser().getPicture()));
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         add(lbPicture, gridBagConstraints);

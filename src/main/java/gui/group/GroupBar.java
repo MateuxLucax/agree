@@ -4,15 +4,10 @@ import models.group.Group;
 import utils.ImageUtil;
 
 import javax.swing.*;
-import java.awt.*;
 
 public class GroupBar extends JPanel
 {
     private final JLabel lbName;
-    private final JLabel lbPicture;
-
-    private static final int ICON_HEIGHT = 64;
-    private static final int ICON_WIDTH  = 64;
 
     private final JButton btChat;
     private final JButton btMembers;
@@ -25,7 +20,7 @@ public class GroupBar extends JPanel
     {
         this.groupName = group.getName();
 
-        lbPicture = new JLabel(ImageUtil.getImageIcon(group.getPicture(), ICON_WIDTH, ICON_HEIGHT));
+        var lbPicture = new JLabel(ImageUtil.getImageIcon64(group.getPicture()));
         add(lbPicture);
 
         lbName = new JLabel(groupName);
