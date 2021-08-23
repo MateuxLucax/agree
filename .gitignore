@@ -82,9 +82,6 @@ fabric.properties
 # *.iml
 # modules.xml
 
-agree.iml
-
 database
 *.json
 postgres-data
-*.iml
