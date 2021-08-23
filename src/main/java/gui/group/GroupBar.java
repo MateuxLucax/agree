@@ -11,8 +11,6 @@ public class GroupBar extends JPanel
     private final JLabel lbName;
     private final JLabel lbPicture;
 
-    private String currentPicture;
-
     private static final int ICON_HEIGHT = 64;
     private static final int ICON_WIDTH  = 64;
 
@@ -29,7 +27,6 @@ public class GroupBar extends JPanel
 
         lbPicture = new JLabel(ImageUtil.getImageIcon(group.getPicture(), ICON_WIDTH, ICON_HEIGHT));
         add(lbPicture);
-        currentPicture = group.getPicture();
 
         lbName = new JLabel(groupName);
         add(lbName);
@@ -57,11 +54,6 @@ public class GroupBar extends JPanel
 
     public void updateGroup(Group group) {
         lbName.setText(group.getName());
-        // Let's not reload the images unnecessarily, it can be quite slow if the image is big
-        if (! group.getPicture().equals(currentPicture)) {
-            lbPicture.setIcon(ImageUtil.getImageIcon(group.getPicture(), ICON_WIDTH, ICON_HEIGHT));
-            currentPicture = group.getPicture();
-        }
         repaint();
         revalidate();
     }
